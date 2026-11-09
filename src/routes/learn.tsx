@@ -57,8 +57,10 @@ function LearnPage() {
         <div className="mt-5 space-y-3">{cur.modules.map((m, i) => <ModuleCard key={m.id} m={m} n={`${level + 1}.${i + 1}`} done={done.has(m.id)} onDone={() => completeModule(m.id)} />)}</div>
         <div className="mt-8 flex justify-between">{level > 0 ? <Button variant="ghost" onClick={() => setLevel(level - 1)}>← {curriculum[level - 1]?.name}</Button> : <span />}{level < curriculum.length - 1 && <Button onClick={() => { setLevel(level + 1); window.scrollTo({ top: 0 }); }}>Next: {curriculum[level + 1]?.name} →</Button>}</div>
       </section>
-      <PktivoPronunciation className="mt-12 text-xs" />
-      <p className="mt-2 text-xs text-muted-foreground">Pktivo is not affiliated with Cisco. CCNA is a trademark of Cisco Systems. Always check the official exam topics before booking your exam.</p>
+      <div className="mt-12 border-t pt-6">
+        <PktivoPronunciation className="text-xs" />
+        <p className="mt-2 text-xs text-muted-foreground">Pktivo is not affiliated with Cisco. CCNA is a trademark of Cisco Systems. Always check the official exam topics before booking your exam.</p>
+      </div>
     </main>
   </div>;
 }
