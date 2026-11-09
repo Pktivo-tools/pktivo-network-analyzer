@@ -1,4 +1,4 @@
-# Netlens desktop preview 0.1
+# Netlens desktop preview 0.2.0
 
 Portable, unsigned preview packages. Extract the entire archive before launching.
 
@@ -26,4 +26,8 @@ The desktop renderer is a separate static client build; the hosted TanStack app 
 
 Claude is hosted and cannot run locally. The Local help tab instead supports a separately installed Ollama with a downloaded local model (for example `ollama pull llama3.2:3b`). Downloading needs internet; inference works offline. Set `OLLAMA_NO_CLOUD=1` in your OS environment before starting Ollama and keep its default loopback-only binding. Restart Ollama after changing its environment.
 
-Help is disabled by default and when leaving the tab. Netlens contacts only `127.0.0.1:11434`, refuses redirects and remote/cloud model metadata, and never attaches captures or history. The renderer retains `connect-src 'none'`. Netlens cannot control other software on your machine: use a trusted Ollama installation and local model. The browser version does not connect to local models. Previously downloaded preview archives do not include this update; a new desktop build is required.
+Help is disabled by default and when leaving the tab. Netlens contacts only `127.0.0.1:11434`, refuses redirects and remote/cloud model metadata, and never attaches captures or history. The renderer retains `connect-src 'none'`. Netlens cannot control other software on your machine: use a trusted Ollama installation and local model. The browser version does not connect to local models. Downloads on the new Downloads page include this update.
+
+## Downloads and updates
+
+The hosted `/downloads` page provides Windows x64, macOS Intel/Apple Silicon, Debian/Ubuntu AMD64 and Arch x86_64 preview packages. Preview packages are manually updated. The established electron-updater integration is inactive until an HTTPS release host and supported signed installer builds are configured. See `RELEASING.md` for activation and target-OS verification requirements. The app never uploads captures when checking for software updates.

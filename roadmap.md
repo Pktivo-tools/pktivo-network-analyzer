@@ -1,9 +1,14 @@
 # Netlens completion
+- [x] Dedicated Downloads page and navigation button
+- [x] Updated Windows/macOS archives and Debian/Ubuntu + Arch packages served in the app
+- [x] Safe automatic-update integration and release setup documentation
+- [x] Verify all five actual downloads, checksums, package contents, and updater safety
+- [ ] Activate and test automatic installer updates — blocked by a public release host, signed Windows/macOS release credentials and native release environments
 - [x] Beginner overview and automatic suspicious-traffic explanations with tests
 - [x] Separate networking and usage learning tab
 - [x] Optional strictly local assistant and privacy boundary tests
 - [x] Verify browser workflows on desktop and mobile
-- [ ] Real local-model answer in Electron — blocked by no installed Ollama/model and unavailable native desktop session; existing downloadable archives predate this update
+- [ ] Real local-model answer in Electron — blocked by no installed Ollama/model and unavailable native desktop session; current downloads include local help
 - [x] Packet workspace, demo traffic, filters, details, bytes, stream and statistics
 - [x] Secure Electron shell and live capture bridge (existing capture-tool permissions required)
 - [x] Windows x64, macOS Intel/Apple Silicon and Linux x64 portable preview packages

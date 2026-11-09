@@ -36,3 +36,5 @@ use the editor.
 - Keep appearance presets in global semantic CSS tokens and apply the validated saved theme after hydration; store this device-only preference locally to preserve offline desktop support.
 - Keep warning detection as pure full-capture heuristics separate from display filters so beginner explanations remain consistent.
 - Optional on-device tutoring is an exception to hosted AI routing: Electron main uses a fixed loopback-only Ollama connection with opt-in and local-model validation; no capture context or cloud fallback is permitted.
+- Serve versioned desktop downloads through immutable asset pointers; keep installer update feeds separately configured at build time so preview downloads never imply working automatic updates.
+- Keep electron-updater in Electron main only and enabled only for configured installer releases; pause during recording and require explicit restart to protect unsaved captures.

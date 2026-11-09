@@ -12,7 +12,8 @@
     "format": "prettier --write .",
     "test": "vitest run",
     "test:watch": "vitest",
-    "desktop:build": "vite build --config electron/vite.config.ts",
+    "desktop:build": "vite build --config electron/vite.config.ts && bun run desktop:updater",
+    "desktop:updater": "bun build node_modules/electron-updater/out/main.js --target=node --format=cjs --external=electron --outfile=electron/updater-runtime.cjs",
     "desktop:package": "electron-packager . Netlens --platform=linux --arch=x64 --out=electron-release --overwrite --no-prune --no-asar --electron-version=39.2.7 --ignore=\"^/(node_modules|src|public|electron-release|.git|.workspace|.lovable|.oj-cache)(/|$)\""
   },
   "overrides": {
@@ -57,6 +58,7 @@
     "clsx": "^2.1.1",
     "cmdk": "^1.1.1",
     "date-fns": "^4.1.0",
+    "electron-updater": "^6.8.11",
     "embla-carousel-react": "^8.6.0",
     "input-otp": "^1.4.2",
     "lucide-react": "^0.575.0",
@@ -100,6 +102,6 @@
     "vitest": "^4.1.10"
   },
   "main": "electron/main.cjs",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "productName": "Netlens"
 }
