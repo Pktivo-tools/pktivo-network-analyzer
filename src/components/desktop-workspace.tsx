@@ -222,7 +222,7 @@ export function DesktopWorkspace(){
     </ResizablePanelGroup>}</div>
 
     <footer className="ws-status"><button type="button" className={`flex items-center gap-1 ${findings.some(f=>f.level==='review')?'text-destructive':findings.length?'text-primary':''}`} onClick={()=>setModal('expert')} title="Expert information"><span className={`size-2.5 rounded-full ${findings.some(f=>f.level==='review')?'bg-destructive':findings.length?'bg-primary':'bg-muted-foreground'}`}/></button>
-      <span className="truncate">{live?<span className="text-destructive">● Capturing on {chosen.join(', ')}</span>:filename||'Ready to load or capture'}</span>
+      <span className="truncate">{live?<span className="text-destructive">{stopping?'Stopping…':`● Capturing on ${chosen.join(', ')}`}</span>:filename||'Ready to load or capture'}</span>
       <span className="ml-auto">Packets: {packets.length.toLocaleString()} · Displayed: {filtered.length.toLocaleString()} ({packets.length?(filtered.length/packets.length*100).toFixed(1):'0.0'}%){marked.size?` · Marked: ${marked.size}`:''}</span>
       {range?.field&&<span className="hidden font-mono md:inline">{range.field}</span>}<span>Profile: Default</span></footer>
     <input ref={fileInput} type="file" accept=".pcap,.pcapng,.cap" className="hidden" aria-label="Open capture file" onChange={e=>{const f=e.target.files?.[0];if(f)void openFile(f);e.target.value=''}}/>
