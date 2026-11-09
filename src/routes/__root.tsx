@@ -77,10 +77,10 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Netpack" },
+      { title: "Pktivo" },
       { name: "description", content: "Modern network packet analysis" },
-      { name: "author", content: "Netpack" },
-      { property: "og:title", content: "Netpack" },
+      { name: "author", content: "Pktivo" },
+      { property: "og:title", content: "Pktivo" },
       { property: "og:description", content: "Modern network packet analysis" },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
