@@ -27,9 +27,12 @@ with tempfile.TemporaryDirectory(prefix='pktivo-packages-') as temporary:
     control=temp/'control';control.mkdir()
     size=sum(p.stat().st_size for p in root.rglob('*') if p.is_file())//1024
     (control/'control').write_text(f'Package: pktivo\nVersion: {version}\nArchitecture: amd64\nMaintainer: Pktivo release maintainer\nSection: net\nPriority: optional\nInstalled-Size: {size}\nDepends: libgtk-3-0, libnss3, libatk-bridge2.0-0, libdrm2, libxkbcommon0, libxcomposite1, libxdamage1, libxfixes3, libxrandr2, libgbm1, libasound2 | libasound2t64\nRecommends: wireshark-common\nDescription: Beginner-friendly local network packet analyzer\n Inspect saved captures offline and record traffic using installed capture tools.\n')
+    # dpkg rejects PAX headers (Python's default), so use GNU tar with root ownership.
+    def owned(info):
+        info.uid=info.gid=0;info.uname=info.gname='root';return info
     def pack(path,directory,mode):
-        with tarfile.open(path,mode) as archive:
-            for child in directory.iterdir():archive.add(child,arcname=child.name)
+        with tarfile.open(path,mode,format=tarfile.GNU_FORMAT) as archive:
+            for child in directory.iterdir():archive.add(child,arcname='./'+child.name,filter=owned)
     (temp/'debian-binary').write_text('2.0\n');pack(temp/'control.tar.gz',control,'w:gz');pack(temp/'data.tar.xz',root,'w:xz')
     subprocess.run(['ar','rc',str(out/f'pktivo_{version}_amd64.deb'),'debian-binary','control.tar.gz','data.tar.xz'],cwd=temp,check=True)
     (root/'.PKGINFO').write_text(f'pkgname = pktivo\npkgbase = pktivo\npkgver = {version}-1\npkgdesc = Beginner-friendly local network packet analyzer\nsize = {size*1024}\narch = x86_64\nlicense = LicenseRef-Pktivo-preview\ndepend = gtk3\ndepend = nss\ndepend = alsa-lib\ndepend = libxss\ndepend = libxtst\ndepend = libnotify\ndepend = libdrm\ndepend = mesa\noptdepend = wireshark-cli: live packet capture\n')
