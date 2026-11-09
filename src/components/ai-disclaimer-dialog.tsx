@@ -10,13 +10,18 @@ export function AiDisclaimerDialog() {
   const [open, setOpen] = useState(false);
   const [dontShowAgain, setDontShowAgain] = useState(false);
 
-  // Storage is only readable after hydration, so the dialog never renders open on the server.
+  // Storage is only readable after hydration, and the modal must not hide the page
+  // until React has finished hydrating it, so the notice opens on a short delay.
   useEffect(() => {
+    let show = true;
     try {
-      setOpen(shouldShowDisclaimer(window.localStorage));
+      show = shouldShowDisclaimer(window.localStorage);
     } catch {
-      setOpen(true);
+      show = true;
     }
+    if (!show) return;
+    const timer = window.setTimeout(() => setOpen(true), 400);
+    return () => window.clearTimeout(timer);
   }, []);
 
   function close() {
