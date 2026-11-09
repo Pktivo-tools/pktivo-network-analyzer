@@ -13,7 +13,7 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "desktop:build": "vite build --config electron/vite.config.ts",
-    "desktop:package": "electron-packager . Netlens --platform=linux --arch=x64 --out=electron-release --overwrite --ignore=\"^/(node_modules|src|public|electron-release|.git|.workspace|.lovable|.oj-cache)(/|$)\""
+    "desktop:package": "electron-packager . Netlens --platform=linux --arch=x64 --out=electron-release --overwrite --no-prune --no-asar --electron-version=39.2.7 --ignore=\"^/(node_modules|src|public|electron-release|.git|.workspace|.lovable|.oj-cache)(/|$)\""
   },
   "overrides": {
     "rolldown": "1.2.1"
@@ -99,5 +99,7 @@
     "vite": "8.1.5",
     "vitest": "^4.1.10"
   },
-  "main": "electron/main.cjs"
+  "main": "electron/main.cjs",
+  "version": "0.1.0",
+  "productName": "Netlens"
 }
