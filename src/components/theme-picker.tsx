@@ -28,8 +28,8 @@ export function useTheme() {
 }
 
 /** The swatch grid, reusable inside a popover or a menu. */
-export function ThemeGrid({ theme, onSelect }: { theme: ThemeId; onSelect: (id: ThemeId) => void }) {
-  return <div className="grid grid-cols-2 gap-2">{THEMES.map(option => <Button key={option.id} variant="outline" aria-pressed={theme === option.id} onClick={() => onSelect(option.id)} className={`h-auto flex-col items-stretch gap-2 p-2 ${theme === option.id ? 'border-primary ring-1 ring-primary' : ''}`}>
+export function ThemeGrid({ theme, onSelect, className = 'grid-cols-2' }: { theme: ThemeId; onSelect: (id: ThemeId) => void; className?: string }) {
+  return <div className={`grid gap-2 ${className}`}>{THEMES.map(option => <Button key={option.id} variant="outline" aria-pressed={theme === option.id} onClick={() => onSelect(option.id)} className={`h-auto flex-col items-stretch gap-2 p-2 ${theme === option.id ? 'border-primary ring-1 ring-primary' : ''}`}>
     <span data-theme={option.id} className={`theme-swatch ${option.dark ? 'dark' : ''}`} aria-hidden="true"><span className="swatch-rail"/><span className="swatch-content"><span className="swatch-line"/><span className="swatch-line short"/><span className="swatch-accent"/></span></span>
     <span className="flex items-center justify-between gap-1 text-xs font-medium">{option.name}{theme === option.id && <Check className="size-3 text-primary"/>}</span>
   </Button>)}</div>;
