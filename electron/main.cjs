@@ -3,6 +3,8 @@ const { spawn }=require('node:child_process');
 const path=require('node:path');
 const { pathToFileURL }=require('node:url');
 const { findTool, listInterfaces, captureArgs }=require('./capture.cjs');
+const { createAssistant }=require('./assistant.cjs');
+const assistant=createAssistant();
 let win=null,processCapture=null,tool=null,allowed=[];
 const index=path.join(__dirname,'..','dist','index.html');
 const localUrl=pathToFileURL(index).href;
@@ -20,11 +22,14 @@ ipcMain.handle('capture:start',async(event,name)=>{
   child.on('close',code=>{if(processCapture===child)processCapture=null;if(win&&!win.isDestroyed()){if(code&&code!==0&&!received)win.webContents.send('capture:error',diagnostic.trim()||'Capture failed. Check interface permissions.');win.webContents.send('capture:stopped');}});
 });
 ipcMain.handle('capture:stop',event=>{checkSender(event);stop()});
+ipcMain.handle('assistant:enable',(event,value)=>{checkSender(event);return assistant.enable(value)});
+ipcMain.handle('assistant:models',event=>{checkSender(event);return assistant.models()});
+ipcMain.handle('assistant:ask',(event,model,question)=>{checkSender(event);return assistant.ask(model,question)});
 app.whenReady().then(()=>{
   win=new BrowserWindow({width:1440,height:1000,minWidth:760,minHeight:600,title:'Netlens',webPreferences:{preload:path.join(__dirname,'preload.cjs'),contextIsolation:true,nodeIntegration:false,sandbox:true}});
   win.webContents.setWindowOpenHandler(()=>({action:'deny'}));
   win.webContents.on('will-navigate',(event,url)=>{if(url!==localUrl)event.preventDefault()});
   win.webContents.session.setPermissionRequestHandler((_webContents,_permission,callback)=>callback(false));
-  win.loadFile(index);win.on('closed',()=>{stop();win=null});
+  win.loadFile(index);win.on('closed',()=>{assistant.enable(false);stop();win=null});
 });
 app.on('window-all-closed',()=>app.quit());app.on('before-quit',stop);

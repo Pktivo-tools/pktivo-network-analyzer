@@ -34,3 +34,5 @@ use the editor.
 - Keep native capture and process access exclusively in Electron main behind a validated preload bridge; the hosted app only inspects files.
 - Package Electron with a separate client-only Vite entry and relative asset paths, preserving the hosted TanStack bootstrap.
 - Keep appearance presets in global semantic CSS tokens and apply the validated saved theme after hydration; store this device-only preference locally to preserve offline desktop support.
+- Keep warning detection as pure full-capture heuristics separate from display filters so beginner explanations remain consistent.
+- Optional on-device tutoring is an exception to hosted AI routing: Electron main uses a fixed loopback-only Ollama connection with opt-in and local-model validation; no capture context or cloud fallback is permitted.

@@ -303,3 +303,10 @@ progress { accent-color: var(--primary); } progress::-webkit-progress-bar { back
 .swatch-line.short { width: 55%; }
 .swatch-accent { height: 7px; width: 37%; margin-top: 2px; background: var(--primary); border-radius: 2px; }
 .theme-swatch[data-theme="light"] { --background: oklch(0.995 0.001 160); --sidebar: oklch(0.978 0.003 160); --border: oklch(0.92 0.006 160); --muted-foreground: oklch(0.54 0.016 165); --primary: oklch(0.51 0.11 166); }
+.guide-section { padding: 6px 26px 32px; max-width: 1000px; margin: 0 auto; }
+.finding-item { border: 1px solid var(--border); border-radius: 6px; padding: 20px; background: var(--background); }
+.packet-journey { display: flex; align-items: center; justify-content: space-between; gap: 10px; max-width: 500px; padding: 24px 0; color: var(--primary); }
+.packet-journey span { display: flex; align-items: center; gap: 8px; font-size: 12px; }
+.packet-journey svg { width: 20px; flex-shrink: 0; }
+.journey-message { padding: 10px; border: 1px dashed var(--primary); }
+@media(max-width:760px) { .guide-section { padding: 8px 16px 28px; } .finding-item { padding: 16px; } .packet-journey { gap: 6px; } .packet-journey span { flex-direction: column; } .workspace-heading h1 { max-width: 100%; } .mobile-nav button[aria-current] { color: var(--primary); } }

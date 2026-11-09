@@ -21,3 +21,9 @@ bun run desktop:build
 bun run desktop:package
 
 The desktop renderer is a separate static client build; the hosted TanStack app remains unchanged.
+
+## Optional local tutor
+
+Claude is hosted and cannot run locally. The Local help tab instead supports a separately installed Ollama with a downloaded local model (for example `ollama pull llama3.2:3b`). Downloading needs internet; inference works offline. Set `OLLAMA_NO_CLOUD=1` in your OS environment before starting Ollama and keep its default loopback-only binding. Restart Ollama after changing its environment.
+
+Help is disabled by default and when leaving the tab. Netlens contacts only `127.0.0.1:11434`, refuses redirects and remote/cloud model metadata, and never attaches captures or history. The renderer retains `connect-src 'none'`. Netlens cannot control other software on your machine: use a trusted Ollama installation and local model. The browser version does not connect to local models. Previously downloaded preview archives do not include this update; a new desktop build is required.
