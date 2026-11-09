@@ -1,9 +1,10 @@
 import { createFileRoute, Link } from '@tanstack/react-router';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { ArrowLeft, BookOpen, Check, ChevronDown, Terminal, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { PktivoLogo } from '@/components/pktivo-logo';
 import { curriculum, type Module } from '@/lib/learn/curriculum';
+import { readLearnProgress, saveLearnProgress } from '@/lib/learn/progress';
 
 export const Route = createFileRoute('/learn')({
   head: () => ({ meta: [{ title: 'Learn networking with Pktivo — beginner to CCNA' }, { name: 'description', content: 'A free networking learning path from beginner to professional, covering every CCNA 200-301 exam domain with quizzes and Cisco commands.' }, { property: 'og:title', content: 'Learn networking — beginner to CCNA' }, { property: 'og:description', content: 'Four levels, 22 modules, quizzes and Cisco IOS commands to prepare for the CCNA exam.' }, { property: 'og:type', content: 'website' }, { name: 'twitter:card', content: 'summary_large_image' }] }),
@@ -30,18 +31,30 @@ function ModuleCard({ m, n, done, onDone }: { m: Module; n: string; done: boolea
 
 function LearnPage() {
   const [level, setLevel] = useState(0); const [done, setDone] = useState<Set<string>>(new Set());
-  const total = curriculum.reduce((a, l) => a + l.modules.length, 0); const cur = curriculum[level]!;
+  const [saveFailed, setSaveFailed] = useState(false);
+  useEffect(() => {
+    try { setDone(readLearnProgress(window.localStorage)); }
+    catch { setSaveFailed(true); }
+  }, []);
+  function completeModule(id: string) {
+    const next = new Set(done).add(id);
+    setDone(next);
+    try { setSaveFailed(!saveLearnProgress(window.localStorage, next)); }
+    catch { setSaveFailed(true); }
+  }
+  const total = curriculum.reduce((a, l) => a + l.modules.length, 0); const cur = curriculum[level];
+  if (!cur) return null;
   return <div className="min-h-screen bg-background text-foreground">
     <header className="flex items-center justify-between border-b px-4 py-3 sm:px-8"><Link to="/" className="flex items-center gap-2 font-semibold"><span className="size-6"><PktivoLogo /></span>pktivo<span className="text-primary">.</span></Link><Button asChild variant="ghost" size="sm"><Link to="/"><ArrowLeft />Back to workspace</Link></Button></header>
     <main className="mx-auto max-w-4xl px-4 py-10 sm:px-8">
       <div className="flex items-center gap-2 text-sm text-primary"><BookOpen className="size-4" />Learn networking</div>
       <h1 className="mt-3 text-3xl font-semibold sm:text-4xl">From zero to CCNA-ready</h1>
       <p className="mt-3 max-w-2xl text-muted-foreground">A step-by-step path through every CCNA 200-301 exam domain. Start at Beginner, answer each check correctly to tick a module off, and lab the commands in Cisco Packet Tracer.</p>
-      <div className="mt-6"><div className="flex justify-between text-xs text-muted-foreground"><span>Your progress (this visit)</span><span>{done.size} / {total} modules</span></div><progress className="mt-2 h-1.5 w-full" max={total} value={done.size} /></div>
+      <div className="mt-6"><div className="flex justify-between gap-3 text-xs text-muted-foreground"><span>Your progress · {saveFailed ? 'Not saved' : 'Saved on this device'}</span><span className="shrink-0">{done.size} / {total} modules</span></div><progress className="mt-2 h-1.5 w-full" max={total} value={done.size} />{saveFailed && <p role="status" className="mt-2 text-xs text-destructive">Your browser couldn’t save progress. It will last only until you leave this page.</p>}</div>
       <nav className="mt-8 grid grid-cols-2 gap-2 sm:grid-cols-4" aria-label="Levels">{curriculum.map((l, i) => { const c = l.modules.filter(m => done.has(m.id)).length; return <button key={l.id} onClick={() => setLevel(i)} className={`rounded-lg border p-3 text-left transition-colors ${i === level ? 'border-primary bg-accent' : 'hover:bg-accent'}`}><span className="text-xs text-muted-foreground">Level {i + 1}</span><span className="block font-medium">{l.name}</span><span className="text-xs text-muted-foreground">{c}/{l.modules.length} done</span></button>; })}</nav>
       <section className="mt-8"><h2 className="text-xl font-semibold">{cur.name}</h2><p className="mt-1 text-sm text-muted-foreground">{cur.goal}</p>
-        <div className="mt-5 space-y-3">{cur.modules.map((m, i) => <ModuleCard key={m.id} m={m} n={`${level + 1}.${i + 1}`} done={done.has(m.id)} onDone={() => setDone(s => new Set(s).add(m.id))} />)}</div>
-        <div className="mt-8 flex justify-between">{level > 0 ? <Button variant="ghost" onClick={() => setLevel(level - 1)}>← {curriculum[level - 1]!.name}</Button> : <span />}{level < curriculum.length - 1 && <Button onClick={() => { setLevel(level + 1); window.scrollTo({ top: 0 }); }}>Next: {curriculum[level + 1]!.name} →</Button>}</div>
+        <div className="mt-5 space-y-3">{cur.modules.map((m, i) => <ModuleCard key={m.id} m={m} n={`${level + 1}.${i + 1}`} done={done.has(m.id)} onDone={() => completeModule(m.id)} />)}</div>
+        <div className="mt-8 flex justify-between">{level > 0 ? <Button variant="ghost" onClick={() => setLevel(level - 1)}>← {curriculum[level - 1]?.name}</Button> : <span />}{level < curriculum.length - 1 && <Button onClick={() => { setLevel(level + 1); window.scrollTo({ top: 0 }); }}>Next: {curriculum[level + 1]?.name} →</Button>}</div>
       </section>
       <p className="mt-12 border-t pt-6 text-xs text-muted-foreground">Pktivo is not affiliated with Cisco. CCNA is a trademark of Cisco Systems. Always check the official exam topics before booking your exam.</p>
     </main>

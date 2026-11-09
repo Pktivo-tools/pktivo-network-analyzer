@@ -30,6 +30,7 @@ use the editor.
 <!-- LOVABLE:END -->
 
 ## Pktivo architecture
+- Persist only validated Learn completion IDs in device-local storage after hydration, independently of capture state, so learning works offline without storing packet data.
 - Keep capture analysis in browser-safe `src/lib/netlens` modules so saved captures remain local and work offline.
 - Keep native capture and process access exclusively in Electron main behind a validated preload bridge; the hosted app only inspects files.
 - Package Electron with a separate client-only Vite entry and relative asset paths, preserving the hosted TanStack bootstrap.
