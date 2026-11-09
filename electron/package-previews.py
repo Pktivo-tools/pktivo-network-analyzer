@@ -10,13 +10,10 @@ for platform in ['win32-x64','darwin-x64','darwin-arm64','linux-x64']:
     if not folder.is_dir():raise RuntimeError(f'Missing packaged app: {folder}')
     if platform=='linux-x64':continue
     filename=f'Netlens-{version}-{platform}.zip'
-    with zipfile.ZipFile(out/filename,'w',zipfile.ZIP_DEFLATED,compresslevel=3) as archive:
-        for root,dirs,files in os.walk(folder):
-            dirs[:]=[d for d in dirs if d!='.git']
-            for name in files:
-                path=Path(root)/name
-                if name=='.git':continue
-                archive.write(path,path.relative_to(source))
+    destination=out/filename
+    if destination.exists():destination.unlink()
+    # Preserve macOS framework symlinks instead of duplicating their targets.
+    subprocess.run(['zip','-q','-r','-y','-3',str(destination),folder.name,'-x','*/.git/*','*/.git'],cwd=source,check=True)
 with tarfile.open(out/f'Netlens-{version}-linux-x64.tar.gz','w:gz',compresslevel=3) as archive:
     archive.add(source/'Netlens-linux-x64',arcname='Netlens-linux-x64')
 with tempfile.TemporaryDirectory(prefix='netlens-packages-') as temporary:

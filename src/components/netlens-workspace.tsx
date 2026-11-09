@@ -5,6 +5,7 @@ import { Dialog, DialogContent, DialogDescription, DialogTitle } from '@/compone
 import { NetlensOverview } from '@/components/netlens-overview';
 import { NetlensLearn } from '@/components/netlens-learn';
 import { NetlensLocalHelp } from '@/components/netlens-local-help';
+import { NetlensUpdateStatus } from '@/components/netlens-update-status';
 import { analyzePackets, type Finding } from '@/lib/netlens/findings';
 import { ThemePicker } from '@/components/theme-picker';
 import { Inspector } from '@/components/netlens-inspector';
@@ -23,7 +24,7 @@ function download(bytes: Uint8Array, name: string) {
   const url=URL.createObjectURL(new Blob([new Uint8Array(bytes).buffer],{type:'application/octet-stream'}));
   const a=document.createElement('a'); a.href=url; a.download=name; a.click(); setTimeout(()=>URL.revokeObjectURL(url),1000);
 }
-export function NetlensWorkspace() {
+export function NetlensWorkspace({onDownloads}:{onDownloads?:()=>void}={}) {
   const [packets,setPackets]=useState<Packet[]>(()=>demoPackets());
   const [filename,setFilename]=useState('sample-traffic.pcapng');
   const [isDemo,setIsDemo]=useState(true);
