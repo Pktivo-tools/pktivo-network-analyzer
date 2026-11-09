@@ -1,4 +1,6 @@
 # Netlens completion
+- [ ] Verify tab-only capture lifecycle and accurate privacy disclaimer
+- [ ] Disable published visitor analytics — blocked because the platform setting cannot be changed by the agent on this project
 - [x] Dedicated Downloads page and navigation button
 - [x] Updated Windows/macOS archives and Debian/Ubuntu + Arch packages served in the app
 - [x] Safe automatic-update integration and release setup documentation
