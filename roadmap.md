@@ -1,4 +1,5 @@
 # Pktivo completion
+- [x] Pop-up notice on entry stating the project is fully AI-built, results are not guaranteed, and updates continue
 - [x] Save Learn completion on this device across closing and reopening tabs, independently of capture privacy
 - [x] Verify tab-only capture lifecycle, no capture requests/storage writes, and accurate privacy disclaimer
 - [ ] Disable published visitor analytics — blocked because the platform setting cannot be changed by the agent on this project
