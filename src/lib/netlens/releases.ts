@@ -1,9 +1,9 @@
-import windows from '@/assets/releases/Pktivo-0.2.0-win32-x64.zip.asset.json';
-import macArm from '@/assets/releases/Pktivo-0.2.0-darwin-arm64.zip.asset.json';
-import macIntel from '@/assets/releases/Pktivo-0.2.0-darwin-x64.zip.asset.json';
-import debian from '@/assets/releases/pktivo_0.2.0_amd64.deb.asset.json';
-import arch from '@/assets/releases/pktivo-0.2.0-1-x86_64.pkg.tar.zst.asset.json';
-export const RELEASE_VERSION='0.2.0';
+import windows from '@/assets/releases/Pktivo-0.3.0-win32-x64.zip.asset.json';
+import macArm from '@/assets/releases/Pktivo-0.3.0-darwin-arm64.zip.asset.json';
+import macIntel from '@/assets/releases/Pktivo-0.3.0-darwin-x64.zip.asset.json';
+import debian from '@/assets/releases/pktivo_0.3.0_amd64.deb.asset.json';
+import arch from '@/assets/releases/pktivo-0.3.0-1-x86_64.pkg.tar.zst.asset.json';
+export const RELEASE_VERSION='0.3.0';
 export interface Step { text: string; command?: string }
 const macInstall:Step[]=[
   {text:'Double-click the downloaded ZIP to extract it.'},
@@ -23,9 +23,9 @@ export const RELEASES=[
   {id:'mac-arm',platform:'macOS',variant:'Apple Silicon · M1 and newer',format:'App ZIP',asset:macArm,install:macInstall,capture:macCapture},
   {id:'mac-intel',platform:'macOS',variant:'Intel · x64',format:'App ZIP',asset:macIntel,install:macInstall,capture:macCapture},
   {id:'debian',platform:'Debian / Ubuntu',variant:'Debian, Ubuntu, Mint and derivatives · AMD64',format:'.deb package',asset:debian,
-    install:[{text:'Save the package in your Downloads folder.'},{text:'Open a terminal in Downloads and install it (apt also installs the required system libraries):',command:'sudo apt install ./pktivo_0.2.0_amd64.deb'},{text:'Open it by searching for “Pktivo” in your app grid, or by typing this in a terminal:',command:'pktivo'},{text:'If the icon hasn’t appeared yet, log out and back in. Don’t run it with sudo or as root.'}] as Step[],
+    install:[{text:'Save the package in your Downloads folder.'},{text:'Open a terminal in Downloads and install it (apt also installs the required system libraries):',command:'sudo apt install ./pktivo_0.3.0_amd64.deb'},{text:'Open it by searching for “Pktivo” in your app grid, or by typing this in a terminal:',command:'pktivo'},{text:'If the icon hasn’t appeared yet, log out and back in. Don’t run it with sudo or as root.'}] as Step[],
     capture:[{text:'Install the Wireshark capture tool package (it contains dumpcap):',command:'sudo apt install wireshark-common'},{text:'When asked “Should non-superusers be able to capture packets?”, choose Yes. If you missed it, run:',command:'sudo dpkg-reconfigure wireshark-common'},{text:'Add your user to the wireshark group:',command:'sudo usermod -aG wireshark $USER'},{text:'Log out and back in (or restart), then check that it lists your network connections without sudo:',command:'dumpcap -D'}] as Step[]},
   {id:'arch',platform:'Arch Linux',variant:'Arch, Manjaro, EndeavourOS · x86_64',format:'Pacman package',asset:arch,
-    install:[{text:'Save the package in your Downloads folder.'},{text:'Open a terminal in Downloads and install it:',command:'sudo pacman -U ./pktivo-0.2.0-1-x86_64.pkg.tar.zst'},{text:'Open it by searching for “Pktivo” in your app grid, or by typing this in a terminal:',command:'pktivo'},{text:'If the icon hasn’t appeared yet, log out and back in. Don’t run it with sudo or as root.'}] as Step[],
+    install:[{text:'Save the package in your Downloads folder.'},{text:'Open a terminal in Downloads and install it:',command:'sudo pacman -U ./pktivo-0.3.0-1-x86_64.pkg.tar.zst'},{text:'Open it by searching for “Pktivo” in your app grid, or by typing this in a terminal:',command:'pktivo'},{text:'If the icon hasn’t appeared yet, log out and back in. Don’t run it with sudo or as root.'}] as Step[],
     capture:[{text:'Install the command-line Wireshark package (it contains dumpcap). You don’t need the full Wireshark window app:',command:'sudo pacman -S wireshark-cli'},{text:'Add your user to the wireshark group, which is allowed to capture:',command:'sudo usermod -aG wireshark $USER'},{text:'Log out and back in (or restart), then check that it lists your network connections without sudo:',command:'dumpcap -D'}] as Step[]},
 ] as const;

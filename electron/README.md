@@ -1,4 +1,4 @@
-# Pktivo desktop preview 0.2.0
+# Pktivo desktop preview 0.3.0
 
 Portable, unsigned preview packages. Extract the entire archive before launching.
 
@@ -10,9 +10,9 @@ Saved PCAP/PCAPNG files and all analysis work offline. Fonts are bundled. Captur
 
 ## Live capture permissions
 
-Pktivo does not ask for or store administrator passwords. It uses installed dumpcap (preferred) or tcpdump with your existing interface permissions. Configure capture permissions using your OS or capture tool's documented procedure. On Linux, the distribution's Wireshark package commonly offers a capture-permissions setup. On macOS, Wireshark's ChmodBPF package can grant capture access. On Windows, install Npcap and ensure capture access is allowed.
+Pktivo never sees or stores administrator passwords. It uses installed dumpcap (preferred) or tcpdump with your interface permissions. Capture → Check capture setup detects what is missing; on Debian/Ubuntu and Arch "Set it up for me" runs a fixed install-and-permission script through the system's own password prompt (pkexec), and on Windows/macOS it opens the Wireshark download page. Configure capture permissions using your OS or capture tool's documented procedure. On Linux, the distribution's Wireshark package commonly offers a capture-permissions setup. On macOS, Wireshark's ChmodBPF package can grant capture access. On Windows, install Npcap and ensure capture access is allowed.
 
-Windows pktmon fallback, automatic privileged setup, signed installers, decryption, and full TCP sequence reassembly are not included. Live capture requires verification on each target operating system. No production-ready or Wireshark feature-parity claim is made.
+Windows pktmon fallback, signed installers, decryption, and full TCP sequence reassembly are not included. Live capture requires verification on each target operating system. No production-ready or Wireshark feature-parity claim is made.
 
 ## Build
 
