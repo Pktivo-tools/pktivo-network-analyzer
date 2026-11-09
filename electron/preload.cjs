@@ -1,6 +1,10 @@
 const { contextBridge, ipcRenderer } = require('electron');
 const subscribe = (channel, cb) => { const handler=(_event,value)=>cb(value);ipcRenderer.on(channel,handler);return()=>ipcRenderer.removeListener(channel,handler); };
 contextBridge.exposeInMainWorld('netlens', {
+  updateStatus:()=>ipcRenderer.invoke('updates:status'),
+  checkUpdates:()=>ipcRenderer.invoke('updates:check'),
+  installUpdate:()=>ipcRenderer.invoke('updates:install'),
+  onUpdateStatus:cb=>subscribe('updates:status',cb),
   assistantEnable:enabled=>ipcRenderer.invoke('assistant:enable',enabled),
   assistantModels:()=>ipcRenderer.invoke('assistant:models'),
   assistantAsk:(model,question)=>ipcRenderer.invoke('assistant:ask',model,question),

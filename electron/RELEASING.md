@@ -1,0 +1,19 @@
+# Download releases and automatic updates
+
+The Downloads page serves current unsigned preview archives and native Linux packages. They include the beginner views, themes, and optional local tutor. Preview archives do not self-update. A standalone DEB/Pacman package is not an update repository.
+
+## Activate automatic updates
+
+1. Choose a public HTTPS release directory you control. It must serve artifacts and electron-updater metadata (`latest.yml`, `latest-mac.yml`, `latest-linux.yml`) without login or a preview access gate. GitHub Releases or static object storage can be used; provider setup must match the build configuration. Current Lovable immutable binary assets are downloads, not a mutable update feed.
+2. Obtain Windows publisher signing credentials and an Apple Developer ID identity plus notarization credentials. Store private certificates/passwords in the release runner's secrets, never in this project. Windows/macOS release builds require signing.
+3. In a **native platform release runner**, write `electron/release-config.json` with `enabled: true`, the HTTPS `baseUrl`, the signed publisher's `publisherName`, and `packageType` set to `nsis` (Windows), `mac` (macOS), `deb` (Debian/Ubuntu), or `pacman` (Arch). This is build-time configuration, not a renderer-supplied address. Bump `package.json` version for each release.
+4. Install the project, run `bun run desktop:build`, and bundle the update runtime: `bunx esbuild node_modules/electron-updater/out/main.js --bundle --platform=node --format=cjs --external:electron --outfile=electron/updater-runtime.cjs`.
+5. On release CI only, install `electron-builder`, then run its installer build with `--config electron/build-installers.cjs` for the native OS/architecture. The Lovable sandbox uses Packager for previews, not builder. Inspect the resulting artifacts and metadata; test Debian/Pacman updater behavior on real target distributions before release (Pacman support is beta).
+6. Publish installers, blockmaps, checksums, and matching generated update YAML to the configured HTTPS directory. Keep filenames/architecture metadata exactly as generated. For signed Windows metadata, retain `publisherName`. Do not hand-edit checksums or point metadata at preview ZIPs.
+7. Install the previous signed version on each target OS, publish a higher version, and verify automatic check/download, signature/hash verification, failed-download recovery, permission prompts, and explicit restart. Do not advertise automatic installation until this end-to-end check succeeds.
+
+The updater runs only in Electron main, with a trusted build-time host. It checks at launch and every six hours, automatically downloads a verified update, and asks the user to save work and restart. It never attaches packet data. Update checks pause during recording, installation is blocked during recording, downgrades and prereleases are disabled, and no unverified overwrite routine is used. Linux installation can require an OS permission prompt. Linux users may instead receive updates through a properly maintained signed APT/Pacman repository; the preview packages do not configure one.
+
+## Preview packaging
+
+`electron/package-previews.py` reuses fresh Packager directories and creates Windows/macOS archives, Debian/Ubuntu AMD64 DEB, and Arch x86_64 Pacman packages. Rebuild the renderer and stage only runtime Electron files first. Packages do not install capture permissions, turn off the Electron sandbox, or modify repositories. Linux system libraries and a normal desktop session are required. Signing, native runtime verification, and real update feeds remain release prerequisites.
