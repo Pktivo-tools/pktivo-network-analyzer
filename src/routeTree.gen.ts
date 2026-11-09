@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as DownloadsRouteImport } from './routes/downloads'
 import { Route as LearnRouteImport } from './routes/learn'
+import { Route as LearnTestRouteImport } from './routes/learn_/test'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -28,35 +29,44 @@ const LearnRoute = LearnRouteImport.update({
   path: '/learn',
   getParentRoute: () => rootRouteImport,
 } as any)
+const LearnTestRoute = LearnTestRouteImport.update({
+  id: '/learn_/test',
+  path: '/learn/test',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/downloads': typeof DownloadsRoute
   '/learn': typeof LearnRoute
+  '/learn/test': typeof LearnTestRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/downloads': typeof DownloadsRoute
   '/learn': typeof LearnRoute
+  '/learn/test': typeof LearnTestRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/downloads': typeof DownloadsRoute
   '/learn': typeof LearnRoute
+  '/learn_/test': typeof LearnTestRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/downloads' | '/learn'
+  fullPaths: '/' | '/downloads' | '/learn' | '/learn/test'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/downloads' | '/learn'
-  id: '__root__' | '/' | '/downloads' | '/learn'
+  to: '/' | '/downloads' | '/learn' | '/learn/test'
+  id: '__root__' | '/' | '/downloads' | '/learn' | '/learn_/test'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   DownloadsRoute: typeof DownloadsRoute
   LearnRoute: typeof LearnRoute
+  LearnTestRoute: typeof LearnTestRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -82,6 +92,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LearnRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/learn_/test': {
+      id: '/learn_/test'
+      path: '/learn/test'
+      fullPath: '/learn/test'
+      preLoaderRoute: typeof LearnTestRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -89,6 +106,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   DownloadsRoute: DownloadsRoute,
   LearnRoute: LearnRoute,
+  LearnTestRoute: LearnTestRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

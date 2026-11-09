@@ -1,31 +1,33 @@
 import { createFileRoute, Link } from '@tanstack/react-router';
 import { useEffect, useState } from 'react';
-import { ArrowLeft, BookOpen, Check, ChevronDown, Terminal, X } from 'lucide-react';
+import { ArrowLeft, BookOpen, Check, ChevronDown, ClipboardCheck, Lightbulb, Terminal } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { PktivoLogo } from '@/components/pktivo-logo';
 import { PktivoPronunciation } from '@/components/pktivo-pronunciation';
 import { curriculum, type Module } from '@/lib/learn/curriculum';
+import { course } from '@/lib/learn/course';
 import { readLearnProgress, saveLearnProgress } from '@/lib/learn/progress';
 
 export const Route = createFileRoute('/learn')({
-  head: () => ({ meta: [{ title: 'Learn networking with Pktivo — beginner to CCNA' }, { name: 'description', content: 'A free networking learning path from beginner to professional, covering every CCNA 200-301 exam domain with quizzes and Cisco commands.' }, { property: 'og:title', content: 'Learn networking — beginner to CCNA' }, { property: 'og:description', content: 'Four levels, 22 modules, quizzes and Cisco IOS commands to prepare for the CCNA exam.' }, { property: 'og:type', content: 'website' }, { name: 'twitter:card', content: 'summary_large_image' }] }),
+  head: () => ({ meta: [{ title: 'Learn networking with Pktivo — beginner to CCNA' }, { name: 'description', content: 'A free networking learning path from beginner to professional, covering every CCNA 200-301 exam domain with quizzes and Cisco commands.' }, { property: 'og:title', content: 'Learn networking — beginner to CCNA' }, { property: 'og:description', content: 'Four levels, 22 reading modules, a separate test and Cisco IOS commands to prepare for the CCNA exam.' }, { property: 'og:type', content: 'website' }, { name: 'twitter:card', content: 'summary_large_image' }] }),
   component: LearnPage,
 });
 
 function ModuleCard({ m, n, done, onDone }: { m: Module; n: string; done: boolean; onDone: () => void }) {
-  const [open, setOpen] = useState(false); const [pick, setPick] = useState<number | null>(null);
+  const [open, setOpen] = useState(false); const c = course[m.id];
   return <article className="rounded-lg border bg-card">
     <button className="flex w-full items-center gap-3 p-4 text-left" aria-expanded={open} onClick={() => setOpen(!open)}>
       <span className={`flex size-7 shrink-0 items-center justify-center rounded-full border text-xs font-mono ${done ? 'border-primary bg-primary text-primary-foreground' : 'text-muted-foreground'}`}>{done ? <Check className="size-4" /> : n}</span>
-      <span className="flex-1 font-medium">{m.title}</span><ChevronDown className={`size-4 transition-transform ${open ? 'rotate-180' : ''}`} />
+      <span className="flex-1"><span className="block font-medium">{m.title}</span><span className="text-xs text-muted-foreground">{(c?.lessons.length ?? 0) + 1} short readings{done ? ' · Read' : ''}</span></span><ChevronDown className={`size-4 transition-transform ${open ? 'rotate-180' : ''}`} />
     </button>
     {open && <div className="border-t px-4 pb-5 pt-4 text-sm">
-      <p className="leading-7">{m.summary}</p>
-      <ul className="mt-4 list-disc space-y-2 pl-5 text-muted-foreground">{m.points.map(p => <li key={p}>{p}</li>)}</ul>
-      {m.commands && <div className="mt-4 rounded-md border bg-muted p-3"><div className="mb-2 flex items-center gap-2 text-xs text-muted-foreground"><Terminal className="size-3" />Cisco IOS</div><pre className="overflow-x-auto font-mono text-xs leading-6">{m.commands.join('\n')}</pre></div>}
-      <h4 className="mt-5 font-medium">Check yourself: {m.quiz.q}</h4>
-      <div className="mt-3 flex flex-wrap gap-2">{m.quiz.choices.map((c, i) => <Button key={c} size="sm" variant={pick === i ? 'secondary' : 'outline'} onClick={() => { setPick(i); if (i === m.quiz.answer) onDone(); }}>{pick === i && (i === m.quiz.answer ? <Check /> : <X />)}{c}</Button>)}</div>
-      {pick !== null && <p role="status" className={`mt-3 ${pick === m.quiz.answer ? 'text-primary' : 'text-destructive'}`}>{pick === m.quiz.answer ? 'Correct! ' : 'Not quite. '}{m.quiz.why}</p>}
+      {c && <div className="rounded-md border-l-2 border-primary bg-accent px-3 py-2"><div className="flex items-center gap-1.5 text-xs font-medium text-primary"><Lightbulb className="size-3" />In simple words</div><p className="mt-1 leading-6">{c.simple}</p></div>}
+      <p className="mt-4 leading-7">{m.summary}</p>
+      {c?.lessons.map((l, i) => <section key={l.heading} className="mt-5"><h4 className="font-medium">{i + 1}. {l.heading}</h4><p className="mt-1.5 leading-7 text-muted-foreground">{l.body}</p></section>)}
+      <h4 className="mt-6 font-medium">Remember</h4>
+      <ul className="mt-2 list-disc space-y-2 pl-5 text-muted-foreground">{m.points.map(p => <li key={p}>{p}</li>)}</ul>
+      {m.commands && <div className="mt-4 rounded-md border bg-muted p-3"><div className="mb-2 flex items-center gap-2 text-xs text-muted-foreground"><Terminal className="size-3" />Cisco IOS — try in Packet Tracer</div><pre className="overflow-x-auto font-mono text-xs leading-6">{m.commands.join('\n')}</pre></div>}
+      <div className="mt-6 flex justify-end"><Button size="sm" variant={done ? 'secondary' : 'default'} onClick={onDone} disabled={done}>{done ? <><Check />Read</> : 'Mark as read'}</Button></div>
     </div>}
   </article>;
 }
@@ -50,8 +52,9 @@ function LearnPage() {
     <main className="mx-auto max-w-4xl px-4 py-10 sm:px-8">
       <div className="flex items-center gap-2 text-sm text-primary"><BookOpen className="size-4" />Learn networking</div>
       <h1 className="mt-3 text-3xl font-semibold sm:text-4xl">From zero to CCNA-ready</h1>
-      <p className="mt-3 max-w-2xl text-muted-foreground">A step-by-step path through every CCNA 200-301 exam domain. Start at Beginner, answer each check correctly to tick a module off, and lab the commands in Cisco Packet Tracer.</p>
-      <div className="mt-6"><div className="flex justify-between gap-3 text-xs text-muted-foreground"><span>Your progress · {saveFailed ? 'Not saved' : 'Saved on this device'}</span><span className="shrink-0">{done.size} / {total} modules</span></div><progress className="mt-2 h-1.5 w-full" max={total} value={done.size} />{saveFailed && <p role="status" className="mt-2 text-xs text-destructive">Your browser couldn’t save progress. It will last only until you leave this page.</p>}</div>
+      <p className="mt-3 max-w-2xl text-muted-foreground">A step-by-step path through every CCNA 200-301 exam domain. Read each module, mark it as read, then check what you remember in the separate test.</p>
+      <Link to="/learn/test" className="mt-5 flex items-center gap-3 rounded-lg border border-primary/40 bg-accent p-4 hover:border-primary"><ClipboardCheck className="size-5 text-primary" /><span className="flex-1"><span className="block font-medium">Take the test</span><span className="text-xs text-muted-foreground">Questions drawn from this reading course — by level or everything at once.</span></span><span className="text-sm text-primary">Start →</span></Link>
+      <div className="mt-6"><div className="flex justify-between gap-3 text-xs text-muted-foreground"><span>Your progress · {saveFailed ? 'Not saved' : 'Saved on this device'}</span><span className="shrink-0">{done.size} / {total} modules read</span></div><progress className="mt-2 h-1.5 w-full" max={total} value={done.size} />{saveFailed && <p role="status" className="mt-2 text-xs text-destructive">Your browser couldn’t save progress. It will last only until you leave this page.</p>}</div>
       <nav className="mt-8 grid grid-cols-2 gap-2 sm:grid-cols-4" aria-label="Levels">{curriculum.map((l, i) => { const c = l.modules.filter(m => done.has(m.id)).length; return <button key={l.id} onClick={() => setLevel(i)} className={`rounded-lg border p-3 text-left transition-colors ${i === level ? 'border-primary bg-accent' : 'hover:bg-accent'}`}><span className="text-xs text-muted-foreground">Level {i + 1}</span><span className="block font-medium">{l.name}</span><span className="text-xs text-muted-foreground">{c}/{l.modules.length} done</span></button>; })}</nav>
       <section className="mt-8"><h2 className="text-xl font-semibold">{cur.name}</h2><p className="mt-1 text-sm text-muted-foreground">{cur.goal}</p>
         <div className="mt-5 space-y-3">{cur.modules.map((m, i) => <ModuleCard key={m.id} m={m} n={`${level + 1}.${i + 1}`} done={done.has(m.id)} onDone={() => completeModule(m.id)} />)}</div>
