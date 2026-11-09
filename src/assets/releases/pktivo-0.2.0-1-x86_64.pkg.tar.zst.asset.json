@@ -1,11 +1,11 @@
 {
   "version": 1,
-  "asset_id": "54282386-248d-45f2-aca6-7f6017adc973",
+  "asset_id": "a99e2dc3-dd34-4e65-8953-5c19cd4c789a",
   "project_id": "130dafb0-bb24-4413-8b9d-72a711e294c9",
-  "url": "/__l5e/assets-v1/54282386-248d-45f2-aca6-7f6017adc973/pktivo-0.2.0-1-x86_64.pkg.tar.zst",
-  "r2_key": "a/v1/130dafb0-bb24-4413-8b9d-72a711e294c9/54282386-248d-45f2-aca6-7f6017adc973/pktivo-0.2.0-1-x86_64.pkg.tar.zst",
+  "url": "/__l5e/assets-v1/a99e2dc3-dd34-4e65-8953-5c19cd4c789a/pktivo-0.2.0-1-x86_64.pkg.tar.zst",
+  "r2_key": "a/v1/130dafb0-bb24-4413-8b9d-72a711e294c9/a99e2dc3-dd34-4e65-8953-5c19cd4c789a/pktivo-0.2.0-1-x86_64.pkg.tar.zst",
   "original_filename": "pktivo-0.2.0-1-x86_64.pkg.tar.zst",
-  "size": 109844233,
-  "content_type": "application/octet-stream",
-  "created_at": "2026-11-09T14:08:32Z"
+  "size": 109910715,
+  "content_type": "application/zstd",
+  "created_at": "2026-11-09T18:06:00Z"
 }
