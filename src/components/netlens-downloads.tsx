@@ -1,6 +1,6 @@
 import { NetpackLogo } from '@/components/netpack-logo';
 import { useState } from 'react';
-import { Activity, ArrowLeft, ArrowDownToLine, Monitor, Laptop, Package, RefreshCw, ShieldCheck, Copy, Check } from 'lucide-react';
+import { ArrowLeft, ArrowDownToLine, Monitor, Laptop, Package, RefreshCw, ShieldCheck, Copy, Check } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { ThemePicker } from '@/components/theme-picker';
 import { RELEASES, RELEASE_VERSION } from '@/lib/netlens/releases';
