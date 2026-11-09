@@ -7,7 +7,7 @@ import { followStream } from '@/lib/netlens/streams';
 import { computeStats } from '@/lib/netlens/stats';
 import { buildTree } from '@/lib/netlens/dissect';
 
-describe('Netlens capture analysis',()=>{
+describe('Netpack capture analysis',()=>{
   it('round-trips actual packet bytes through PCAPNG',()=>{
     const raw=demoRaw();const result=parseCapture(writePcapng(raw));
     expect(result).toHaveLength(240);expect(result[4]?.data).toEqual(raw[4]?.data);

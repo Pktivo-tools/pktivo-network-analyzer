@@ -29,7 +29,7 @@ use the editor.
 - **Secrets.** Lovable manages them. Do not put secret values in the repo.
 <!-- LOVABLE:END -->
 
-## Netlens architecture
+## Netpack architecture
 - Keep capture analysis in browser-safe `src/lib/netlens` modules so saved captures remain local and work offline.
 - Keep native capture and process access exclusively in Electron main behind a validated preload bridge; the hosted app only inspects files.
 - Package Electron with a separate client-only Vite entry and relative asset paths, preserving the hosted TanStack bootstrap.

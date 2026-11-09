@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { THEMES, resolveTheme } from '@/lib/netlens/themes';
 
-describe('Netlens theme choices', () => {
+describe('Netpack theme choices', () => {
   it('keeps the mandatory basic light theme', () => {
     expect(resolveTheme('light')).toEqual({ id: 'light', name: 'Light', dark: false });
   });

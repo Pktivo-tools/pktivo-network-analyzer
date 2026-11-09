@@ -27,8 +27,8 @@ export function demoRaw(): RawPacket[] {
     add(frame('192.168.1.1','192.168.1.108',53,port,dns(i%2?'api.github.com':'example.com',true),true));
     add(frame('192.168.1.108','93.184.216.34',port,80,new Uint8Array(),false,2,0));
     add(frame('93.184.216.34','192.168.1.108',80,port,new Uint8Array(),false,0x12,0));
-    add(frame('192.168.1.108','93.184.216.34',port,80,encode(`GET /${i ? 'assets/app.js' : ''} HTTP/1.1\r\nHost: example.com\r\nUser-Agent: Netlens\r\n\r\n`)));
-    add(frame('93.184.216.34','192.168.1.108',80,port,encode('HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\nContent-Length: 19\r\n\r\nHello from Netlens!\n')));
+    add(frame('192.168.1.108','93.184.216.34',port,80,encode(`GET /${i ? 'assets/app.js' : ''} HTTP/1.1\r\nHost: example.com\r\nUser-Agent: Netpack\r\n\r\n`)));
+    add(frame('93.184.216.34','192.168.1.108',80,port,encode('HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\nContent-Length: 19\r\n\r\nHello from Netpack!\n')));
     add(frame('192.168.1.108','142.250.185.46',port,443,new Uint8Array([23,3,3,0,24,...Array.from({length:24},(_,n)=>(n*13+i)%256)])));
     add(frame('142.250.185.46','192.168.1.108',443,port,new Uint8Array([23,3,3,0,32,...Array.from({length:32},(_,n)=>(n*17+i)%256)])));
     add(frame('192.168.1.108','1.1.1.1',port,443,new Uint8Array([0xc0,0,0,0,1,4,0x11,0x22,0x33,0x44,0]),true));

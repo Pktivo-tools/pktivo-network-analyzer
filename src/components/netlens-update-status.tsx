@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { RefreshCw } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import type { UpdateStatus } from '@/lib/netlens/desktop';
-export function NetlensUpdateStatus(){
+export function NetpackUpdateStatus(){
   const [status,setStatus]=useState<UpdateStatus>();const [error,setError]=useState('');
   useEffect(()=>{const bridge=window.netlens;if(!bridge)return;void bridge.updateStatus().then(setStatus).catch(()=>{});return bridge.onUpdateStatus(setStatus)},[]);
   async function action(install=false){const bridge=window.netlens;if(!bridge)return;setError('');try{if(install)await bridge.installUpdate();else setStatus(await bridge.checkUpdates())}catch(e){setError(e instanceof Error?e.message:'Update unavailable.')}}

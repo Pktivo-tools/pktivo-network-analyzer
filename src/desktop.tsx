@@ -1,5 +1,5 @@
 import { createRoot } from 'react-dom/client';
-import { NetlensWorkspace } from './components/netlens-workspace';
+import { NetpackWorkspace } from './components/netlens-workspace';
 import './styles.css';
 const root=document.getElementById('root');
-if(root)createRoot(root).render(<NetlensWorkspace/>);
+if(root)createRoot(root).render(<NetpackWorkspace/>);
