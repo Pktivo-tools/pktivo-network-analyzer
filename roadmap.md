@@ -23,3 +23,5 @@
 - [x] Top bar Learn button plus hamburger menu holding themes, downloads and help
 - [x] Pronunciation note ("packet-ee-vo") in the analyzer, Learn and Downloads footers
 - [x] Debian and Arch packages launchable: world-readable app folder, terminal launcher, menu icon, refresh on install
+- [x] Remove 'remove earlier copy' step from Debian/Arch instructions
+- [x] Wireshark-style desktop window: menus, toolbar, 3 panes, capture filters, stop conditions, multiple interfaces, ring buffer, setup checker with one-click setup; 0.3.0 downloads

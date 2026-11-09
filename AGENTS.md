@@ -40,3 +40,5 @@ use the editor.
 - Serve versioned desktop downloads through immutable asset pointers; keep installer update feeds separately configured at build time so preview downloads never imply working automatic updates.
 - Keep electron-updater in Electron main only and enabled only for configured installer releases; pause during recording and require explicit restart to protect unsaved captures.
 - Capture files/results must stay in tab memory with no persistence or outbound reporting; clear on pagehide to prevent back/forward cache restoration and mark capture views/portals private for recorder defense in depth.
+- The desktop renderer uses its own classic three-pane workspace (`desktop-workspace.tsx`) while the hosted site keeps the beginner workspace; both share `src/lib/netlens` analysis.
+- Capture options are validated in Electron main against discovered interfaces and turned into spawn arguments (never a shell); ring-buffer output paths and privileged setup scripts are fixed in main, never supplied by the renderer.
