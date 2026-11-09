@@ -34,7 +34,7 @@ ipcMain.handle('updates:status',event=>{checkSender(event);return updates.status
 ipcMain.handle('updates:check',event=>{checkSender(event);return updates.check()});
 ipcMain.handle('updates:install',event=>{checkSender(event);updates.install()});
 app.whenReady().then(()=>{
-  win=new BrowserWindow({width:1440,height:1000,minWidth:760,minHeight:600,title:'Netpack',webPreferences:{preload:path.join(__dirname,'preload.cjs'),contextIsolation:true,nodeIntegration:false,sandbox:true}});
+  win=new BrowserWindow({width:1440,height:1000,minWidth:760,minHeight:600,title:'Netpack',icon:path.join(__dirname,'icons','netpack.png'),webPreferences:{preload:path.join(__dirname,'preload.cjs'),contextIsolation:true,nodeIntegration:false,sandbox:true}});
   win.webContents.setWindowOpenHandler(()=>({action:'deny'}));
   win.webContents.on('will-navigate',(event,url)=>{if(url!==localUrl)event.preventDefault()});
   win.webContents.session.setPermissionRequestHandler((_webContents,_permission,callback)=>callback(false));

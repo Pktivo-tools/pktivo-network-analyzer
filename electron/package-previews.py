@@ -23,7 +23,7 @@ with tempfile.TemporaryDirectory(prefix='netpack-packages-') as temporary:
     sandbox=app/'chrome-sandbox'
     if sandbox.exists():sandbox.chmod(0o4755)
     desktop=root/'usr/share/applications/netpack.desktop';desktop.parent.mkdir(parents=True)
-    desktop.write_text('[Desktop Entry]\nName=Netpack\nComment=Network packet analyzer\nExec=/opt/netpack/Netpack %F\nType=Application\nCategories=Network;\nTerminal=false\n')
+    desktop.write_text('[Desktop Entry]\nName=Netpack\nComment=Network packet analyzer\nExec=/opt/netpack/Netpack %F\nIcon=/opt/netpack/resources/app/electron/icons/netpack.png\nType=Application\nCategories=Network;\nTerminal=false\n')
     control=temp/'control';control.mkdir()
     size=sum(p.stat().st_size for p in root.rglob('*') if p.is_file())//1024
     (control/'control').write_text(f'Package: netpack\nVersion: {version}\nArchitecture: amd64\nMaintainer: Netpack release maintainer\nSection: net\nPriority: optional\nInstalled-Size: {size}\nDepends: libgtk-3-0, libnss3, libatk-bridge2.0-0, libdrm2, libxkbcommon0, libxcomposite1, libxdamage1, libxfixes3, libxrandr2, libgbm1, libasound2 | libasound2t64\nRecommends: wireshark-common\nDescription: Beginner-friendly local network packet analyzer\n Inspect saved captures offline and record traffic using installed capture tools.\n')
