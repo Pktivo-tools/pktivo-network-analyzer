@@ -18,3 +18,4 @@
 - [ ] Native launch and live capture on target operating systems — blocked by unavailable Windows/macOS machines and root-only Linux sandbox
 - [ ] Signed/notarized installers — blocked by signing credentials and target-platform signing environment
 - [x] Rename website, refreshed desktop packages and download checksums to Pktivo
+- [x] Top bar Learn button plus hamburger menu holding themes, downloads and help
