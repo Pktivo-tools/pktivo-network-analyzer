@@ -38,3 +38,4 @@ use the editor.
 - Optional on-device tutoring is an exception to hosted AI routing: Electron main uses a fixed loopback-only Ollama connection with opt-in and local-model validation; no capture context or cloud fallback is permitted.
 - Serve versioned desktop downloads through immutable asset pointers; keep installer update feeds separately configured at build time so preview downloads never imply working automatic updates.
 - Keep electron-updater in Electron main only and enabled only for configured installer releases; pause during recording and require explicit restart to protect unsaved captures.
+- Capture files/results must stay in tab memory with no persistence or outbound reporting; clear on pagehide to prevent back/forward cache restoration and mark capture views/portals private for recorder defense in depth.

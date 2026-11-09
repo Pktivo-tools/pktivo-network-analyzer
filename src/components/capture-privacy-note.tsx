@@ -1,0 +1,4 @@
+import { LockKeyhole } from 'lucide-react';
+export function CapturePrivacyNote(){
+  return <div className="mx-4 mb-4 flex items-start gap-2 text-xs leading-5 text-muted-foreground sm:mx-6"><LockKeyhole className="mt-0.5 size-3.5 shrink-0 text-primary"/><p><strong className="font-medium text-foreground">Local, not uploaded.</strong> Netlens processes files and results in this tab’s memory, without sending them to a server or saving capture history. Closing or reloading clears this view—not your original file or exports. Browser extensions and device access are outside Netlens’s control.</p></div>;
+}
