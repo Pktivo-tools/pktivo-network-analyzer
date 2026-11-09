@@ -116,7 +116,9 @@ class FilterError extends Error {
 }
 
 function makeLiteral(raw: string, isString: boolean, op: Op): Literal {
-  const lower = raw.toLowerCase();
+  let lower = raw.toLowerCase();
+  // Accept MAC addresses written as aa-bb-cc-dd-ee-ff too.
+  if (/^[0-9a-f]{2}(-[0-9a-f]{2}){5}$/.test(lower)) lower = lower.replace(/-/g, ":");
   let num: number | null = null;
   if (!isString) {
     if (/^0x[0-9a-f]+$/i.test(raw)) num = parseInt(raw, 16);
@@ -211,7 +213,7 @@ function eqValue(v: FieldValue, lit: Literal): boolean {
     const n = ipv4ToInt(v);
     return n !== null && ((n & lit.cidr.mask) >>> 0) === lit.cidr.base;
   }
-  return v.toLowerCase() === lit.lower.replace(/-/g, (m) => (/^[0-9a-f]{2}(-[0-9a-f]{2}){5}$/.test(lit.lower) ? ":" : m));
+  return v.toLowerCase() === lit.lower;
 }
 
 function cmpOne(v: FieldValue, op: Op, lit: Literal): boolean {
