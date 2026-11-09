@@ -36,7 +36,7 @@ ipcMain.handle('capture:start',async(event,raw)=>{
   child.stdout.on('end',()=>{clearTimeout(flushTimer);flush();});
   child.stderr.on('data',chunk=>{diagnostic=(diagnostic+chunk.toString()).slice(-4000);});
   child.on('error',err=>send('capture:error',err.message));
-  child.on('close',code=>{if(processCapture===child){processCapture=null;clearTimeout(stopTimer);}if(code&&code!==0&&!received&&!options.ring)send('capture:error',diagnostic.trim()||'Capture failed. Check interface permissions.');else if(code&&code!==0&&options.ring)send('capture:error',diagnostic.trim()||'Capture to files failed.');if(processCapture===null&&!stopTimer){/* stopped */}send('capture:stopped');});
+  child.on('close',code=>{if(processCapture===child){processCapture=null;clearTimeout(stopTimer);}if(code&&code!==0&&!received&&!options.ring)send('capture:error',diagnostic.trim()||'Capture failed. Check interface permissions.');else if(code&&code!==0&&options.ring)send('capture:error',diagnostic.trim()||'Capture to files failed.');send('capture:stopped');});
   return {toFiles:Boolean(options.ring),folder:options.ring?ringFolder:null};
 });
 ipcMain.handle('capture:chooseFolder',async event=>{checkSender(event);const r=await dialog.showOpenDialog(win,{title:'Folder for capture files',properties:['openDirectory','createDirectory']});if(r.canceled||!r.filePaths[0])return null;ringFolder=r.filePaths[0];return ringFolder;});
