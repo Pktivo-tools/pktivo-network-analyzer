@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useDeferredValue, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { ArrowDownToLine, ArrowUpToLine, ChevronDown, ChevronUp, Copy, FolderOpen, Play, RotateCcw, Save, Search, Settings2, ShieldAlert, Square, Wrench, X, ZoomIn, ZoomOut, Palette, ListEnd, CornerDownRight, Bookmark, Check, Radio, FlaskConical } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Menubar, MenubarCheckboxItem, MenubarContent, MenubarItem, MenubarMenu, MenubarRadioGroup, MenubarRadioItem, MenubarSeparator, MenubarShortcut, MenubarSub, MenubarSubContent, MenubarSubTrigger, MenubarTrigger } from '@/components/ui/menubar';
@@ -46,19 +46,26 @@ export function DesktopWorkspace(){
   const listRef=useRef<HTMLDivElement>(null);const fileInput=useRef<HTMLInputElement>(null);
   const parserRef=useRef(new CaptureParser());const dissectorRef=useRef(new Dissector());const gen=useRef(0);const lastOptions=useRef<unknown>(null);
   const compiled=useMemo(()=>compileFilter(applied),[applied]);const validation=useMemo(()=>compileFilter(draft),[draft]);
-  const filtered=useMemo(()=>compiled.ok?packets.filter(p=>compiled.test(p)):packets,[packets,compiled]);
+  const filterCache=useRef<{src:Packet[];test:unknown;out:Packet[]}>({src:[],test:null,out:[]});
+  const filtered=useMemo(()=>{if(!compiled.ok||!applied)return packets;const c=filterCache.current;
+    // Live capture only appends: test just the new packets instead of re-filtering everything.
+    if(c.test===compiled&&packets.length>=c.src.length&&packets[c.src.length-1]===c.src[c.src.length-1]){const add=packets.slice(c.src.length).filter(p=>compiled.test(p));const out=add.length?c.out.concat(add):c.out;filterCache.current={src:packets,test:compiled,out};return out}
+    const out=packets.filter(p=>compiled.test(p));filterCache.current={src:packets,test:compiled,out};return out},[packets,compiled,applied]);
   const packet=filtered.find(p=>p.no===selected)??null;
-  const findings=useMemo(()=>analyzePackets(packets),[packets]);const flagged=useMemo(()=>new Set(findings.flatMap(f=>f.packetNos)),[findings]);
-  const stats=useMemo(()=>computeStats(filtered),[filtered]);
+  const [stopping,setStopping]=useState(false);const slowPackets=useDeferredValue(packets);const findings=useMemo(()=>live?[]:analyzePackets(slowPackets),[slowPackets,live]);const flagged=useMemo(()=>new Set(findings.flatMap(f=>f.packetNos)),[findings]);
+  const statsNeeded=modal==='summary'||modal==='hierarchy'||modal==='conversations'||modal==='endpoints'||modal==='io';const stats=useMemo(()=>computeStats(statsNeeded?filtered:[]),[filtered,statsNeeded]);
   const stream=useMemo(()=>packet?.stream&&modal==='stream'?followStream(packets,packet.stream.kind,packet.stream.index):null,[packet,packets,modal]);
   const bridge=typeof window!=='undefined'?window.netlens:undefined;
 
   useEffect(()=>bindTabLifetime(window,()=>{gen.current++;setPackets([]);setFilename('');setSelected(0);void window.netlens?.stop()}),[]);
   useEffect(()=>{const b=window.netlens;if(!b)return;
-    const a=b.onData(bytes=>{try{const raw=parserRef.current.push(new Uint8Array(bytes));if(raw.length)setPackets(prev=>[...prev,...raw.map(p=>dissectorRef.current.dissect(p))])}catch(e){setError(e instanceof Error?e.message:'Capture decoding failed');void b.stop()}});
-    const c=b.onError(m=>{setError(m);setLive(false)});const d=b.onStopped(()=>{setLive(false)});return()=>{a();c();d()}},[]);
-  useEffect(()=>{const el=listRef.current;if(!el)return;const ro=new ResizeObserver(()=>setListH(el.clientHeight));ro.observe(el);return()=>ro.disconnect()},[show]);
-  useEffect(()=>{if(live&&autoScroll&&listRef.current)listRef.current.scrollTop=listRef.current.scrollHeight},[filtered.length,live,autoScroll]);
+    // Collect chunks and decode them a few times per second so the window stays responsive.
+    let queue:Uint8Array[]=[];let timer:number|null=null;
+    const flush=()=>{timer=null;const chunks=queue;queue=[];const fresh:Packet[]=[];try{for(const ch of chunks)for(const raw of parserRef.current.push(ch))fresh.push(dissectorRef.current.dissect(raw))}catch(e){setError(e instanceof Error?e.message:'Capture decoding failed');void b.stop();}if(fresh.length)setPackets(prev=>prev.concat(fresh))};
+    const a=b.onData(bytes=>{queue.push(bytes instanceof Uint8Array?bytes:new Uint8Array(bytes));if(timer===null)timer=window.setTimeout(flush,200)});
+    const c=b.onError(m=>{setError(m);setLive(false);setStopping(false)});const d=b.onStopped(()=>{if(timer!==null){clearTimeout(timer);flush()}setLive(false);setStopping(false)});return()=>{a();c();d();if(timer!==null)clearTimeout(timer)}},[]);
+  const roRef=useRef<ResizeObserver|null>(null);const setList=useCallback((el:HTMLDivElement|null)=>{listRef.current=el;roRef.current?.disconnect();if(el){const ro=new ResizeObserver(()=>{setListH(el.clientHeight);setScrollTop(el.scrollTop)});ro.observe(el);roRef.current=ro;setListH(el.clientHeight)}},[]);
+  useLayoutEffect(()=>{const el=listRef.current;if(live&&autoScroll&&el){el.scrollTop=el.scrollHeight;setScrollTop(el.scrollTop)}},[filtered.length,live,autoScroll]);
 
   const refreshInterfaces=useCallback(async()=>{if(!window.netlens)return null;setDiag(null);const d=await window.netlens.diagnose();setDiag(d);if(d.ok){setInterfaces(d.interfaces);setChosen(c=>c.filter(n=>d.interfaces.some(i=>i.name===n)).length?c:d.interfaces.slice(0,1).map(i=>i.name));const t=await window.netlens.captureTool();setIsDumpcap(Boolean(t?.dumpcap))}return d},[]);
   useEffect(()=>{void refreshInterfaces()},[refreshInterfaces]);
@@ -80,7 +87,7 @@ export function DesktopWorkspace(){
     setError('');parserRef.current=new CaptureParser();dissectorRef.current=new Dissector();setPackets([]);setMarked(new Set());select(0);
     const opts=options as ReturnType<typeof buildOptions>;setFilename(`live-${opts.interfaces.join('+')}.pcapng`);setLive(true);setModal(null);lastOptions.current=opts;
     try{const r=await bridge.start(opts as never);setToFiles(r&&r.toFiles?r.folder:null)}catch(e){setError(e instanceof Error?e.message.replace(/^Error invoking remote method '[^']+': (Error: )?/,''):'Could not start capture');setLive(false)}}
-  const stopCapture=()=>void bridge?.stop();
+  const stopCapture=()=>{if(!live||stopping)return;setStopping(true);void bridge?.stop().catch(()=>setStopping(false))};
   const restart=async()=>{if(live){await bridge?.stop();setTimeout(()=>void start(),400)}else void start()};
   async function runSetup(){if(!bridge)return;setSetupBusy(true);setError('');try{const r=await bridge.runSetup();setNotice(r.message);await refreshInterfaces()}catch(e){setError(e instanceof Error?e.message.replace(/^Error invoking remote method '[^']+': (Error: )?/,''):'Setup failed')}finally{setSetupBusy(false)}}
   function toggleMark(no=packet?.no){if(!no)return;setMarked(m=>{const n=new Set(m);if(n.has(no))n.delete(no);else n.add(no);return n})}
@@ -205,7 +212,7 @@ export function DesktopWorkspace(){
 
     <div className="ws-panes">{!packets.length&&!live?<Welcome interfaces={interfaces} chosen={chosen} setChosen={setChosen} diag={diag} capFilter={capFilter} setCapFilter={setCapFilter} onStart={()=>void start(buildOptions())} onOptions={()=>void openOptions()} onOpen={()=>fileInput.current?.click()} onSetup={()=>{setModal('setup');void refreshInterfaces()}} onSample={()=>{setPackets(demoPackets());setFilename('sample-traffic.pcapng');select(1)}} desktop={Boolean(bridge)} busy={busy}/>:
     <ResizablePanelGroup orientation="vertical">
-      <ResizablePanel defaultSize={45} minSize={15}><div className="ws-list" ref={listRef} onScroll={e=>setScrollTop(e.currentTarget.scrollTop)}>
+      <ResizablePanel defaultSize={45} minSize={15}><div className="ws-list" ref={setList} onScroll={e=>setScrollTop(e.currentTarget.scrollTop)}>
         <div className="ws-row ws-head"><span>No.</span><span>Time</span><span>Source</span><span>Destination</span><span>Protocol</span><span>Length</span><span>Info</span></div>
         <div style={{height:filtered.length*ROW,position:'relative'}}>{filtered.slice(startIdx,endIdx).map((p,k)=><div key={p.no} role="row" aria-selected={p.no===selected} onClick={()=>select(p.no)} onDoubleClick={()=>p.stream&&setModal('stream')} style={{top:(startIdx+k)*ROW}} className={`ws-row ${colorize?`ws-c-${flagged.has(p.no)?'alert':p.proto}`:''} ${p.no===selected?'ws-sel':''} ${marked.has(p.no)?'ws-marked':''}`}><span>{p.no}</span><span>{fmtTime(p)}</span><span>{p.src}</span><span>{p.dst}</span><span>{p.protocol}</span><span>{p.len}</span><span>{p.info}</span></div>)}</div>
         {!filtered.length&&<div className="p-6 text-center text-muted-foreground">{live?'Waiting for packets…':'No packets match this filter.'}</div>}
@@ -215,7 +222,7 @@ export function DesktopWorkspace(){
     </ResizablePanelGroup>}</div>
 
     <footer className="ws-status"><button type="button" className={`flex items-center gap-1 ${findings.some(f=>f.level==='review')?'text-destructive':findings.length?'text-primary':''}`} onClick={()=>setModal('expert')} title="Expert information"><span className={`size-2.5 rounded-full ${findings.some(f=>f.level==='review')?'bg-destructive':findings.length?'bg-primary':'bg-muted-foreground'}`}/></button>
-      <span className="truncate">{live?<span className="text-destructive">● Capturing on {chosen.join(', ')}</span>:filename||'Ready to load or capture'}</span>
+      <span className="truncate">{live?<span className="text-destructive">{stopping?'Stopping…':`● Capturing on ${chosen.join(', ')}`}</span>:filename||'Ready to load or capture'}</span>
       <span className="ml-auto">Packets: {packets.length.toLocaleString()} · Displayed: {filtered.length.toLocaleString()} ({packets.length?(filtered.length/packets.length*100).toFixed(1):'0.0'}%){marked.size?` · Marked: ${marked.size}`:''}</span>
       {range?.field&&<span className="hidden font-mono md:inline">{range.field}</span>}<span>Profile: Default</span></footer>
     <input ref={fileInput} type="file" accept=".pcap,.pcapng,.cap" className="hidden" aria-label="Open capture file" onChange={e=>{const f=e.target.files?.[0];if(f)void openFile(f);e.target.value=''}}/>

@@ -1,4 +1,4 @@
-# Pktivo desktop preview 0.3.0
+# Pktivo desktop preview 0.3.1
 
 Portable, unsigned preview packages. Extract the entire archive before launching.
 

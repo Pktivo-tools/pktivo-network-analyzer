@@ -14,7 +14,11 @@ let win=null,processCapture=null,tool=null,allowed=[],ringFolder=null,stopTimer=
 const index=path.join(__dirname,'..','dist','index.html');
 const localUrl=pathToFileURL(index).href;
 function checkSender(event){if(!win||event.sender!==win.webContents||event.senderFrame?.url!==localUrl)throw new Error('Untrusted capture request');}
-function stop(){clearTimeout(stopTimer);stopTimer=null;if(processCapture){processCapture.kill('SIGTERM');processCapture=null;}}
+function stop(){clearTimeout(stopTimer);stopTimer=null;const child=processCapture;if(!child)return;processCapture=null;
+  // Stop forwarding immediately, then make sure the tool really exits.
+  child.stdout.removeAllListeners('data');try{child.kill('SIGTERM')}catch{}
+  const force=setTimeout(()=>{try{if(child.exitCode===null)child.kill('SIGKILL')}catch{}},1500);child.once('close',()=>clearTimeout(force));
+  send('capture:stopped');}
 const send=(channel,value)=>{if(win&&!win.isDestroyed())win.webContents.send(channel,value)};
 ipcMain.handle('capture:interfaces',async event=>{checkSender(event);tool=await findTool();allowed=await listInterfaces(tool);return allowed;});
 ipcMain.handle('capture:tool',event=>{checkSender(event);return tool?{dumpcap:tool.dumpcap,version:tool.version}:null});
@@ -27,7 +31,9 @@ ipcMain.handle('capture:start',async(event,raw)=>{
   const child=spawn(tool.executable,buildCaptureArgs(tool,options,outFile),{stdio:['ignore','pipe','pipe'],windowsHide:true});processCapture=child;
   let diagnostic='',received=false,bytes=0;const limit=options.ring?0:options.stop.megabytes*1e6;
   if(options.stop.seconds&&!options.ring)stopTimer=setTimeout(()=>{if(processCapture===child)stop()},options.stop.seconds*1000);
-  child.stdout.on('data',chunk=>{received=true;bytes+=chunk.length;send('capture:data',Array.from(chunk));if(limit&&bytes>=limit&&processCapture===child)stop();});
+  let pending=[],flushTimer=null;const flush=()=>{flushTimer=null;if(!pending.length)return;const data=Buffer.concat(pending);pending=[];send('capture:data',new Uint8Array(data.buffer,data.byteOffset,data.length));};
+  child.stdout.on('data',chunk=>{received=true;bytes+=chunk.length;pending.push(chunk);if(!flushTimer)flushTimer=setTimeout(flush,100);if(limit&&bytes>=limit&&processCapture===child){flush();stop();}});
+  child.stdout.on('end',()=>{clearTimeout(flushTimer);flush();});
   child.stderr.on('data',chunk=>{diagnostic=(diagnostic+chunk.toString()).slice(-4000);});
   child.on('error',err=>send('capture:error',err.message));
   child.on('close',code=>{if(processCapture===child){processCapture=null;clearTimeout(stopTimer);}if(code&&code!==0&&!received&&!options.ring)send('capture:error',diagnostic.trim()||'Capture failed. Check interface permissions.');else if(code&&code!==0&&options.ring)send('capture:error',diagnostic.trim()||'Capture to files failed.');send('capture:stopped');});
