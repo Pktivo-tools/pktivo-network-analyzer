@@ -1,6 +1,6 @@
 import { PktivoLogo } from '@/components/pktivo-logo';
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { Activity, ArrowDownToLine, ArrowRight, BookOpen, Cable, Check, ChevronRight, CircleHelp, FileUp, FlaskConical, FolderOpen, GitBranch, Globe, Layers, Play, Radio, Search, ShieldCheck, ShieldAlert, Bot, Square, X } from 'lucide-react';
+import { Activity, ArrowDownToLine, ArrowRight, BookOpen, Cable, Check, ChevronRight, CircleHelp, FileUp, FlaskConical, FolderOpen, GitBranch, Globe, Layers, Menu, Play, Radio, Search, ShieldCheck, ShieldAlert, Bot, Square, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogDescription, DialogTitle } from '@/components/ui/dialog';
 import { PktivoOverview } from '@/components/netlens-overview';
@@ -10,7 +10,9 @@ import { SavedCaptureGuide } from '@/components/saved-capture-guide';
 import { CapturePrivacyNote } from '@/components/capture-privacy-note';
 import { bindTabLifetime } from '@/lib/netlens/tab-lifetime';
 import { analyzePackets, type Finding } from '@/lib/netlens/findings';
-import { ThemePicker } from '@/components/theme-picker';
+import { ThemeGrid, useTheme } from '@/components/theme-picker';
+import { resolveTheme } from '@/lib/netlens/themes';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { Inspector } from '@/components/netlens-inspector';
 import { CaptureParser } from '@/lib/netlens/capture-parser';
 import { Dissector } from '@/lib/netlens/dissect';
@@ -44,6 +46,7 @@ export function PktivoWorkspace({onDownloads,onLearn}:{onDownloads?:()=>void;onL
   const compiled=useMemo(()=>compileFilter(applied),[applied]); const validation=useMemo(()=>compileFilter(draft),[draft]);
   const findings=useMemo(()=>analyzePackets(packets),[packets]);
   const [focus,setFocus]=useState<Finding|null>(null);
+  const [menuOpen,setMenuOpen]=useState(false); const {theme,select:selectTheme}=useTheme();
   const flagged=useMemo(()=>new Set(findings.flatMap(f=>f.packetNos)),[findings]);
   const focusNos=useMemo(()=>focus?new Set(focus.packetNos):null,[focus]);
   const filtered=useMemo(()=>packets.filter(p=>(!focusNos||focusNos.has(p.no))&&(!compiled.ok||compiled.test(p))),[packets,compiled,focusNos]);
