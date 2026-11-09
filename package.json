@@ -14,7 +14,7 @@
     "test:watch": "vitest",
     "desktop:build": "vite build --config electron/vite.config.ts && bun run desktop:updater",
     "desktop:updater": "bun build node_modules/electron-updater/out/main.js --target=node --format=cjs --external=electron --outfile=electron/updater-runtime.cjs",
-    "desktop:package": "electron-packager . Netlens --platform=linux --arch=x64 --out=electron-release --overwrite --no-prune --no-asar --electron-version=39.2.7 --ignore=\"^/(node_modules|src|public|electron-release|.git|.workspace|.lovable|.oj-cache)(/|$)\""
+    "desktop:package": "electron-packager . Netpack --platform=linux --arch=x64 --out=electron-release --overwrite --no-prune --no-asar --electron-version=39.2.7 --ignore=\"^/(node_modules|src|public|electron-release|.git|.workspace|.lovable|.oj-cache)(/|$)\""
   },
   "overrides": {
     "rolldown": "1.2.1"
@@ -103,5 +103,5 @@
   },
   "main": "electron/main.cjs",
   "version": "0.2.0",
-  "productName": "Netlens"
+  "productName": "Netpack"
 }

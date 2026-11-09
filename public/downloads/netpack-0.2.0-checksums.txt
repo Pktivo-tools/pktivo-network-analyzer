@@ -1,0 +1,5 @@
+a5cb9033b96fe201101b4b6d8a540c838a123352dee319c8f5d9ab1d7c34cbbd  Netpack-0.2.0-darwin-arm64.zip
+75caaf10be394cdb5b1e52f989d4550df6dd433c5e7548ed1be925ac6d0a8725  Netpack-0.2.0-darwin-x64.zip
+cfc29bd230ac3e1f9c3f5304f846d64053f9f78d9ebf727bc3c1f5a4bfc6d181  Netpack-0.2.0-win32-x64.zip
+d2aca20f70d35f301eb20bf6af00fe6021ef014fb9d2bfb034786c5e4a10d17d  netpack-0.2.0-1-x86_64.pkg.tar.zst
+d31093038ed810e72efa507e6df5ef93453b787b85de17deeb1cd6c349148e97  netpack_0.2.0_amd64.deb
