@@ -1,8 +1,9 @@
 # Netlens completion
-- [ ] Beginner overview and automatic suspicious-traffic explanations with tests
-- [ ] Separate networking and usage learning tab
-- [ ] Optional strictly local assistant and privacy checks
-- [ ] Verify new workflows on desktop and mobile
+- [x] Beginner overview and automatic suspicious-traffic explanations with tests
+- [x] Separate networking and usage learning tab
+- [x] Optional strictly local assistant and privacy boundary tests
+- [x] Verify browser workflows on desktop and mobile
+- [ ] Real local-model answer in Electron — blocked by no installed Ollama/model and unavailable native desktop session; existing downloadable archives predate this update
 - [x] Packet workspace, demo traffic, filters, details, bytes, stream and statistics
 - [x] Secure Electron shell and live capture bridge (existing capture-tool permissions required)
 - [x] Windows x64, macOS Intel/Apple Silicon and Linux x64 portable preview packages
