@@ -302,3 +302,4 @@ progress { accent-color: var(--primary); } progress::-webkit-progress-bar { back
 .swatch-line { height: 3px; width: 80%; background: var(--muted-foreground); opacity: .5; }
 .swatch-line.short { width: 55%; }
 .swatch-accent { height: 7px; width: 37%; margin-top: 2px; background: var(--primary); border-radius: 2px; }
+.theme-swatch[data-theme="light"] { --background: oklch(0.995 0.001 160); --sidebar: oklch(0.978 0.003 160); --border: oklch(0.92 0.006 160); --muted-foreground: oklch(0.54 0.016 165); --primary: oklch(0.51 0.11 166); }
