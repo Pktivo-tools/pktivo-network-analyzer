@@ -22,3 +22,4 @@
 - [x] Rename website, refreshed desktop packages and download checksums to Pktivo
 - [x] Top bar Learn button plus hamburger menu holding themes, downloads and help
 - [x] Pronunciation note ("packet-ee-vo") in the analyzer, Learn and Downloads footers
+- [x] Debian and Arch packages launchable: world-readable app folder, terminal launcher, menu icon, refresh on install
