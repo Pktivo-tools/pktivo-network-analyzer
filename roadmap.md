@@ -1,4 +1,8 @@
 # Netlens completion
+- [ ] Dedicated Downloads page and navigation button
+- [ ] Updated Windows/macOS archives and Debian/Ubuntu + Arch packages served in the app
+- [ ] Safe automatic-update integration and release setup documentation
+- [ ] Verify downloads, package contents, and updater safety
 - [x] Beginner overview and automatic suspicious-traffic explanations with tests
 - [x] Separate networking and usage learning tab
 - [x] Optional strictly local assistant and privacy boundary tests
