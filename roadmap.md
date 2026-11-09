@@ -1,4 +1,8 @@
 # Netlens completion
+- [ ] Beginner overview and automatic suspicious-traffic explanations with tests
+- [ ] Separate networking and usage learning tab
+- [ ] Optional strictly local assistant and privacy checks
+- [ ] Verify new workflows on desktop and mobile
 - [x] Packet workspace, demo traffic, filters, details, bytes, stream and statistics
 - [x] Secure Electron shell and live capture bridge (existing capture-tool permissions required)
 - [x] Windows x64, macOS Intel/Apple Silicon and Linux x64 portable preview packages
