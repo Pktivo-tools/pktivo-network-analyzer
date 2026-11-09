@@ -21,3 +21,4 @@
 - [ ] Signed/notarized installers — blocked by signing credentials and target-platform signing environment
 - [x] Rename website, refreshed desktop packages and download checksums to Pktivo
 - [x] Top bar Learn button plus hamburger menu holding themes, downloads and help
+- [x] Pronunciation note ("packet-ee-vo") in the analyzer, Learn and Downloads footers
