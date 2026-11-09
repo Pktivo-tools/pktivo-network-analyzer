@@ -1,23 +1,7 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute } from '@tanstack/react-router';
+import { NetlensWorkspace } from '@/components/netlens-workspace';
 
-// The home route ships no og:image, so serve-time hosting can inject the
-// project's social preview (explicit og:image or latest screenshot).
-export const Route = createFileRoute("/")({
-  component: Index,
+export const Route = createFileRoute('/')({
+  head:()=>({meta:[{title:'Netlens — Network packet analyzer'},{name:'description',content:'Inspect captures, filter packets, follow conversations and explore network traffic with Netlens.'},{property:'og:title',content:'Netlens — Network packet analyzer'},{property:'og:description',content:'A modern workspace for packet inspection and network traffic analysis.'},{property:'og:type',content:'website'},{name:'twitter:card',content:'summary_large_image'}]}),
+  component: NetlensWorkspace,
 });
-
-// IMPORTANT: Replace this placeholder. See ./README.md for routing conventions.
-function Index() {
-  return (
-    <div
-      className="flex min-h-screen items-center justify-center"
-      style={{ backgroundColor: "#fcfbf8" }}
-    >
-      <img
-        data-lovable-blank-page-placeholder="REMOVE_THIS"
-        src="https://cdn.gpteng.co/blank-app-v1.svg"
-        alt="Your app will live here!"
-      />
-    </div>
-  );
-}
