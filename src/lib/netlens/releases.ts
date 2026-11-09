@@ -1,8 +1,8 @@
-import windows from '@/assets/releases/Netpack-0.2.0-win32-x64.zip.asset.json';
-import macArm from '@/assets/releases/Netpack-0.2.0-darwin-arm64.zip.asset.json';
-import macIntel from '@/assets/releases/Netpack-0.2.0-darwin-x64.zip.asset.json';
-import debian from '@/assets/releases/netpack_0.2.0_amd64.deb.asset.json';
-import arch from '@/assets/releases/netpack-0.2.0-1-x86_64.pkg.tar.zst.asset.json';
+import windows from '@/assets/releases/Pktivo-0.2.0-win32-x64.zip.asset.json';
+import macArm from '@/assets/releases/Pktivo-0.2.0-darwin-arm64.zip.asset.json';
+import macIntel from '@/assets/releases/Pktivo-0.2.0-darwin-x64.zip.asset.json';
+import debian from '@/assets/releases/pktivo_0.2.0_amd64.deb.asset.json';
+import arch from '@/assets/releases/pktivo-0.2.0-1-x86_64.pkg.tar.zst.asset.json';
 export const RELEASE_VERSION='0.2.0';
 export interface Step { text: string; command?: string }
 const macInstall:Step[]=[
