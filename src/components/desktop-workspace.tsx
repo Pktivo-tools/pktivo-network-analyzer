@@ -60,7 +60,7 @@ export function DesktopWorkspace(){
   useEffect(()=>{const el=listRef.current;if(!el)return;const ro=new ResizeObserver(()=>setListH(el.clientHeight));ro.observe(el);return()=>ro.disconnect()},[show]);
   useEffect(()=>{if(live&&autoScroll&&listRef.current)listRef.current.scrollTop=listRef.current.scrollHeight},[filtered.length,live,autoScroll]);
 
-  const refreshInterfaces=useCallback(async()=>{if(!window.netlens)return null;setDiag(null);const d=await window.netlens.diagnose();setDiag(d);if(d.ok){setInterfaces(d.interfaces);setChosen(c=>c.filter(n=>d.interfaces.some(i=>i.name===n)).length?c:[d.interfaces[0].name]);const t=await window.netlens.captureTool();setIsDumpcap(Boolean(t?.dumpcap))}return d},[]);
+  const refreshInterfaces=useCallback(async()=>{if(!window.netlens)return null;setDiag(null);const d=await window.netlens.diagnose();setDiag(d);if(d.ok){setInterfaces(d.interfaces);setChosen(c=>c.filter(n=>d.interfaces.some(i=>i.name===n)).length?c:d.interfaces.slice(0,1).map(i=>i.name));const t=await window.netlens.captureTool();setIsDumpcap(Boolean(t?.dumpcap))}return d},[]);
   useEffect(()=>{void refreshInterfaces()},[refreshInterfaces]);
 
   function apply(v:string){setDraft(v);if(compileFilter(v).ok){setApplied(v);if(v)setRecent(r=>[v,...r.filter(x=>x!==v)].slice(0,8))}}
