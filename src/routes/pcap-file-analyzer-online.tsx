@@ -25,7 +25,7 @@ const steps = [
 
 function PcapAnalyzerPage() {
   return <div className="min-h-dvh bg-background text-foreground">
-    <header className="border-b"><div className="mx-auto flex max-w-4xl items-center justify-between px-4 py-3"><Link to="/" className="flex items-center gap-2 font-semibold"><PktivoLogo />pktivo.</Link><Button asChild variant="ghost" size="sm"><Link to="/"><ArrowLeft />Open the analyzer</Link></Button></div></header>
+    <header className="border-b"><div className="mx-auto flex max-w-4xl items-center justify-between px-4 py-3"><Link to="/" className="flex items-center gap-2 font-semibold"><PktivoLogo />pktivo.</Link><Button asChild variant="ghost" size="sm"><Link to="/"><ArrowLeft />Packet viewer</Link></Button></div></header>
     <main className="mx-auto max-w-4xl px-4 py-12">
       <h1 className="text-3xl font-semibold tracking-tight sm:text-4xl">PCAP file analyzer online</h1>
       <p className="mt-4 max-w-2xl text-lg leading-8 text-muted-foreground">Pktivo opens network captures saved by Wireshark straight in your browser. No install and no account, and the file never leaves your device.</p>
