@@ -491,6 +491,7 @@ function tcp(ctx: Ctx, o: number, end: number, ipSrc: string, ipDst: string) {
   field(ctx, t, "tcp.seq", seq, `Sequence Number: ${seq}    (relative sequence number)`, o + 4, 4);
   field(ctx, t, "tcp.seq_raw", seqRaw, `Sequence Number (raw): ${seqRaw}`, o + 4, 4);
   field(ctx, t, "tcp.ack", ack, `Acknowledgment Number: ${ack}`, o + 8, 4);
+  addField(ctx, "tcp.ack_raw", ackRaw);
   field(ctx, t, "tcp.hdr_len", off, `Header Length: ${off} bytes`, o + 12, 1);
   const fl = node(ctx, t, `Flags: ${hex(flags, 3)} (${flagNames.join(", ") || "none"})`, o + 12, 2);
   field(ctx, fl, "tcp.flags.syn", flags & 0x02 ? 1 : 0, `Syn: ${flags & 0x02 ? "Set" : "Not set"}`, o + 13, 1);

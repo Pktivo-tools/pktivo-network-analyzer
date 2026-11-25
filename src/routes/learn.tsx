@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from '@tanstack/react-router';
 import { useEffect, useState } from 'react';
-import { ArrowLeft, BookOpen, Check, ChevronDown, ClipboardCheck, Lightbulb, Terminal } from 'lucide-react';
+import { ArrowLeft, BookOpen, Check, ChevronDown, ClipboardCheck, Lightbulb, Network, Terminal } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { PktivoLogo } from '@/components/pktivo-logo';
 import { PktivoPronunciation } from '@/components/pktivo-pronunciation';
@@ -47,15 +47,18 @@ function LearnPage() {
     catch { setSaveFailed(true); }
   }
   const total = curriculum.reduce((a, l) => a + l.modules.length, 0); const cur = curriculum[level];
+  const completed = curriculum.flatMap(l => l.modules).filter(m => done.has(m.id)).length;
   if (!cur) return null;
   return <div className="min-h-screen bg-background text-foreground">
     <header className="flex items-center justify-between border-b px-4 py-3 sm:px-8"><Link to="/" className="flex items-center gap-2 font-semibold"><span className="size-6"><PktivoLogo /></span>pktivo<span className="text-primary">.</span></Link><Button asChild variant="ghost" size="sm"><Link to="/"><ArrowLeft />Back to workspace</Link></Button></header>
     <main className="mx-auto max-w-4xl px-4 py-10 sm:px-8">
       <div className="flex items-center gap-2 text-sm text-primary"><BookOpen className="size-4" />Learn networking</div>
       <h1 className="mt-3 text-3xl font-semibold sm:text-4xl">From zero to CCNA-ready</h1>
+      <Button asChild variant="link" size="sm" className="mt-2 px-0"><Link to="/glossary"><BookOpen />Networking glossary →</Link></Button>
       <p className="mt-3 max-w-2xl text-muted-foreground">A step-by-step path through every CCNA 200-301 exam domain. Read each module, mark it as read, then check what you remember in the separate test.</p>
       <Link to="/learn/test" className="mt-5 flex items-center gap-3 rounded-lg border border-primary/40 bg-accent p-4 hover:border-primary"><ClipboardCheck className="size-5 text-primary" /><span className="flex-1"><span className="block font-medium">Take the test</span><span className="text-xs text-muted-foreground">Questions drawn from this reading course — by level or everything at once.</span></span><span className="text-sm text-primary">Start →</span></Link>
-      <div className="mt-6"><div className="flex justify-between gap-3 text-xs text-muted-foreground"><span>Your progress · {saveFailed ? 'Not saved' : 'Saved on this device'}</span><span className="shrink-0">{done.size} / {total} modules read</span></div><progress className="mt-2 h-1.5 w-full" max={total} value={done.size} />{saveFailed && <p role="status" className="mt-2 text-xs text-destructive">Your browser couldn’t save progress. It will last only until you leave this page.</p>}</div>
+      <section className="mt-6 border-y py-5"><div className="flex flex-wrap items-center justify-between gap-4"><div className="min-w-0"><h2 className="flex items-center gap-2 font-medium"><Network className="size-4 text-primary" />Subnetting focus course</h2><p className="mt-1 text-sm text-muted-foreground">IPv4, CIDR, host ranges and VLSM · 6 lessons with a visual calculator and practice.</p></div><Button asChild variant="outline" size="sm"><Link to="/learn/subnetting">Open subnetting course →</Link></Button></div></section>
+      <div className="mt-6"><div className="flex justify-between gap-3 text-xs text-muted-foreground"><span>Your progress · {saveFailed ? 'Not saved' : 'Saved on this device'}</span><span className="shrink-0">{completed} / {total} modules read</span></div><progress className="mt-2 h-1.5 w-full" max={total} value={completed} />{saveFailed && <p role="status" className="mt-2 text-xs text-destructive">Your browser couldn’t save progress. It will last only until you leave this page.</p>}</div>
       <nav className="mt-8 grid grid-cols-2 gap-2 sm:grid-cols-4" aria-label="Levels">{curriculum.map((l, i) => { const c = l.modules.filter(m => done.has(m.id)).length; return <button key={l.id} onClick={() => setLevel(i)} className={`rounded-lg border p-3 text-left transition-colors ${i === level ? 'border-primary bg-accent' : 'hover:bg-accent'}`}><span className="text-xs text-muted-foreground">Level {i + 1}</span><span className="block font-medium">{l.name}</span><span className="text-xs text-muted-foreground">{c}/{l.modules.length} done</span></button>; })}</nav>
       <section className="mt-8"><h2 className="text-xl font-semibold">{cur.name}</h2><p className="mt-1 text-sm text-muted-foreground">{cur.goal}</p>
         <div className="mt-5 space-y-3">{cur.modules.map((m, i) => <ModuleCard key={m.id} m={m} n={`${level + 1}.${i + 1}`} done={done.has(m.id)} onDone={() => completeModule(m.id)} />)}</div>

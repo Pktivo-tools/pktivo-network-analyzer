@@ -14,3 +14,12 @@
 - [x] Add a public beginner guide with packet columns, conversations, filters and cautious warning explanations
 - [x] Link the guide from the workspace and link to the course and practice test
 - [x] Verify navigation, mobile layout and sitemap inclusion
+
+# Subnetting course and capture comparison
+- [x] Add a separate subnetting reading course, visual calculator and progressive practice under Learn
+- [x] Add private two-file comparison with traffic, timing and warning differences to the workspace
+- [x] Verify calculations, file comparison, saved learning progress and mobile navigation
+
+# Networking glossary
+- [x] Add a searchable beginner-friendly glossary of Wireshark and networking terms
+- [x] Link the glossary from the courses and packet viewer and verify navigation and sitemap inclusion

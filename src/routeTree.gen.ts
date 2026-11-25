@@ -10,15 +10,22 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as GlossaryRouteImport } from './routes/glossary'
 import { Route as HowToReadWiresharkCaptureRouteImport } from './routes/how-to-read-wireshark-capture'
 import { Route as LearnRouteImport } from './routes/learn'
 import { Route as PcapFileAnalyzerOnlineRouteImport } from './routes/pcap-file-analyzer-online'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
+import { Route as LearnSubnettingRouteImport } from './routes/learn_/subnetting'
 import { Route as LearnTestRouteImport } from './routes/learn_/test'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const GlossaryRoute = GlossaryRouteImport.update({
+  id: '/glossary',
+  path: '/glossary',
   getParentRoute: () => rootRouteImport,
 } as any)
 const HowToReadWiresharkCaptureRoute =
@@ -42,6 +49,11 @@ const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
   path: '/sitemap.xml',
   getParentRoute: () => rootRouteImport,
 } as any)
+const LearnSubnettingRoute = LearnSubnettingRouteImport.update({
+  id: '/learn_/subnetting',
+  path: '/learn/subnetting',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const LearnTestRoute = LearnTestRouteImport.update({
   id: '/learn_/test',
   path: '/learn/test',
@@ -50,62 +62,76 @@ const LearnTestRoute = LearnTestRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/glossary': typeof GlossaryRoute
   '/how-to-read-wireshark-capture': typeof HowToReadWiresharkCaptureRoute
   '/learn': typeof LearnRoute
   '/pcap-file-analyzer-online': typeof PcapFileAnalyzerOnlineRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/learn/subnetting': typeof LearnSubnettingRoute
   '/learn/test': typeof LearnTestRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/glossary': typeof GlossaryRoute
   '/how-to-read-wireshark-capture': typeof HowToReadWiresharkCaptureRoute
   '/learn': typeof LearnRoute
   '/pcap-file-analyzer-online': typeof PcapFileAnalyzerOnlineRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/learn/subnetting': typeof LearnSubnettingRoute
   '/learn/test': typeof LearnTestRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/glossary': typeof GlossaryRoute
   '/how-to-read-wireshark-capture': typeof HowToReadWiresharkCaptureRoute
   '/learn': typeof LearnRoute
   '/pcap-file-analyzer-online': typeof PcapFileAnalyzerOnlineRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/learn_/subnetting': typeof LearnSubnettingRoute
   '/learn_/test': typeof LearnTestRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/glossary'
     | '/how-to-read-wireshark-capture'
     | '/learn'
     | '/pcap-file-analyzer-online'
     | '/sitemap.xml'
+    | '/learn/subnetting'
     | '/learn/test'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/glossary'
     | '/how-to-read-wireshark-capture'
     | '/learn'
     | '/pcap-file-analyzer-online'
     | '/sitemap.xml'
+    | '/learn/subnetting'
     | '/learn/test'
   id:
     | '__root__'
     | '/'
+    | '/glossary'
     | '/how-to-read-wireshark-capture'
     | '/learn'
     | '/pcap-file-analyzer-online'
     | '/sitemap.xml'
+    | '/learn_/subnetting'
     | '/learn_/test'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  GlossaryRoute: typeof GlossaryRoute
   HowToReadWiresharkCaptureRoute: typeof HowToReadWiresharkCaptureRoute
   LearnRoute: typeof LearnRoute
   PcapFileAnalyzerOnlineRoute: typeof PcapFileAnalyzerOnlineRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
+  LearnSubnettingRoute: typeof LearnSubnettingRoute
   LearnTestRoute: typeof LearnTestRoute
 }
 
@@ -116,6 +142,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/glossary': {
+      id: '/glossary'
+      path: '/glossary'
+      fullPath: '/glossary'
+      preLoaderRoute: typeof GlossaryRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/how-to-read-wireshark-capture': {
@@ -146,6 +179,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SitemapDotxmlRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/learn_/subnetting': {
+      id: '/learn_/subnetting'
+      path: '/learn/subnetting'
+      fullPath: '/learn/subnetting'
+      preLoaderRoute: typeof LearnSubnettingRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/learn_/test': {
       id: '/learn_/test'
       path: '/learn/test'
@@ -158,10 +198,12 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  GlossaryRoute: GlossaryRoute,
   HowToReadWiresharkCaptureRoute: HowToReadWiresharkCaptureRoute,
   LearnRoute: LearnRoute,
   PcapFileAnalyzerOnlineRoute: PcapFileAnalyzerOnlineRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
+  LearnSubnettingRoute: LearnSubnettingRoute,
   LearnTestRoute: LearnTestRoute,
 }
 export const routeTree = rootRouteImport

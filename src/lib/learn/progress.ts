@@ -1,7 +1,8 @@
 import { curriculum } from './curriculum';
+import { subnetLessons } from './subnetting';
 
 const STORAGE_KEY = 'pktivo.learn.progress.v1';
-const moduleIds = new Set(curriculum.flatMap(level => level.modules.map(module => module.id)));
+const moduleIds = new Set([...curriculum.flatMap(level => level.modules.map(module => module.id)), ...subnetLessons.map(lesson => lesson.id)]);
 type ProgressStorage = Pick<Storage, 'getItem' | 'setItem'>;
 
 export function readLearnProgress(storage: ProgressStorage): Set<string> {

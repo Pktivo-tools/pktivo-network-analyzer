@@ -2,6 +2,12 @@ import { describe, expect, it } from 'vitest';
 import { readLearnProgress, saveLearnProgress } from '@/lib/learn/progress';
 
 describe('saved Learn progress', () => {
+  it('saves subnetting completion separately from the existing course modules', () => {
+    let saved = '';
+    const storage = { getItem: () => saved || null, setItem: (_key: string, value: string) => { saved = value; } };
+    saveLearnProgress(storage, new Set(['subnet-ipv4', 'subnet-vlsm', 'what-is-network', 'private-capture']));
+    expect([...readLearnProgress(storage)]).toEqual(['subnet-ipv4', 'subnet-vlsm', 'what-is-network']);
+  });
   it('keeps completed modules when the tab closes and a new visit reads storage', () => {
     const data = new Map<string, string>();
     const storage = { getItem: (key: string) => data.get(key) ?? null, setItem: (key: string, value: string) => { data.set(key, value); } };
