@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as LearnRouteImport } from './routes/learn'
+import { Route as PcapFileAnalyzerOnlineRouteImport } from './routes/pcap-file-analyzer-online'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as LearnTestRouteImport } from './routes/learn_/test'
 
@@ -22,6 +23,11 @@ const IndexRoute = IndexRouteImport.update({
 const LearnRoute = LearnRouteImport.update({
   id: '/learn',
   path: '/learn',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PcapFileAnalyzerOnlineRoute = PcapFileAnalyzerOnlineRouteImport.update({
+  id: '/pcap-file-analyzer-online',
+  path: '/pcap-file-analyzer-online',
   getParentRoute: () => rootRouteImport,
 } as any)
 const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
@@ -38,12 +44,14 @@ const LearnTestRoute = LearnTestRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/learn': typeof LearnRoute
+  '/pcap-file-analyzer-online': typeof PcapFileAnalyzerOnlineRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/learn/test': typeof LearnTestRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/learn': typeof LearnRoute
+  '/pcap-file-analyzer-online': typeof PcapFileAnalyzerOnlineRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/learn/test': typeof LearnTestRoute
 }
@@ -51,20 +59,38 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/learn': typeof LearnRoute
+  '/pcap-file-analyzer-online': typeof PcapFileAnalyzerOnlineRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/learn_/test': typeof LearnTestRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/learn' | '/sitemap.xml' | '/learn/test'
+  fullPaths:
+    | '/'
+    | '/learn'
+    | '/pcap-file-analyzer-online'
+    | '/sitemap.xml'
+    | '/learn/test'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/learn' | '/sitemap.xml' | '/learn/test'
-  id: '__root__' | '/' | '/learn' | '/sitemap.xml' | '/learn_/test'
+  to:
+    | '/'
+    | '/learn'
+    | '/pcap-file-analyzer-online'
+    | '/sitemap.xml'
+    | '/learn/test'
+  id:
+    | '__root__'
+    | '/'
+    | '/learn'
+    | '/pcap-file-analyzer-online'
+    | '/sitemap.xml'
+    | '/learn_/test'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   LearnRoute: typeof LearnRoute
+  PcapFileAnalyzerOnlineRoute: typeof PcapFileAnalyzerOnlineRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   LearnTestRoute: typeof LearnTestRoute
 }
@@ -83,6 +109,13 @@ declare module '@tanstack/react-router' {
       path: '/learn'
       fullPath: '/learn'
       preLoaderRoute: typeof LearnRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/pcap-file-analyzer-online': {
+      id: '/pcap-file-analyzer-online'
+      path: '/pcap-file-analyzer-online'
+      fullPath: '/pcap-file-analyzer-online'
+      preLoaderRoute: typeof PcapFileAnalyzerOnlineRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/sitemap.xml': {
@@ -105,6 +138,7 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   LearnRoute: LearnRoute,
+  PcapFileAnalyzerOnlineRoute: PcapFileAnalyzerOnlineRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   LearnTestRoute: LearnTestRoute,
 }

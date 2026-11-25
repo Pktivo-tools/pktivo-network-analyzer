@@ -4,7 +4,7 @@ import { sitemapStaticPaths, sitemapXML } from "@/lib/sitemap";
 
 describe("Public sitemap", () => {
   it("includes only the analyzer, reading course and test, not downloads or the sitemap endpoint", () => {
-    expect(sitemapStaticPaths(getRouter())).toEqual(["/", "/learn", "/learn/test"]);
+    expect(sitemapStaticPaths(getRouter())).toEqual(["/", "/learn", "/learn/test", "/pcap-file-analyzer-online"]);
   });
 
   it("uses the public origin without invented last-modified dates", () => {
