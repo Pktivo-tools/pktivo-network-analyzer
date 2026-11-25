@@ -14,9 +14,9 @@ export const Route = createFileRoute('/learn')({
   component: LearnPage,
 });
 
-function ModuleCard({ m, n, done, onDone }: { m: Module; n: string; done: boolean; onDone: () => void }) {
-  const [open, setOpen] = useState(false); const c = course[m.id];
-  return <article className="rounded-lg border bg-card">
+function ModuleCard({ m, n, done, onDone, initiallyOpen = false }: { m: Module; n: string; done: boolean; onDone: () => void; initiallyOpen?: boolean }) {
+  const [open, setOpen] = useState(initiallyOpen); const c = course[m.id];
+  return <article id={m.id} className="scroll-mt-6 rounded-lg border bg-card">
     <button className="flex w-full items-center gap-3 p-4 text-left" aria-expanded={open} onClick={() => setOpen(!open)}>
       <span className={`flex size-7 shrink-0 items-center justify-center rounded-full border text-xs font-mono ${done ? 'border-primary bg-primary text-primary-foreground' : 'text-muted-foreground'}`}>{done ? <Check className="size-4" /> : n}</span>
       <span className="flex-1"><span className="block font-medium">{m.title}</span><span className="text-xs text-muted-foreground">{(c?.lessons.length ?? 0) + 1} short readings{done ? ' · Read' : ''}</span></span><ChevronDown className={`size-4 transition-transform ${open ? 'rotate-180' : ''}`} />
@@ -36,7 +36,11 @@ function ModuleCard({ m, n, done, onDone }: { m: Module; n: string; done: boolea
 function LearnPage() {
   const [level, setLevel] = useState(0); const [done, setDone] = useState<Set<string>>(new Set());
   const [saveFailed, setSaveFailed] = useState(false);
+  const [target, setTarget] = useState<string | null>(null);
   useEffect(() => {
+    const id = decodeURIComponent(window.location.hash.slice(1));
+    const li = curriculum.findIndex(l => l.modules.some(m => m.id === id));
+    if (li >= 0) { setLevel(li); setTarget(id); window.setTimeout(() => document.getElementById(id)?.scrollIntoView({ block: 'start' }), 50); }
     try { setDone(readLearnProgress(window.localStorage)); }
     catch { setSaveFailed(true); }
   }, []);
@@ -61,7 +65,7 @@ function LearnPage() {
       <div className="mt-6"><div className="flex justify-between gap-3 text-xs text-muted-foreground"><span>Your progress · {saveFailed ? 'Not saved' : 'Saved on this device'}</span><span className="shrink-0">{completed} / {total} modules read</span></div><progress className="mt-2 h-1.5 w-full" max={total} value={completed} />{saveFailed && <p role="status" className="mt-2 text-xs text-destructive">Your browser couldn’t save progress. It will last only until you leave this page.</p>}</div>
       <nav className="mt-8 grid grid-cols-2 gap-2 sm:grid-cols-4" aria-label="Levels">{curriculum.map((l, i) => { const c = l.modules.filter(m => done.has(m.id)).length; return <button key={l.id} onClick={() => setLevel(i)} className={`rounded-lg border p-3 text-left transition-colors ${i === level ? 'border-primary bg-accent' : 'hover:bg-accent'}`}><span className="text-xs text-muted-foreground">Level {i + 1}</span><span className="block font-medium">{l.name}</span><span className="text-xs text-muted-foreground">{c}/{l.modules.length} done</span></button>; })}</nav>
       <section className="mt-8"><h2 className="text-xl font-semibold">{cur.name}</h2><p className="mt-1 text-sm text-muted-foreground">{cur.goal}</p>
-        <div className="mt-5 space-y-3">{cur.modules.map((m, i) => <ModuleCard key={m.id} m={m} n={`${level + 1}.${i + 1}`} done={done.has(m.id)} onDone={() => completeModule(m.id)} />)}</div>
+        <div className="mt-5 space-y-3">{cur.modules.map((m, i) => <ModuleCard key={m.id === target ? `${m.id}-open` : m.id} m={m} n={`${level + 1}.${i + 1}`} done={done.has(m.id)} onDone={() => completeModule(m.id)} initiallyOpen={m.id === target} />)}</div>
         <div className="mt-8 flex justify-between">{level > 0 ? <Button variant="ghost" onClick={() => setLevel(level - 1)}>← {curriculum[level - 1]?.name}</Button> : <span />}{level < curriculum.length - 1 && <Button onClick={() => { setLevel(level + 1); window.scrollTo({ top: 0 }); }}>Next: {curriculum[level + 1]?.name} →</Button>}</div>
       </section>
       <div className="mt-12 border-t pt-6">
