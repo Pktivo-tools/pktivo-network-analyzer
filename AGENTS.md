@@ -32,13 +32,7 @@ use the editor.
 ## Pktivo architecture
 - Persist only validated Learn completion IDs in device-local storage after hydration, independently of capture state, so learning works offline without storing packet data.
 - Keep capture analysis in browser-safe `src/lib/netlens` modules so saved captures remain local and work offline.
-- Keep native capture and process access exclusively in Electron main behind a validated preload bridge; the hosted app only inspects files.
-- Package Electron with a separate client-only Vite entry and relative asset paths, preserving the hosted TanStack bootstrap.
-- Keep appearance presets in global semantic CSS tokens and apply the validated saved theme after hydration; store this device-only preference locally to preserve offline desktop support.
+- Keep appearance presets in global semantic CSS tokens and apply the validated saved theme after hydration; store only the appearance preference locally so themes survive reopening without storing capture data.
 - Keep warning detection as pure full-capture heuristics separate from display filters so beginner explanations remain consistent.
-- Optional on-device tutoring is an exception to hosted AI routing: Electron main uses a fixed loopback-only Ollama connection with opt-in and local-model validation; no capture context or cloud fallback is permitted.
-- Serve versioned desktop downloads through immutable asset pointers; keep installer update feeds separately configured at build time so preview downloads never imply working automatic updates.
-- Keep electron-updater in Electron main only and enabled only for configured installer releases; pause during recording and require explicit restart to protect unsaved captures.
 - Capture files/results must stay in tab memory with no persistence or outbound reporting; clear on pagehide to prevent back/forward cache restoration and mark capture views/portals private for recorder defense in depth.
-- The desktop renderer uses its own classic three-pane workspace (`desktop-workspace.tsx`) while the hosted site keeps the beginner workspace; both share `src/lib/netlens` analysis.
-- Capture options are validated in Electron main against discovered interfaces and turned into spawn arguments (never a shell); ring-buffer output paths and privileged setup scripts are fixed in main, never supplied by the renderer.
+- Keep Pktivo browser-only: Wireshark records traffic externally and the web workspace inspects saved files; no native capture bridge or desktop packaging is needed.

@@ -1,28 +1,5 @@
-# Pktivo completion
-- [x] Pop-up notice on entry stating the project is fully AI-built, results are not guaranteed, and updates continue
-- [x] Save Learn completion on this device across closing and reopening tabs, independently of capture privacy
-- [x] Verify tab-only capture lifecycle, no capture requests/storage writes, and accurate privacy disclaimer
-- [ ] Disable published visitor analytics — blocked because the platform setting cannot be changed by the agent on this project
-- [x] Dedicated Downloads page and navigation button
-- [x] Updated Windows/macOS archives and Debian/Ubuntu + Arch packages served in the app
-- [x] Safe automatic-update integration and release setup documentation
-- [x] Verify all five actual downloads, checksums, package contents, and updater safety
-- [ ] Activate and test automatic installer updates — blocked by a public release host, signed Windows/macOS release credentials and native release environments
-- [x] Beginner overview and automatic suspicious-traffic explanations with tests
-- [x] Separate networking and usage learning tab
-- [x] Optional strictly local assistant and privacy boundary tests
-- [x] Verify browser workflows on desktop and mobile
-- [ ] Real local-model answer in Electron — blocked by no installed Ollama/model and unavailable native desktop session; current downloads include local help
-- [x] Packet workspace, demo traffic, filters, details, bytes, stream and statistics
-- [x] Secure Electron shell and live capture bridge (existing capture-tool permissions required)
-- [x] Windows x64, macOS Intel/Apple Silicon and Linux x64 portable preview packages
-- [x] Nine automated tests and desktop/mobile workflow checks; offline renderer verified
-- [ ] Native launch and live capture on target operating systems — blocked by unavailable Windows/macOS machines and root-only Linux sandbox
-- [ ] Signed/notarized installers — blocked by signing credentials and target-platform signing environment
-- [x] Rename website, refreshed desktop packages and download checksums to Pktivo
-- [x] Top bar Learn button plus hamburger menu holding themes, downloads and help
-- [x] Pronunciation note ("packet-ee-vo") in the analyzer, Learn and Downloads footers
-- [x] Debian and Arch packages launchable: world-readable app folder, terminal launcher, menu icon, refresh on install
-- [x] Remove 'remove earlier copy' step from Debian/Arch instructions
-- [x] Wireshark-style desktop window: menus, toolbar, 3 panes, capture filters, stop conditions, multiple interfaces, ring buffer, setup checker with one-click setup; 0.3.0 downloads
-- [x] 0.3.1 polish: one-click Stop, smooth batched live list, no disappearing rows
+# Pktivo web-only transition
+- [x] Remove desktop apps, packaging, downloads, update controls and local desktop help
+- [x] Replace desktop references with visible Wireshark installation and capture instructions
+- [x] Preserve browser-only capture privacy, themes and saved Learn progress
+- [x] Verify file opening, capture instructions, navigation and mobile layout

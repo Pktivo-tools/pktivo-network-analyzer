@@ -309,43 +309,6 @@ progress { accent-color: var(--primary); } progress::-webkit-progress-bar { back
 .packet-journey span { display: flex; align-items: center; gap: 8px; font-size: 12px; }
 .packet-journey svg { width: 20px; flex-shrink: 0; }
 .journey-message { padding: 10px; border: 1px dashed var(--primary); }
-.download-header { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 20px 26px; border-bottom: 1px solid var(--border); }
-.download-intro,.download-footer { max-width: 1160px; margin: 0 auto; padding: 32px 26px; }
-.download-grid { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); max-width: 1160px; margin: 0 auto; gap: 16px; padding: 0 26px; }
-.download-item { border: 1px solid var(--border); padding: 22px; border-radius: 6px; min-width: 0; }
-@media(max-width:1000px) { .download-grid { grid-template-columns: repeat(2,minmax(0,1fr)); } }
-@media(max-width:600px) { .download-header { padding: 16px; flex-wrap: wrap; } .download-header .brand { font-size: 23px; } .download-intro,.download-footer { padding: 26px 16px; } .download-grid { grid-template-columns: 1fr; padding: 0 16px; } }
 @media(max-width:760px) { .guide-section { padding: 8px 16px 28px; } .finding-item { padding: 16px; } .packet-journey { gap: 6px; } .packet-journey span { flex-direction: column; } .workspace-heading h1 { max-width: 100%; } .mobile-nav button[aria-current] { color: var(--primary); } }
 
 /* Desktop classic (Wireshark-style) workspace */
-.ws-shell { display:flex; flex-direction:column; height:100dvh; overflow:hidden; background:var(--background); color:var(--foreground); font-family:var(--font-sans); }
-.ws-menubar { border-radius:0; border-width:0 0 1px; height:30px; padding:0 4px; background:var(--muted); }
-.ws-menubar button { font-size:12.5px; padding:2px 8px; }
-.ws-toolbar { display:flex; align-items:center; gap:1px; padding:2px 6px; border-bottom:1px solid var(--border); background:var(--muted); flex-wrap:wrap; }
-.ws-sep { width:1px; height:18px; margin:0 5px; background:var(--border); }
-.ws-filter { display:flex; align-items:center; gap:6px; margin:4px 6px; padding:2px 6px; border:1px solid var(--border); border-radius:4px; background:var(--background); font-size:0.95em; }
-.ws-filter-ok { background:color-mix(in oklch, var(--proto-http) 14%, var(--background)); border-color:color-mix(in oklch, var(--proto-http) 50%, var(--border)); }
-.ws-filter-bad { background:color-mix(in oklch, var(--destructive) 14%, var(--background)); border-color:var(--destructive); }
-.ws-find { display:flex; align-items:center; gap:6px; padding:3px 8px; border-bottom:1px solid var(--border); font-size:0.95em; }
-.ws-msg { padding:4px 10px; font-size:0.9em; border-bottom:1px solid var(--border); }
-.ws-panes { flex:1; min-height:0; }
-.ws-panes [data-separator], .ws-panes [role="separator"] { height:5px !important; width:100% !important; background:var(--border); cursor:row-resize; }
-.ws-list { height:100%; overflow:auto; font-family:var(--font-mono); font-size:0.88em; }
-.ws-row { position:absolute; left:0; right:0; height:20px; display:grid; grid-template-columns:64px 110px minmax(130px,1fr) minmax(130px,1fr) 80px 64px 4fr; align-items:center; cursor:default; white-space:nowrap; min-width:900px; }
-.ws-row > span { padding:0 6px; overflow:hidden; text-overflow:ellipsis; }
-.ws-head { position:sticky; top:0; z-index:2; background:var(--muted); font-family:var(--font-sans); font-weight:500; border-bottom:1px solid var(--border); color:var(--muted-foreground); }
-.ws-c-tcp { background:color-mix(in oklch, var(--proto-tcp) 12%, var(--background)); }
-.ws-c-udp { background:color-mix(in oklch, var(--proto-udp) 14%, var(--background)); }
-.ws-c-http { background:color-mix(in oklch, var(--proto-http) 18%, var(--background)); }
-.ws-c-tls { background:color-mix(in oklch, var(--proto-tls) 13%, var(--background)); }
-.ws-c-dns { background:color-mix(in oklch, var(--proto-dns) 16%, var(--background)); }
-.ws-c-quic { background:color-mix(in oklch, var(--proto-quic) 12%, var(--background)); }
-.ws-c-arp, .ws-c-dhcp { background:color-mix(in oklch, var(--proto-dns) 9%, var(--background)); }
-.ws-c-icmp { background:color-mix(in oklch, var(--proto-udp) 22%, var(--background)); }
-.ws-c-alert { background:color-mix(in oklch, var(--destructive) 75%, var(--background)); color:var(--primary-foreground); }
-.ws-marked { background:var(--foreground) !important; color:var(--background) !important; }
-.ws-sel { background:var(--primary) !important; color:var(--primary-foreground) !important; }
-.ws-pane { height:100%; overflow:auto; }
-.ws-status { display:flex; align-items:center; gap:14px; height:24px; padding:0 8px; border-top:1px solid var(--border); background:var(--muted); font-size:0.85em; color:var(--muted-foreground); white-space:nowrap; overflow:hidden; }
-.ws-welcome { height:100%; overflow:auto; padding:24px 32px; display:flex; flex-direction:column; gap:22px; max-width:900px; font-size:0.95em; }
-.ws-wh { font-weight:600; margin-bottom:8px; color:var(--primary); }

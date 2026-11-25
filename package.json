@@ -11,10 +11,7 @@
     "lint": "eslint .",
     "format": "prettier --write .",
     "test": "vitest run",
-    "test:watch": "vitest",
-    "desktop:build": "vite build --config electron/vite.config.ts && bun run desktop:updater",
-    "desktop:updater": "bun build node_modules/electron-updater/out/main.js --target=node --format=cjs --external=electron --outfile=electron/updater-runtime.cjs",
-    "desktop:package": "electron-packager . Pktivo --platform=linux --arch=x64 --out=electron-release --overwrite --no-prune --no-asar --electron-version=39.2.7 --ignore=\"^/(node_modules|src|public|electron-release|.git|.workspace|.lovable|.oj-cache)(/|$)\""
+    "test:watch": "vitest"
   },
   "overrides": {
     "rolldown": "1.2.1"
@@ -58,7 +55,6 @@
     "clsx": "^2.1.1",
     "cmdk": "^1.1.1",
     "date-fns": "^4.1.0",
-    "electron-updater": "^6.8.11",
     "embla-carousel-react": "^8.6.0",
     "input-otp": "^1.4.2",
     "lucide-react": "^0.575.0",
@@ -77,7 +73,6 @@
     "zod": "^3.25.76"
   },
   "devDependencies": {
-    "@electron/packager": "^20.3.0",
     "@eslint/js": "^9.32.0",
     "@lovable.dev/vite-tanstack-config": "2.27.1",
     "@testing-library/jest-dom": "^6.6.0",
@@ -86,7 +81,6 @@
     "@types/react": "^19.2.0",
     "@types/react-dom": "^19.2.0",
     "@vitejs/plugin-react": "^5.2.0",
-    "electron": "39.2.7",
     "eslint": "^9.32.0",
     "eslint-config-prettier": "^10.1.1",
     "eslint-plugin-prettier": "^5.2.6",
@@ -101,7 +95,5 @@
     "vite": "8.1.5",
     "vitest": "^4.1.10"
   },
-  "main": "electron/main.cjs",
-  "version": "0.3.1",
-  "productName": "Pktivo"
+  "version": "0.3.1"
 }
