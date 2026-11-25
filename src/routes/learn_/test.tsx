@@ -1,5 +1,9 @@
 import { createFileRoute, Link } from '@tanstack/react-router';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
+import { useServerFn } from '@tanstack/react-start';
+import { Sparkles } from 'lucide-react';
+import { suggestLessons } from '@/lib/learn/revisit.functions';
+import type { Suggestion } from '@/lib/learn/revisit';
 import { ArrowLeft, Check, ClipboardCheck, RotateCcw, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { PktivoLogo } from '@/components/pktivo-logo';
@@ -13,8 +17,8 @@ export const Route = createFileRoute('/learn_/test')({
   component: TestPage,
 });
 
-type Item = Quiz & { module: string; level: string };
-const bank: Item[] = curriculum.flatMap(l => l.modules.flatMap(m => questionsFor(m.id, m.quiz).map(q => ({ ...q, module: m.title, level: l.name }))));
+type Item = Quiz & { module: string; moduleId: string; level: string };
+const bank: Item[] = curriculum.flatMap(l => l.modules.flatMap(m => questionsFor(m.id, m.quiz).map(q => ({ ...q, module: m.title, moduleId: m.id, level: l.name }))));
 
 function shuffle<T>(a: T[]): T[] { const b = [...a]; for (let i = b.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [b[i], b[j]] = [b[j]!, b[i]!]; } return b; }
 
@@ -46,9 +50,30 @@ function TestPage() {
       {finished && <>
         <h1 className="mt-3 text-3xl font-semibold">{qs.length - wrong.length} / {qs.length} correct</h1>
         <p className="mt-2 text-muted-foreground">{wrong.length === 0 ? 'Perfect score — try a harder level next.' : (qs.length - wrong.length) / qs.length >= 0.8 ? 'Great work. Reread the topics below to close the gaps.' : 'Keep going — reread these topics and try again.'}</p>
+        {wrong.length > 0 && <RevisitSuggestions key={seed} wrong={wrong} />}
         {wrong.length > 0 && <ul className="mt-5 space-y-2">{wrong.map(w => <li key={w.q} className="rounded-md border p-3 text-sm"><span className="text-xs text-muted-foreground">Reread: {w.level} · {w.module}</span><span className="mt-1 block">{w.q}</span><span className="mt-1 block text-primary">Answer: {w.choices[w.answer]}</span></li>)}</ul>}
         <div className="mt-6 flex gap-2"><Button onClick={() => start(scope)}><RotateCcw />Try again</Button><Button variant="outline" onClick={() => setScope(null)}>Pick another level</Button><Button asChild variant="ghost"><Link to="/learn">Back to reading</Link></Button></div>
       </>}
     </main>
   </div>;
+}
+
+function RevisitSuggestions({ wrong }: { wrong: Item[] }) {
+  const ask = useServerFn(suggestLessons);
+  const [state, setState] = useState<{ lessons?: Suggestion[]; error?: string }>({});
+  useEffect(() => {
+    let live = true;
+    ask({ data: { missed: wrong.map(w => ({ moduleId: w.moduleId, question: w.q, chosen: '', correct: w.choices[w.answer] ?? '' })) } })
+      .then(r => { if (live) setState(r.lessons.length ? { lessons: r.lessons } : { error: r.error ?? 'No suggestions this time.' }); })
+      .catch(() => { if (live) setState({ error: 'Suggestions are unavailable right now.' }); });
+    return () => { live = false; };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+  return <section className="mt-5 rounded-lg border border-primary/40 bg-accent/40 p-4" aria-live="polite">
+    <h2 className="flex items-center gap-2 text-sm font-semibold"><Sparkles className="size-4 text-primary" />Lessons to revisit</h2>
+    {!state.lessons && !state.error && <p className="mt-2 text-sm text-muted-foreground">Looking at your missed questions…</p>}
+    {state.error && <p className="mt-2 text-sm text-muted-foreground">{state.error} Use the list below instead.</p>}
+    {state.lessons && <ol className="mt-2 space-y-2">{state.lessons.map(l => <li key={l.moduleId} className="text-sm"><span className="font-medium">{l.level} · {l.title}</span><span className="block text-muted-foreground">{l.reason}</span></li>)}</ol>}
+    <p className="mt-3 text-xs text-muted-foreground">Suggested by AI from the questions you missed — only the quiz questions are sent, nothing else. It can be wrong.</p>
+  </section>;
 }
