@@ -1,3 +1,5 @@
+import { advancedSubnetLessons, subnetScenarios } from './subnetting-advanced';
+
 export function ipv4Number(ip: string): number {
   const parts = ip.trim().split('.');
   if (parts.length !== 4 || parts.some(p => !/^\d{1,3}$/.test(p) || Number(p) > 255)) throw new Error('Enter four numbers from 0 to 255, separated by dots.');
@@ -59,12 +61,18 @@ export const subnetLessons = [
       { heading: '/31 and /32 exceptions', body: 'On a supported point-to-point link, /31 uses both addresses as endpoints under RFC 3021; there is no directed broadcast. A /32 describes exactly one address, commonly a loopback or host route, and has no broadcast address. Do not apply the ordinary minus-two rule to these prefixes.' },
       { heading: 'Summarize only compatible blocks', body: 'Adjacent networks can be summarized when they share the leading bits and align to the summary boundary. 192.168.0.0/24 and 192.168.1.0/24 fit 192.168.0.0/23. But 192.168.1.0/24 and 192.168.2.0/24 do not form one exact /23. Summaries that include extra addresses can route traffic somewhere unintended.' },
     ], example: '/30: 2 ordinary hosts · /31: 2 point-to-point endpoints · /32: 1 address', takeaway: 'Check boundaries and prefix exceptions before choosing an answer.' },
+  ...advancedSubnetLessons,
 ];
 
-export type PracticeLevel = 'Beginner' | 'Intermediate' | 'Advanced';
-export interface SubnetQuestion { prompt: string; answer: string; hint: string; explanation: string }
+export type PracticeLevel = 'Beginner' | 'Intermediate' | 'Advanced' | 'Professional';
+export interface SubnetQuestion { prompt: string; answer: string; hint: string; explanation: string; lessonId?: string; topic?: string }
 export function makeSubnetQuestion(level: PracticeLevel, random: () => number = Math.random): SubnetQuestion {
   const pick = (n: number) => Math.min(n - 1, Math.max(0, Math.floor(random() * n)));
+  if (level === 'Professional') {
+    const question = subnetScenarios[pick(subnetScenarios.length)];
+    if (!question) throw new Error('Missing subnetting scenario.');
+    return question;
+  }
   const prefix = level === 'Beginner' ? 24 + pick(5) : level === 'Intermediate' ? 20 + pick(11) : 16 + pick(15);
   const ip = `192.168.${pick(256)}.${1 + pick(254)}`;
   const result = subnet(ip, prefix);
@@ -79,6 +87,24 @@ export function makeSubnetQuestion(level: PracticeLevel, random: () => number = 
 }
 
 export function checkSubnetAnswer(input: string, expected: string): boolean {
-  const normalized = input.trim();
+  const normalized = input.trim().toLowerCase();
   return expected.startsWith('/') ? normalized.replace(/^\//, '') === expected.slice(1) : normalized === expected;
+}
+
+export const SUBNET_EXAM_LENGTH = 20;
+/** Unique, shuffled original scenarios. No Cisco exam questions or scores implied. */
+export function createSubnetExam(random: () => number = Math.random): SubnetQuestion[] {
+  const questions = [...subnetScenarios];
+  for (let i = questions.length - 1; i > 0; i--) {
+    const j = Math.min(i, Math.max(0, Math.floor(random() * (i + 1))));
+    const a = questions[i], b = questions[j];
+    if (a && b) { questions[i] = b; questions[j] = a; }
+  }
+  return questions.slice(0, SUBNET_EXAM_LENGTH);
+}
+
+export function gradeSubnetExam(questions: SubnetQuestion[], answers: string[]) {
+  const review = questions.map((question, i) => ({ question, answer: answers[i] ?? '', correct: checkSubnetAnswer(answers[i] ?? '', question.answer) }));
+  const correct = review.filter(item => item.correct).length;
+  return { correct, total: questions.length, percent: questions.length ? Math.round(correct / questions.length * 100) : 0, review };
 }

@@ -23,3 +23,8 @@
 # Networking glossary
 - [x] Add a searchable beginner-friendly glossary of Wireshark and networking terms
 - [x] Link the glossary from the courses and packet viewer and verify navigation and sitemap inclusion
+
+# Deeper subnetting learning
+- [x] Expand reading with troubleshooting, route summarization, wildcard masks, IPv6 and a VLSM design lab
+- [x] Add professional scenario practice and a separate mixed subnetting exam with end-of-test review
+- [x] Test question answers, saved progress and the complete exam on desktop and phone

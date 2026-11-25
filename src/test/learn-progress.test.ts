@@ -5,8 +5,8 @@ describe('saved Learn progress', () => {
   it('saves subnetting completion separately from the existing course modules', () => {
     let saved = '';
     const storage = { getItem: () => saved || null, setItem: (_key: string, value: string) => { saved = value; } };
-    saveLearnProgress(storage, new Set(['subnet-ipv4', 'subnet-vlsm', 'what-is-network', 'private-capture']));
-    expect([...readLearnProgress(storage)]).toEqual(['subnet-ipv4', 'subnet-vlsm', 'what-is-network']);
+    saveLearnProgress(storage, new Set(['subnet-ipv4', 'subnet-vlsm', 'subnet-capstone', 'subnet-ipv6', 'what-is-network', 'private-capture']));
+    expect([...readLearnProgress(storage)]).toEqual(['subnet-ipv4', 'subnet-vlsm', 'subnet-capstone', 'subnet-ipv6', 'what-is-network']);
   });
   it('keeps completed modules when the tab closes and a new visit reads storage', () => {
     const data = new Map<string, string>();
