@@ -8,6 +8,7 @@ import { questionsFor } from '@/lib/learn/course';
 import type { Quiz } from '@/lib/learn/curriculum';
 
 export const Route = createFileRoute('/learn_/test')({
+  staticData: { sitemap: true },
   head: () => ({ meta: [{ title: 'Networking test — Pktivo Learn' }, { name: 'description', content: 'Test yourself with questions from the Pktivo networking reading course, from beginner to CCNA level.' }, { property: 'og:title', content: 'Networking test — Pktivo Learn' }, { property: 'og:description', content: 'Questions from every level of the reading course, with explanations.' }, { property: 'og:type', content: 'website' }, { name: 'twitter:card', content: 'summary' }] }),
   component: TestPage,
 });

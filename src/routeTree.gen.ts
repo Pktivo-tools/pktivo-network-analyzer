@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as LearnRouteImport } from './routes/learn'
+import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as LearnTestRouteImport } from './routes/learn_/test'
 
 const IndexRoute = IndexRouteImport.update({
@@ -23,6 +24,11 @@ const LearnRoute = LearnRouteImport.update({
   path: '/learn',
   getParentRoute: () => rootRouteImport,
 } as any)
+const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
+  id: '/sitemap.xml',
+  path: '/sitemap.xml',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const LearnTestRoute = LearnTestRouteImport.update({
   id: '/learn_/test',
   path: '/learn/test',
@@ -32,30 +38,34 @@ const LearnTestRoute = LearnTestRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/learn': typeof LearnRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/learn/test': typeof LearnTestRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/learn': typeof LearnRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/learn/test': typeof LearnTestRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/learn': typeof LearnRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/learn_/test': typeof LearnTestRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/learn' | '/learn/test'
+  fullPaths: '/' | '/learn' | '/sitemap.xml' | '/learn/test'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/learn' | '/learn/test'
-  id: '__root__' | '/' | '/learn' | '/learn_/test'
+  to: '/' | '/learn' | '/sitemap.xml' | '/learn/test'
+  id: '__root__' | '/' | '/learn' | '/sitemap.xml' | '/learn_/test'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   LearnRoute: typeof LearnRoute
+  SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   LearnTestRoute: typeof LearnTestRoute
 }
 
@@ -75,6 +85,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LearnRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/sitemap.xml': {
+      id: '/sitemap.xml'
+      path: '/sitemap.xml'
+      fullPath: '/sitemap.xml'
+      preLoaderRoute: typeof SitemapDotxmlRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/learn_/test': {
       id: '/learn_/test'
       path: '/learn/test'
@@ -88,6 +105,7 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   LearnRoute: LearnRoute,
+  SitemapDotxmlRoute: SitemapDotxmlRoute,
   LearnTestRoute: LearnTestRoute,
 }
 export const routeTree = rootRouteImport
