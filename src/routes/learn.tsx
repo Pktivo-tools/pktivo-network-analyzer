@@ -10,7 +10,7 @@ import { readLearnProgress, saveLearnProgress } from '@/lib/learn/progress';
 
 export const Route = createFileRoute('/learn')({
   staticData: { sitemap: true },
-  head: () => ({ meta: [{ title: 'Learn networking with Pktivo — beginner to CCNA' }, { name: 'description', content: 'A free networking learning path from beginner to professional, covering every CCNA 200-301 exam domain with quizzes and Cisco commands.' }, { property: 'og:title', content: 'Learn networking — beginner to CCNA' }, { property: 'og:description', content: 'Four levels, 22 reading modules, a separate test and Cisco IOS commands to prepare for the CCNA exam.' }, { property: 'og:type', content: 'website' }, { name: 'twitter:card', content: 'summary_large_image' }] }),
+  head: () => ({ meta: [{ title: 'Learn networking with Pktivo — beginner to CCNA' }, { name: 'description', content: 'A free networking learning path from beginner to professional, covering every CCNA 200-301 exam domain with quizzes and Cisco commands.' }, { property: 'og:title', content: 'Learn networking with Pktivo — beginner to CCNA' }, { property: 'og:description', content: 'Four levels, 22 reading modules, a separate test and Cisco IOS commands to prepare for the CCNA exam.' }, { property: 'og:type', content: 'website' }, { property: 'og:url', content: 'https://pktivo.com/learn' }, { name: 'twitter:card', content: 'summary_large_image' }] }),
   component: LearnPage,
 });
 
