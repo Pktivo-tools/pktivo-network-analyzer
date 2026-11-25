@@ -9,3 +9,8 @@
 - [x] Add Google's verification tag; preserve existing public sitemap
 - [x] Publish with approval and confirm live verification tag and sitemap
 - [x] Verify ownership, add the property and submit its sitemap
+
+# Beginner capture guide
+- [x] Add a public beginner guide with packet columns, conversations, filters and cautious warning explanations
+- [x] Link the guide from the workspace and link to the course and practice test
+- [x] Verify navigation, mobile layout and sitemap inclusion

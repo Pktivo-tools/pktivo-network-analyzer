@@ -37,3 +37,4 @@ use the editor.
 - Capture files/results must stay in tab memory with no persistence or outbound reporting; clear on pagehide to prevent back/forward cache restoration and mark capture views/portals private for recorder defense in depth.
 - Keep Pktivo browser-only: Wireshark records traffic externally and the web workspace inspects saved files; no native capture bridge or desktop packaging is needed.
 - Derive sitemap URLs from explicit route inclusion decisions so public pages stay discoverable without listing private capture data; omit lastmod without authoritative page timestamps.
+- Keep capture-reading guides in public static routes with illustrative examples independent of capture state, so educational pages cannot expose private traffic.
