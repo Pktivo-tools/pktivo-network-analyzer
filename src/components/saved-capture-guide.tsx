@@ -1,13 +1,17 @@
-import { ExternalLink, FolderOpen, Radio } from 'lucide-react';
+import { ChevronDown, ExternalLink, FolderOpen, Radio } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 export function SavedCaptureGuide({onOpen,disabled,expanded=false}:{onOpen:()=>void;disabled:boolean;expanded?:boolean}) {
-  return <section aria-label="Capture with Wireshark" className={expanded?'space-y-4':'mx-4 mb-4 border-y bg-muted/30 px-3 py-4 sm:mx-6 sm:px-4'}>
-    <div className="flex flex-wrap items-start justify-between gap-3">
-      <div className="flex min-w-0 flex-1 items-start gap-3"><Radio className="mt-0.5 size-5 shrink-0 text-primary"/><div><h2 className="text-sm font-semibold">Capture in Wireshark. Analyze in Pktivo.</h2><p className="mt-1 text-xs leading-5 text-muted-foreground">Install Wireshark to record your network traffic, then open the saved file here. Pktivo runs in your browser—no Pktivo app to install.</p></div></div>
+  return <section aria-label="Capture with Wireshark" className={expanded?'space-y-4':'mx-4 mb-3 border-y sm:mx-6'}>
+    <details open={expanded} className="group text-sm">
+      <summary className="flex cursor-pointer list-none items-center gap-3 py-3 [&::-webkit-details-marker]:hidden">
+        <span className="flex size-9 shrink-0 items-center justify-center rounded-md bg-accent text-primary"><Radio className="size-4"/></span>
+        <span className="min-w-0 flex-1"><span className="block text-sm font-medium">Capture with Wireshark</span><span className="mt-0.5 block text-xs text-muted-foreground">Record there. Open your saved file here.</span></span>
+        <ChevronDown className="size-4 shrink-0 text-muted-foreground transition-transform group-open:rotate-180"/>
+      </summary>
+      <div className="space-y-3 border-t py-4 leading-6">
+      <p className="text-xs leading-5 text-muted-foreground">Install Wireshark to record new traffic. Pktivo reads saved captures in your browser—no Pktivo app to install.</p>
       <Button asChild variant="outline" size="sm"><a href="https://www.wireshark.org/download.html" target="_blank" rel="noopener noreferrer"><ExternalLink/>Install Wireshark</a></Button>
-    </div>
-    <details open={expanded} className="mt-3 text-sm"><summary className="w-fit cursor-pointer text-xs font-medium text-primary">How to record and open a capture</summary><div className="mt-3 space-y-3 leading-6">
       <ol className="list-decimal space-y-2 pl-5">
         <li>Install Wireshark for Windows, macOS or Linux from the official website. On Windows, also install Npcap when prompted. On macOS, install the included ChmodBPF package; on Linux, enable capture permissions for your user when prompted, then sign out and back in.</li>
         <li>Open Wireshark and double-click your active Wi-Fi or Ethernet connection. Record only traffic you have permission to capture.</li>
