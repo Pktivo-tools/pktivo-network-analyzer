@@ -136,6 +136,7 @@ gtag("consent", "default", {
       { title: "Pktivo — Private browser packet analyzer" },
       { name: "description", content: "Pktivo is a private, browser-based network packet analyzer for saved Wireshark PCAP and PCAPNG captures." },
       { name: "author", content: "Pktivo" },
+      { name: "google-site-verification", content: "Vx3GrQR5of_l680TLpYoClFk0AAb_h4--1_H-2kNvIM" },
       { property: "og:title", content: "Pktivo — Private browser packet analyzer" },
       { property: "og:description", content: "Open saved Wireshark captures and inspect packets privately in your browser." },
       { property: "og:type", content: "website" },
