@@ -1,3 +1,4 @@
+import { ThirdPartyNotice } from '@/components/third-party-notice';
 import { createFileRoute, Link } from '@tanstack/react-router';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { ArrowLeft, Copy, FileUp, GitCompare, Network, Radar, ScrollText, ShieldCheck, TerminalSquare, X } from 'lucide-react';
@@ -59,7 +60,7 @@ function ScanMapPage() {
         <TabsContent value="simulator" className="mt-4"><Simulator /></TabsContent>
         <TabsContent value="scripts" className="mt-4"><Playbook scan={scan} /></TabsContent>
       </Tabs>
-      <footer className="mt-10 border-t pt-6"><PktivoPronunciation className="text-xs" /><p className="mt-2 text-xs text-muted-foreground">Independent tool, not affiliated with the Nmap Project. Port hints are clues, not proof.</p></footer>
+      <footer className="mt-10 border-t pt-6"><PktivoPronunciation className="text-xs" /><ThirdPartyNotice tools={['nmap','wireshark']} className="mt-2" /><p className="mt-1 text-xs text-muted-foreground">Port hints are clues, not proof.</p></footer>
     </main>
   </div>;
 }

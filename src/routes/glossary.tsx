@@ -1,3 +1,4 @@
+import { ThirdPartyNotice } from '@/components/third-party-notice';
 import { createFileRoute, Link } from '@tanstack/react-router';
 import { useState } from 'react';
 import { ArrowLeft, BookOpen, ClipboardCheck, FileSearch, GraduationCap, Network, Search, X } from 'lucide-react';
@@ -37,7 +38,7 @@ function GlossaryPage() {
       <p role="status" className="mt-4 text-xs text-muted-foreground">{terms.length} of {glossaryTerms.length} terms</p>
       <dl className="mt-4 divide-y">{terms.map(term => <div key={term.name} className="grid gap-3 py-6 sm:grid-cols-[13rem_1fr] sm:gap-6"><dt><span className="block text-lg font-medium">{term.name}</span><span className="mt-1 block text-xs text-primary">{term.category}</span></dt><dd className="min-w-0"><p className="text-sm leading-7">{term.meaning}</p><p className="mt-2 border-l-2 border-border pl-3 text-sm leading-6 text-muted-foreground"><span className="font-medium">Example: </span>{term.example}</p></dd></div>)}</dl>
       {!terms.length && <div className="py-12 text-center"><h2 className="font-medium">No matching terms</h2><Button className="mt-4" variant="outline" onClick={() => { setQuery(''); setCategory('All'); }}>Show all terms</Button></div>}
-      <footer className="mt-8 border-t pt-6"><PktivoPronunciation className="text-xs" /><p className="mt-2 text-xs text-muted-foreground">Independent educational reference. Warnings are clues, not proof; always consider capture settings and context.</p></footer>
+      <footer className="mt-8 border-t pt-6"><PktivoPronunciation className="text-xs" /><p className="mt-2 text-xs text-muted-foreground">Independent educational reference. Warnings are clues, not proof; always consider capture settings and context.</p><ThirdPartyNotice tools={['wireshark','nmap']} className="mt-2" /></footer>
     </main>
   </div>;
 }

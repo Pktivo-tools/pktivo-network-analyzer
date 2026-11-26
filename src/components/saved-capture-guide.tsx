@@ -1,3 +1,4 @@
+import { ThirdPartyNotice } from '@/components/third-party-notice';
 import { ChevronDown, ExternalLink, FolderOpen, Radio } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
@@ -19,6 +20,7 @@ export function SavedCaptureGuide({onOpen,disabled,expanded=false}:{onOpen:()=>v
         <li>Return here, click <strong>Open file</strong> (the folder icon on mobile), and choose your saved file. You can also drag it onto Pktivo.</li>
       </ol>
       <p className="text-xs text-muted-foreground">Already have a .pcap or .pcapng file? Open it directly—Wireshark is only needed to record new traffic. The sample capture works without installing anything. Your file is read privately on this device, not uploaded.</p>
+      <ThirdPartyNotice tools={['wireshark']} />
       <Button variant="outline" size="sm" disabled={disabled} onClick={onOpen}><FolderOpen/>Choose a capture file</Button>
     </div></details>
   </section>;

@@ -1,3 +1,4 @@
+import { ThirdPartyNotice } from '@/components/third-party-notice';
 import { createFileRoute, Link } from '@tanstack/react-router';
 import { ArrowLeft, FileUp, Filter, Layers, ShieldCheck } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -35,6 +36,6 @@ function PcapAnalyzerPage() {
       <section className="mt-14 rounded-lg border bg-card p-6"><h2 className="flex items-center gap-2 text-xl font-semibold"><ShieldCheck className="size-5 text-primary" />Private by design</h2><p className="mt-3 leading-7 text-muted-foreground">Your capture is read only inside this browser tab. It is never uploaded or saved, and it is cleared from memory when you close the tab.</p></section>
       <section className="mt-14"><h2 className="text-xl font-semibold">Recording a capture</h2><p className="mt-3 leading-7 text-muted-foreground">Pktivo doesn't record traffic itself. Install Wireshark, start a capture on your network interface, stop it, and save the file. Then open that file here. If you're new to networking, the <Link to="/learn" className="text-primary underline">Learn course</Link> explains the basics.</p></section>
     </main>
-    <footer className="border-t py-6 text-center text-xs text-muted-foreground"><PktivoPronunciation /></footer>
+    <footer className="border-t py-6 text-center text-xs text-muted-foreground"><PktivoPronunciation /><ThirdPartyNotice tools={['wireshark']} className="mx-auto mt-2 max-w-2xl" /></footer>
   </div>;
 }

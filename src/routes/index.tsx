@@ -1,3 +1,4 @@
+import { ThirdPartyNotice } from '@/components/third-party-notice';
 import { createFileRoute, Link } from '@tanstack/react-router';
 import { ArrowRight, BookOpen, ClipboardCheck, FileSearch, GitCompare, GraduationCap, Layers, Lock, Network, Radar, ShieldCheck, Sparkles, Waypoints } from 'lucide-react';
 import type { ComponentType } from 'react';
@@ -72,7 +73,7 @@ function HomePage() {
       </div></section>
     </main>
     <footer className="border-t px-4 py-8 sm:px-8"><div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-4 text-xs text-muted-foreground">
-      <div><PktivoPronunciation className="text-xs" /><p className="mt-1">Built by AI — double-check important results. <Link to="/privacy" className="underline">Privacy</Link></p></div>
+      <div><PktivoPronunciation className="text-xs" /><p className="mt-1">Built by AI — double-check important results. <Link to="/privacy" className="underline">Privacy</Link></p><ThirdPartyNotice tools={['wireshark','nmap']} className="mt-1 max-w-xl" /></div>
       <GitHubLink label="Pktivo on GitHub" />
     </div></footer>
   </div>;
