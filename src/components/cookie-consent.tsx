@@ -3,6 +3,7 @@ import { Link } from '@tanstack/react-router';
 import { Check, ShieldCheck, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Switch } from '@/components/ui/switch';
+import { GitHubLink } from '@/components/github-link';
 import { needsAnswer, onConsentChange, readChoice, saveChoices, type Choice } from '@/lib/consent';
 
 const PURPOSES = ['analytics'] as const;
@@ -66,7 +67,8 @@ export function CookieConsent() {
   }
 
   if (!open) {
-    return <div className="flex justify-end border-t bg-background px-3 py-2">
+    return <div className="flex items-center justify-between gap-2 border-t bg-background px-3 py-2">
+      <GitHubLink className="-ml-2" />
       <div role="status" aria-live="polite" aria-atomic="true" className="fixed bottom-14 right-3 z-50 max-w-[calc(100%-1.5rem)]">
         {saved && <p className="flex items-center gap-2 rounded-md border bg-background px-3 py-2 text-xs text-foreground shadow-md"><Check aria-hidden="true" className="size-4 shrink-0 text-primary" />Preferences saved: necessary always on; analytics {choice === 'granted' ? 'on' : 'off'}.</p>}
       </div>
