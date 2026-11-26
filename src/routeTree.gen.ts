@@ -13,6 +13,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as GlossaryRouteImport } from './routes/glossary'
 import { Route as HowToReadWiresharkCaptureRouteImport } from './routes/how-to-read-wireshark-capture'
 import { Route as LearnRouteImport } from './routes/learn'
+import { Route as PacketAnalyzerRouteImport } from './routes/packet-analyzer'
 import { Route as PcapFileAnalyzerOnlineRouteImport } from './routes/pcap-file-analyzer-online'
 import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as ScanMapRouteImport } from './routes/scan-map'
@@ -39,6 +40,11 @@ const HowToReadWiresharkCaptureRoute =
 const LearnRoute = LearnRouteImport.update({
   id: '/learn',
   path: '/learn',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PacketAnalyzerRoute = PacketAnalyzerRouteImport.update({
+  id: '/packet-analyzer',
+  path: '/packet-analyzer',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PcapFileAnalyzerOnlineRoute = PcapFileAnalyzerOnlineRouteImport.update({
@@ -77,6 +83,7 @@ export interface FileRoutesByFullPath {
   '/glossary': typeof GlossaryRoute
   '/how-to-read-wireshark-capture': typeof HowToReadWiresharkCaptureRoute
   '/learn': typeof LearnRoute
+  '/packet-analyzer': typeof PacketAnalyzerRoute
   '/pcap-file-analyzer-online': typeof PcapFileAnalyzerOnlineRoute
   '/privacy': typeof PrivacyRoute
   '/scan-map': typeof ScanMapRoute
@@ -89,6 +96,7 @@ export interface FileRoutesByTo {
   '/glossary': typeof GlossaryRoute
   '/how-to-read-wireshark-capture': typeof HowToReadWiresharkCaptureRoute
   '/learn': typeof LearnRoute
+  '/packet-analyzer': typeof PacketAnalyzerRoute
   '/pcap-file-analyzer-online': typeof PcapFileAnalyzerOnlineRoute
   '/privacy': typeof PrivacyRoute
   '/scan-map': typeof ScanMapRoute
@@ -102,6 +110,7 @@ export interface FileRoutesById {
   '/glossary': typeof GlossaryRoute
   '/how-to-read-wireshark-capture': typeof HowToReadWiresharkCaptureRoute
   '/learn': typeof LearnRoute
+  '/packet-analyzer': typeof PacketAnalyzerRoute
   '/pcap-file-analyzer-online': typeof PcapFileAnalyzerOnlineRoute
   '/privacy': typeof PrivacyRoute
   '/scan-map': typeof ScanMapRoute
@@ -116,6 +125,7 @@ export interface FileRouteTypes {
     | '/glossary'
     | '/how-to-read-wireshark-capture'
     | '/learn'
+    | '/packet-analyzer'
     | '/pcap-file-analyzer-online'
     | '/privacy'
     | '/scan-map'
@@ -128,6 +138,7 @@ export interface FileRouteTypes {
     | '/glossary'
     | '/how-to-read-wireshark-capture'
     | '/learn'
+    | '/packet-analyzer'
     | '/pcap-file-analyzer-online'
     | '/privacy'
     | '/scan-map'
@@ -140,6 +151,7 @@ export interface FileRouteTypes {
     | '/glossary'
     | '/how-to-read-wireshark-capture'
     | '/learn'
+    | '/packet-analyzer'
     | '/pcap-file-analyzer-online'
     | '/privacy'
     | '/scan-map'
@@ -153,6 +165,7 @@ export interface RootRouteChildren {
   GlossaryRoute: typeof GlossaryRoute
   HowToReadWiresharkCaptureRoute: typeof HowToReadWiresharkCaptureRoute
   LearnRoute: typeof LearnRoute
+  PacketAnalyzerRoute: typeof PacketAnalyzerRoute
   PcapFileAnalyzerOnlineRoute: typeof PcapFileAnalyzerOnlineRoute
   PrivacyRoute: typeof PrivacyRoute
   ScanMapRoute: typeof ScanMapRoute
@@ -189,6 +202,13 @@ declare module '@tanstack/react-router' {
       path: '/learn'
       fullPath: '/learn'
       preLoaderRoute: typeof LearnRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/packet-analyzer': {
+      id: '/packet-analyzer'
+      path: '/packet-analyzer'
+      fullPath: '/packet-analyzer'
+      preLoaderRoute: typeof PacketAnalyzerRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/pcap-file-analyzer-online': {
@@ -241,6 +261,7 @@ const rootRouteChildren: RootRouteChildren = {
   GlossaryRoute: GlossaryRoute,
   HowToReadWiresharkCaptureRoute: HowToReadWiresharkCaptureRoute,
   LearnRoute: LearnRoute,
+  PacketAnalyzerRoute: PacketAnalyzerRoute,
   PcapFileAnalyzerOnlineRoute: PcapFileAnalyzerOnlineRoute,
   PrivacyRoute: PrivacyRoute,
   ScanMapRoute: ScanMapRoute,

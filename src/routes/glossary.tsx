@@ -24,7 +24,7 @@ function GlossaryPage() {
   const [category, setCategory] = useState<GlossaryCategory | 'All'>('All');
   const terms = findGlossaryTerms(query, category);
   return <div className="min-h-screen bg-background text-foreground">
-    <header className="border-b px-4 py-3 sm:px-8"><div className="mx-auto flex max-w-4xl flex-wrap items-center justify-between gap-2"><Link to="/" className="flex items-center gap-2 font-semibold"><span className="size-6"><PktivoLogo /></span>pktivo<span className="text-primary">.</span></Link><Button asChild variant="ghost" size="sm"><Link to="/"><ArrowLeft />Packet viewer</Link></Button></div>
+    <header className="border-b px-4 py-3 sm:px-8"><div className="mx-auto flex max-w-4xl flex-wrap items-center justify-between gap-2"><Link to="/" className="flex items-center gap-2 font-semibold"><span className="size-6"><PktivoLogo /></span>pktivo<span className="text-primary">.</span></Link><Button asChild variant="ghost" size="sm"><Link to="/packet-analyzer"><ArrowLeft />Packet viewer</Link></Button></div>
       <nav aria-label="Courses" className="mx-auto mt-3 flex max-w-4xl gap-1 overflow-x-auto pb-1"><Button asChild variant="outline" size="sm"><Link to="/learn"><GraduationCap />Networking course</Link></Button><Button asChild variant="outline" size="sm"><Link to="/learn/subnetting"><Network />Subnetting course</Link></Button><Button asChild variant="outline" size="sm"><Link to="/learn/test"><ClipboardCheck />Practice test</Link></Button><Button asChild variant="outline" size="sm"><Link to="/how-to-read-wireshark-capture"><FileSearch />Capture guide</Link></Button></nav>
     </header>
     <main className="mx-auto max-w-4xl px-4 py-10 sm:px-8">

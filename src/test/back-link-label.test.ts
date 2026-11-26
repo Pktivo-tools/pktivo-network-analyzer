@@ -20,7 +20,7 @@ function routeFiles(dir: string): string[] {
 describe('Back-to-workspace link label', () => {
   const backLinks = routeFiles(ROUTES_DIR).flatMap(file => {
     const source = readFileSync(file, 'utf8');
-    const labels = [...source.matchAll(/<Link to="\/"><ArrowLeft \/>([^<]+)<\/Link>/g)].map(
+    const labels = [...source.matchAll(/<Link to="\/packet-analyzer"><ArrowLeft \/>([^<]+)<\/Link>/g)].map(
       match => match[1],
     );
     return labels.map(label => ({ file: file.slice(process.cwd().length + 1), label }));

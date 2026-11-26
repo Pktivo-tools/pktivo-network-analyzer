@@ -37,7 +37,7 @@ function ScanMapPage() {
   return <div className="min-h-screen bg-background text-foreground">
     <header className="border-b px-4 py-3 sm:px-6"><div className="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-2">
       <Link to="/" className="flex items-center gap-2 font-semibold"><span className="size-6"><PktivoLogo /></span>pktivo<span className="text-primary">.</span><span className="ml-1 text-muted-foreground">Scan Map</span></Link>
-      <Button asChild variant="ghost" size="sm"><Link to="/"><ArrowLeft />Packet viewer</Link></Button></div></header>
+      <Button asChild variant="ghost" size="sm"><Link to="/packet-analyzer"><ArrowLeft />Packet viewer</Link></Button></div></header>
     <main className="mx-auto max-w-7xl px-4 py-6 sm:px-6">
       <div className="flex flex-wrap items-end justify-between gap-4">
         <div><div className="flex items-center gap-2 text-sm text-primary"><Radar className="size-4" />Nmap results, visualized</div>
@@ -163,7 +163,7 @@ function Simulator() {
       <div className="mt-3 rounded-md border p-4"><div className="flex flex-wrap items-center gap-2"><h3 className="font-medium">{t.name}</h3><span className="rounded-full border px-2 text-[11px]">{t.level}</span>{t.needsRoot && <span className="rounded-full border px-2 text-[11px] text-muted-foreground">needs admin/root</span>}</div><p className="mt-1 text-sm text-muted-foreground">{t.summary}</p>
         <div className="mt-3 flex flex-wrap gap-1" aria-label="Port outcome">{t.outcomes.map((x, i) => <Button key={x.state} size="sm" className="h-7" variant={i === outcome ? 'default' : 'ghost'} onClick={() => setOutcome(i)}>If {x.state}</Button>)}</div>
         <ol className="mt-3 space-y-2" aria-label="Packet sequence">{o.steps.map((s, i) => <li key={i} className={`flex ${s.from === 'you' ? 'justify-start' : 'justify-end'}`}><div className={`max-w-[80%] rounded-md border px-3 py-2 text-sm ${s.from === 'you' ? 'bg-primary/10' : 'bg-secondary'}`}><div className="font-mono text-xs">{s.from === 'you' ? 'You → target' : 'Target → you'}: <b>{s.label}</b></div>{s.note && <div className="text-xs text-muted-foreground">{s.note}</div>}</div></li>)}</ol>
-        <p className="mt-3 text-xs text-muted-foreground">Tip: capture this with Wireshark using <code>tcp.flags.syn==1</code> and open it in the <Link to="/" className="underline">Packet viewer</Link> to see it for real.</p></div></section>
+        <p className="mt-3 text-xs text-muted-foreground">Tip: capture this with Wireshark using <code>tcp.flags.syn==1</code> and open it in the <Link to="/packet-analyzer" className="underline">Packet viewer</Link> to see it for real.</p></div></section>
     <section><h2 className="font-medium">2. Add options</h2><div className="mt-2 grid gap-1 sm:grid-cols-2">{scanOptions.map(op => <label key={op.flag} className="flex cursor-pointer items-start gap-2 rounded-md border p-2 text-sm hover:bg-muted"><input type="checkbox" className="mt-1 accent-primary" checked={flags.includes(op.flag)} onChange={e => setFlags(e.target.checked ? [...flags, op.flag] : flags.filter(f => f !== op.flag))} /><span><span className="font-mono text-xs">{op.flag}</span> {op.label}<span className="block text-xs text-muted-foreground">{op.help}</span></span></label>)}</div>
       <h2 className="mt-4 font-medium">3. Target</h2><Input className="mt-2 font-mono" value={target} onChange={e => setTarget(e.target.value)} aria-label="Scan target" />
       <CommandBox cmd={cmd} /></section>

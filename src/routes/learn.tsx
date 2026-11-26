@@ -54,7 +54,7 @@ function LearnPage() {
   const completed = curriculum.flatMap(l => l.modules).filter(m => done.has(m.id)).length;
   if (!cur) return null;
   return <div className="min-h-screen bg-background text-foreground">
-    <header className="flex items-center justify-between border-b px-4 py-3 sm:px-8"><Link to="/" className="flex items-center gap-2 font-semibold"><span className="size-6"><PktivoLogo /></span>pktivo<span className="text-primary">.</span></Link><Button asChild variant="ghost" size="sm"><Link to="/"><ArrowLeft />Packet viewer</Link></Button></header>
+    <header className="flex items-center justify-between border-b px-4 py-3 sm:px-8"><Link to="/" className="flex items-center gap-2 font-semibold"><span className="size-6"><PktivoLogo /></span>pktivo<span className="text-primary">.</span></Link><Button asChild variant="ghost" size="sm"><Link to="/packet-analyzer"><ArrowLeft />Packet viewer</Link></Button></header>
     <main className="mx-auto max-w-4xl px-4 py-10 sm:px-8">
       <div className="flex items-center gap-2 text-sm text-primary"><BookOpen className="size-4" />Learn networking</div>
       <h1 className="mt-3 text-3xl font-semibold sm:text-4xl">From zero to CCNA-ready</h1>
