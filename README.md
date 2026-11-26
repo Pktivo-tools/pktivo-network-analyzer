@@ -96,5 +96,11 @@ flagged packet is not proof of an attack. Verify anything important against the 
 
 ## License
 
-No license file has been added yet, so all rights are reserved by default. Add one before inviting
-contributions.
+Pktivo is licensed under the [Apache License, Version 2.0](LICENSE). You may use, modify and
+redistribute it, including in commercial products, as long as you keep the license notice and state
+any changes you made. The license also grants a patent licence from the people who contribute code.
+
+Contributions are welcome and are offered under the same Apache-2.0 licence, so improvements stay
+usable by everyone. The note above about AI-built results applies to contributed code as well.
+
+Copyright 2026 Pktivo
