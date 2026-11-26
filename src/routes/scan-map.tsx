@@ -48,7 +48,7 @@ function ScanMenu({ onModal }: { onModal: (m: 'nmap' | 'help') => void }) {
       <DropdownMenuLabel className="px-2 text-[11px] font-medium text-muted-foreground">Pktivo</DropdownMenuLabel>
       <DropdownMenuItem asChild className="gap-2"><Link to="/packet-analyzer" onClick={close}><Activity className="size-4" />Packet viewer (Wireshark files)</Link></DropdownMenuItem>
       <DropdownMenuItem className="gap-2" onSelect={() => { close(); onModal('nmap'); }}><Radar className="size-4" />Capture with Nmap</DropdownMenuItem>
-      <DropdownMenuItem asChild className="gap-2"><Link to="/learn" onClick={close}><BookOpen className="size-4" />Learn networking</Link></DropdownMenuItem>
+      <DropdownMenuItem asChild className="gap-2"><Link to="/learn" onClick={close}><BookOpen className="size-4" />Learn networking and subnetting</Link></DropdownMenuItem>
       <DropdownMenuItem asChild className="gap-2"><Link to="/how-to-run-nmap-scan" onClick={close}><BookOpen className="size-4" />Beginner capture guide</Link></DropdownMenuItem>
       <DropdownMenuItem asChild className="gap-2"><Link to="/glossary" onClick={close}><BookOpen className="size-4" />Networking glossary</Link></DropdownMenuItem>
       <DropdownMenuItem className="gap-2" onSelect={() => { close(); onModal('help'); }}><CircleHelp className="size-4" />Help & about</DropdownMenuItem>
