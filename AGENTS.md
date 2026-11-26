@@ -40,3 +40,4 @@ use the editor.
 - Keep capture-reading guides and networking glossaries in public static routes with illustrative examples independent of capture state, so educational pages cannot expose private traffic.
 - Keep subnet calculations, scenario banks and exam grading in browser-safe learning modules; save only validated reading completion IDs, while practice and exam attempts remain in visit memory.
 - Compute comparison summaries from independent full captures and label observed timing pairs explicitly; comparison files stay in component memory and are cleared on pagehide.
+- Keep Nmap XML parsing, scan diffing and Nmap reference data in browser-safe `src/lib/scan` modules; scan files stay in tab memory and clear on pagehide like captures.

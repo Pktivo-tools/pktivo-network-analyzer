@@ -15,6 +15,7 @@ import { Route as HowToReadWiresharkCaptureRouteImport } from './routes/how-to-r
 import { Route as LearnRouteImport } from './routes/learn'
 import { Route as PcapFileAnalyzerOnlineRouteImport } from './routes/pcap-file-analyzer-online'
 import { Route as PrivacyRouteImport } from './routes/privacy'
+import { Route as ScanMapRouteImport } from './routes/scan-map'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as LearnSubnettingRouteImport } from './routes/learn_/subnetting'
 import { Route as LearnTestRouteImport } from './routes/learn_/test'
@@ -50,6 +51,11 @@ const PrivacyRoute = PrivacyRouteImport.update({
   path: '/privacy',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ScanMapRoute = ScanMapRouteImport.update({
+  id: '/scan-map',
+  path: '/scan-map',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
   id: '/sitemap.xml',
   path: '/sitemap.xml',
@@ -73,6 +79,7 @@ export interface FileRoutesByFullPath {
   '/learn': typeof LearnRoute
   '/pcap-file-analyzer-online': typeof PcapFileAnalyzerOnlineRoute
   '/privacy': typeof PrivacyRoute
+  '/scan-map': typeof ScanMapRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/learn/subnetting': typeof LearnSubnettingRoute
   '/learn/test': typeof LearnTestRoute
@@ -84,6 +91,7 @@ export interface FileRoutesByTo {
   '/learn': typeof LearnRoute
   '/pcap-file-analyzer-online': typeof PcapFileAnalyzerOnlineRoute
   '/privacy': typeof PrivacyRoute
+  '/scan-map': typeof ScanMapRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/learn/subnetting': typeof LearnSubnettingRoute
   '/learn/test': typeof LearnTestRoute
@@ -96,6 +104,7 @@ export interface FileRoutesById {
   '/learn': typeof LearnRoute
   '/pcap-file-analyzer-online': typeof PcapFileAnalyzerOnlineRoute
   '/privacy': typeof PrivacyRoute
+  '/scan-map': typeof ScanMapRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/learn_/subnetting': typeof LearnSubnettingRoute
   '/learn_/test': typeof LearnTestRoute
@@ -109,6 +118,7 @@ export interface FileRouteTypes {
     | '/learn'
     | '/pcap-file-analyzer-online'
     | '/privacy'
+    | '/scan-map'
     | '/sitemap.xml'
     | '/learn/subnetting'
     | '/learn/test'
@@ -120,6 +130,7 @@ export interface FileRouteTypes {
     | '/learn'
     | '/pcap-file-analyzer-online'
     | '/privacy'
+    | '/scan-map'
     | '/sitemap.xml'
     | '/learn/subnetting'
     | '/learn/test'
@@ -131,6 +142,7 @@ export interface FileRouteTypes {
     | '/learn'
     | '/pcap-file-analyzer-online'
     | '/privacy'
+    | '/scan-map'
     | '/sitemap.xml'
     | '/learn_/subnetting'
     | '/learn_/test'
@@ -143,6 +155,7 @@ export interface RootRouteChildren {
   LearnRoute: typeof LearnRoute
   PcapFileAnalyzerOnlineRoute: typeof PcapFileAnalyzerOnlineRoute
   PrivacyRoute: typeof PrivacyRoute
+  ScanMapRoute: typeof ScanMapRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   LearnSubnettingRoute: typeof LearnSubnettingRoute
   LearnTestRoute: typeof LearnTestRoute
@@ -192,6 +205,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PrivacyRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/scan-map': {
+      id: '/scan-map'
+      path: '/scan-map'
+      fullPath: '/scan-map'
+      preLoaderRoute: typeof ScanMapRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/sitemap.xml': {
       id: '/sitemap.xml'
       path: '/sitemap.xml'
@@ -223,6 +243,7 @@ const rootRouteChildren: RootRouteChildren = {
   LearnRoute: LearnRoute,
   PcapFileAnalyzerOnlineRoute: PcapFileAnalyzerOnlineRoute,
   PrivacyRoute: PrivacyRoute,
+  ScanMapRoute: ScanMapRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   LearnSubnettingRoute: LearnSubnettingRoute,
   LearnTestRoute: LearnTestRoute,
