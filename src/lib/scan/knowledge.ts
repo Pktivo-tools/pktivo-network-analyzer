@@ -1,3 +1,4 @@
+import { moreScripts } from './nse-library';
 // Static, illustrative Nmap knowledge: scan types, packet sequences, options and NSE scripts.
 export type Side = 'you' | 'target';
 export interface Step { from: Side; label: string; note: string }
@@ -23,6 +24,30 @@ export const scanTypes: ScanType[] = [
     { state: 'open|filtered', steps: [{ from: 'you', label: 'FIN', note: '' }, { from: 'target', label: '(silence)', note: 'Open ports ignore it — or a firewall did.' }] } ] },
   { id: 'ping', flag: '-sn', name: 'Host discovery only', level: 'Beginner', needsRoot: false, summary: 'Finds which devices are up without scanning ports. On a local network it uses ARP; elsewhere ICMP echo, TCP 443 SYN and TCP 80 ACK.', outcomes: [
     { state: 'up', steps: [{ from: 'you', label: 'ARP who-has / ICMP echo', note: 'Is anyone at this address?' }, { from: 'target', label: 'ARP reply / echo reply', note: 'Host is up.' }] } ] },
+  { id: 'null', flag: '-sN', name: 'NULL scan', level: 'Advanced', needsRoot: true, summary: 'A TCP packet with no flags at all. Same logic as FIN: closed ports reply RST, open ports stay silent on RFC 793 systems.', outcomes: [
+    { state: 'closed', steps: [{ from: 'you', label: '(no flags)', note: 'An empty TCP header.' }, { from: 'target', label: 'RST', note: 'Closed.' }] },
+    { state: 'open|filtered', steps: [{ from: 'you', label: '(no flags)', note: '' }, { from: 'target', label: '(silence)', note: 'Open — or dropped by a firewall.' }] } ] },
+  { id: 'xmas', flag: '-sX', name: 'Xmas scan', level: 'Advanced', needsRoot: true, summary: 'Sets FIN, PSH and URG — "lit up like a Christmas tree". Same reading as FIN and NULL; easy for an IDS to spot.', outcomes: [
+    { state: 'closed', steps: [{ from: 'you', label: 'FIN/PSH/URG', note: 'Nonsense flag combination.' }, { from: 'target', label: 'RST', note: 'Closed.' }] },
+    { state: 'open|filtered', steps: [{ from: 'you', label: 'FIN/PSH/URG', note: '' }, { from: 'target', label: '(silence)', note: 'Open or filtered.' }] } ] },
+  { id: 'window', flag: '-sW', name: 'Window scan', level: 'Advanced', needsRoot: true, summary: 'Like ACK, but reads the TCP window size in the RST. On some systems a non-zero window means open.', outcomes: [
+    { state: 'open', steps: [{ from: 'you', label: 'ACK', note: '' }, { from: 'target', label: 'RST (window > 0)', note: 'Some stacks reveal open ports this way.' }] },
+    { state: 'closed', steps: [{ from: 'you', label: 'ACK', note: '' }, { from: 'target', label: 'RST (window 0)', note: 'Closed.' }] },
+    { state: 'filtered', steps: [{ from: 'you', label: 'ACK', note: '' }, { from: 'target', label: '(no reply)', note: 'Firewalled.' }] } ] },
+  { id: 'maimon', flag: '-sM', name: 'Maimon scan', level: 'Advanced', needsRoot: true, summary: 'FIN/ACK probe. Historically some BSD systems dropped it for open ports. Mostly of learning interest today.', outcomes: [
+    { state: 'closed', steps: [{ from: 'you', label: 'FIN/ACK', note: '' }, { from: 'target', label: 'RST', note: 'Closed (most systems answer RST for every port).' }] },
+    { state: 'open|filtered', steps: [{ from: 'you', label: 'FIN/ACK', note: '' }, { from: 'target', label: '(silence)', note: 'Open on old BSD stacks, or filtered.' }] } ] },
+  { id: 'idle', flag: '-sI zombie', name: 'Idle (zombie) scan', level: 'Advanced', needsRoot: true, summary: 'Blind scan through a third "zombie" host with predictable IP IDs. Your address never touches the target. Needs a suitable idle host and -Pn.', outcomes: [
+    { state: 'open', steps: [{ from: 'you', label: 'SYN/ACK → zombie', note: 'Read the zombie’s IP ID (say 100).' }, { from: 'you', label: 'SYN to target (spoofed as zombie)', note: 'Target answers the zombie.' }, { from: 'target', label: 'SYN/ACK → zombie', note: 'Zombie replies RST, IP ID becomes 101.' }, { from: 'you', label: 'SYN/ACK → zombie', note: 'IP ID is 102: it went up by 2 → port open.' }] },
+    { state: 'closed|filtered', steps: [{ from: 'you', label: 'SYN to target (spoofed)', note: '' }, { from: 'target', label: 'RST → zombie / nothing', note: 'Zombie sends nothing back.' }, { from: 'you', label: 'Check zombie IP ID', note: 'Went up by only 1 → closed or filtered.' }] } ] },
+  { id: 'sctp', flag: '-sY', name: 'SCTP INIT scan', level: 'Advanced', needsRoot: true, summary: 'The SYN scan of SCTP, used by telecom (SS7/SIGTRAN, 4G/5G cores).', outcomes: [
+    { state: 'open', steps: [{ from: 'you', label: 'INIT', note: '' }, { from: 'target', label: 'INIT-ACK', note: 'Listening.' }, { from: 'you', label: 'ABORT', note: 'Nmap tears it down.' }] },
+    { state: 'closed', steps: [{ from: 'you', label: 'INIT', note: '' }, { from: 'target', label: 'ABORT', note: 'Closed.' }] } ] },
+  { id: 'proto', flag: '-sO', name: 'IP protocol scan', level: 'Advanced', needsRoot: true, summary: 'Finds which IP protocols (TCP, UDP, ICMP, GRE, ESP…) a host supports instead of which ports.', outcomes: [
+    { state: 'open', steps: [{ from: 'you', label: 'IP packet, protocol N', note: '' }, { from: 'target', label: 'Any reply in that protocol', note: 'Supported.' }] },
+    { state: 'closed', steps: [{ from: 'you', label: 'IP packet, protocol N', note: '' }, { from: 'target', label: 'ICMP protocol unreachable', note: 'Not supported.' }] } ] },
+  { id: 'list', flag: '-sL', name: 'List scan', level: 'Beginner', needsRoot: false, summary: 'Sends nothing to targets — just lists them (with reverse DNS names). Use it to double-check a range before scanning.', outcomes: [
+    { state: 'listed', steps: [{ from: 'you', label: 'Reverse DNS lookup (to your resolver)', note: 'No packets to the targets themselves.' }] } ] },
 ];
 
 export interface ScanOption { flag: string; group: 'Ports' | 'Detection' | 'Timing' | 'Output' | 'Discovery'; label: string; help: string; value?: string }
@@ -47,7 +72,9 @@ export function buildCommand(scanFlag: string, flags: string[], target: string):
   return ['nmap', scanFlag, ...flags, t].filter(Boolean).join(' ');
 }
 
-export type NseCategory = 'safe' | 'default' | 'discovery' | 'version' | 'vuln' | 'auth' | 'brute' | 'intrusive';
+export type NseCategory = 'safe' | 'default' | 'discovery' | 'version' | 'vuln' | 'auth' | 'brute' | 'intrusive' | 'broadcast' | 'exploit' | 'dos' | 'external' | 'fuzzer' | 'malware';
+export const nseCategories: NseCategory[] = ['default', 'safe', 'discovery', 'version', 'vuln', 'auth', 'broadcast', 'external', 'brute', 'intrusive', 'exploit', 'dos', 'fuzzer', 'malware'];
+export const riskyCategories: NseCategory[] = ['brute', 'intrusive', 'exploit', 'dos', 'fuzzer'];
 export interface NseScript { id: string; services: string[]; categories: NseCategory[]; what: string; cve?: string }
 export const nseScripts: NseScript[] = [
   { id: 'http-title', services: ['http', 'https'], categories: ['default', 'safe', 'discovery'], what: 'Shows the web page title.' },
@@ -72,10 +99,11 @@ export const nseScripts: NseScript[] = [
   { id: 'snmp-info', services: ['snmp'], categories: ['default', 'safe'], what: 'Reads basic SNMP system information.' },
   { id: 'vulners', services: ['*'], categories: ['vuln', 'safe'], what: 'Matches detected versions against a CVE database (needs -sV and internet on the scanning machine).' },
 ];
+nseScripts.push(...moreScripts);
 export const safeCategories: NseCategory[] = ['safe', 'default', 'discovery', 'version'];
 export function scriptsFor(services: string[], allowIntrusive: boolean): NseScript[] {
   const s = new Set(services);
-  return nseScripts.filter(n => (n.services.includes('*') || n.services.some(x => s.has(x))) && (allowIntrusive || n.categories.every(c => safeCategories.includes(c) || c === 'vuln') && !n.categories.includes('intrusive')));
+  return nseScripts.filter(n => (n.services.includes('*') || n.services.some(x => s.has(x))) && (allowIntrusive || !n.categories.some(c => riskyCategories.includes(c))));
 }
 export function scriptCommand(scripts: string[], ports: number[], target: string): string {
   return buildCommand('-sV', [ports.length ? `-p ${ports.join(',')}` : '', scripts.length ? `--script ${scripts.join(',')}` : ''].filter(Boolean), target);

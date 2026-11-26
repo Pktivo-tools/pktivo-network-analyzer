@@ -1,3 +1,6 @@
+import { Simulator } from '@/components/scan-simulator';
+import { Playbook } from '@/components/scan-playbook';
+import { CommandBox } from '@/components/scan-command-box';
 import { Dialog, DialogContent, DialogDescription, DialogTitle } from '@/components/ui/dialog';
 import { HelpAbout } from '@/components/help-about';
 import { NmapCaptureGuide } from '@/components/nmap-capture-guide';
@@ -198,23 +201,6 @@ function Compare() {
   </div>;
 }
 
-function Simulator() {
-  const [typeId, setTypeId] = useState('syn'); const t = scanTypes.find(s => s.id === typeId) ?? scanTypes[0]!;
-  const [outcome, setOutcome] = useState(0); const o = t.outcomes[outcome] ?? t.outcomes[0]!;
-  const [flags, setFlags] = useState<string[]>(['-sV', '-oX scan.xml']); const [target, setTarget] = useState('192.168.1.0/24');
-  const cmd = buildCommand(t.flag, flags, target);
-  return <div className="grid gap-6 lg:grid-cols-[1fr_1fr]">
-    <section><h2 className="font-medium">1. Pick a scan type</h2><div className="mt-2 flex flex-wrap gap-1">{scanTypes.map(s => <Button key={s.id} size="sm" variant={s.id === typeId ? 'secondary' : 'outline'} aria-pressed={s.id === typeId} onClick={() => { setTypeId(s.id); setOutcome(0); }}><span className="font-mono">{s.flag}</span></Button>)}</div>
-      <div className="mt-3 rounded-md border p-4"><div className="flex flex-wrap items-center gap-2"><h3 className="font-medium">{t.name}</h3><span className="rounded-full border px-2 text-[11px]">{t.level}</span>{t.needsRoot && <span className="rounded-full border px-2 text-[11px] text-muted-foreground">needs admin/root</span>}</div><p className="mt-1 text-sm text-muted-foreground">{t.summary}</p>
-        <div className="mt-3 flex flex-wrap gap-1" aria-label="Port outcome">{t.outcomes.map((x, i) => <Button key={x.state} size="sm" className="h-7" variant={i === outcome ? 'default' : 'ghost'} onClick={() => setOutcome(i)}>If {x.state}</Button>)}</div>
-        <ol className="mt-3 space-y-2" aria-label="Packet sequence">{o.steps.map((s, i) => <li key={i} className={`flex ${s.from === 'you' ? 'justify-start' : 'justify-end'}`}><div className={`max-w-[80%] rounded-md border px-3 py-2 text-sm ${s.from === 'you' ? 'bg-primary/10' : 'bg-secondary'}`}><div className="font-mono text-xs">{s.from === 'you' ? 'You → target' : 'Target → you'}: <b>{s.label}</b></div>{s.note && <div className="text-xs text-muted-foreground">{s.note}</div>}</div></li>)}</ol>
-        <p className="mt-3 text-xs text-muted-foreground">Tip: capture this with Wireshark using <code>tcp.flags.syn==1</code> and open it in the <Link to="/packet-analyzer" className="underline">Packet viewer</Link> to see it for real.</p></div></section>
-    <section><h2 className="font-medium">2. Add options</h2><div className="mt-2 grid gap-1 sm:grid-cols-2">{scanOptions.map(op => <label key={op.flag} className="flex cursor-pointer items-start gap-2 rounded-md border p-2 text-sm hover:bg-muted"><input type="checkbox" className="mt-1 accent-primary" checked={flags.includes(op.flag)} onChange={e => setFlags(e.target.checked ? [...flags, op.flag] : flags.filter(f => f !== op.flag))} /><span><span className="font-mono text-xs">{op.flag}</span> {op.label}<span className="block text-xs text-muted-foreground">{op.help}</span></span></label>)}</div>
-      <h2 className="mt-4 font-medium">3. Target</h2><Input className="mt-2 font-mono" value={target} onChange={e => setTarget(e.target.value)} aria-label="Scan target" />
-      <CommandBox cmd={cmd} /></section>
-  </div>;
-}
-
 function saveText(text: string, name: string, type: string) {
   const url = URL.createObjectURL(new Blob([text], { type }));
   const a = document.createElement('a'); a.href = url; a.download = name; a.click();
@@ -260,20 +246,4 @@ function PortLookup() {
   </div>;
 }
 
-function CommandBox({ cmd }: { cmd: string }) {
-  const [copied, setCopied] = useState(false);
-  return <div className="mt-4 flex items-center gap-2 rounded-md border bg-muted p-2"><code className="min-w-0 flex-1 break-all font-mono text-sm" aria-label="Generated command">{cmd}</code><Button size="sm" variant="ghost" onClick={() => { void navigator.clipboard?.writeText(cmd); setCopied(true); setTimeout(() => setCopied(false), 1500); }}><Copy />{copied ? 'Copied' : 'Copy'}</Button></div>;
-}
 
-function Playbook({ scan }: { scan: NmapScan | null }) {
-  const detected = useMemo(() => [...new Set(scan?.hosts.flatMap(h => openPorts(h).map(p => p.service)) ?? [])], [scan]);
-  const ports = useMemo(() => [...new Set(scan?.hosts.flatMap(h => openPorts(h).map(p => p.port)) ?? [])].sort((a, b) => a - b), [scan]);
-  const [intrusive, setIntrusive] = useState(false); const [q, setQ] = useState(''); const [picked, setPicked] = useState<string[]>([]);
-  const list = (detected.length ? scriptsFor(detected, intrusive) : nseScripts.filter(s => intrusive || !s.categories.includes('intrusive') && !s.categories.includes('brute'))).filter(s => !q || (s.id + s.what + (s.cve ?? '') + s.services.join(' ')).toLowerCase().includes(q.toLowerCase()));
-  return <div className="space-y-4">
-    <p className="text-sm text-muted-foreground">{detected.length ? <>Scripts matched to services found in your scan: <span className="font-mono">{detected.join(', ')}</span>.</> : 'Open a scan in Results to get scripts matched to your services, or browse them all.'}</p>
-    <div className="flex flex-wrap items-center gap-3"><Input className="max-w-xs" placeholder="Search script, service or CVE…" value={q} onChange={e => setQ(e.target.value)} aria-label="Search scripts" /><label className="flex items-center gap-2 text-sm"><input type="checkbox" className="accent-primary" checked={intrusive} onChange={e => setIntrusive(e.target.checked)} />Include intrusive & brute-force</label></div>
-    <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-3">{list.map(s => <label key={s.id} className="flex cursor-pointer gap-2 rounded-md border p-3 text-sm hover:bg-muted"><input type="checkbox" className="mt-1 accent-primary" checked={picked.includes(s.id)} onChange={e => setPicked(e.target.checked ? [...picked, s.id] : picked.filter(x => x !== s.id))} /><span className="min-w-0"><span className="font-mono">{s.id}</span><span className="block text-xs text-muted-foreground">{s.what}</span><span className="mt-1 flex flex-wrap gap-1">{s.categories.map(c => <span key={c} className={`rounded border px-1 text-[10px] ${c === 'intrusive' || c === 'brute' ? 'text-destructive' : 'text-muted-foreground'}`}>{c}</span>)}{s.cve && <span className="rounded border px-1 text-[10px] text-primary">{s.cve}</span>}</span></span></label>)}</div>
-    <CommandBox cmd={scriptCommand(picked, ports.slice(0, 20), scan?.hosts[0]?.address ?? '192.168.1.0/24')} />
-  </div>;
-}
