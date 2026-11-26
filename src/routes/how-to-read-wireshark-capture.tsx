@@ -1,7 +1,7 @@
 import { GuideSwitch } from '@/components/guide-switch';
 import { ThirdPartyNotice } from '@/components/third-party-notice';
 import { createFileRoute, Link } from '@tanstack/react-router';
-import { ArrowLeft, ArrowRight, BookOpen, ClipboardCheck, ShieldCheck } from 'lucide-react';
+import { Activity, ArrowLeft, ArrowRight, BookOpen, ClipboardCheck, ShieldCheck } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { PktivoLogo } from '@/components/pktivo-logo';
 import { PktivoPronunciation } from '@/components/pktivo-pronunciation';
@@ -43,7 +43,7 @@ function CaptureReadingGuide() {
       <div className="mt-6 flex items-center gap-2 text-sm font-medium text-primary"><BookOpen className="size-4" />Beginner guide</div>
       <h1 className="mt-4 max-w-3xl text-3xl font-semibold sm:text-4xl">How to read a Wireshark capture</h1>
       <p className="mt-4 max-w-2xl text-lg leading-8 text-muted-foreground">A packet is a small piece of a conversation between devices. Start with who is talking, what they are saying, and whether a reply comes back—not every byte on the screen.</p>
-      <div className="mt-6 flex flex-wrap gap-3"><Button asChild><Link to="/packet-analyzer">Open Pktivo<ArrowRight /></Link></Button><Button asChild variant="outline"><Link to="/learn"><BookOpen />Networking course</Link></Button></div>
+      <div className="mt-6 flex flex-wrap gap-3"><Button asChild><Link to="/packet-analyzer"><Activity />Open Packet Viewer<ArrowRight /></Link></Button><Button asChild variant="outline"><Link to="/learn"><BookOpen />Networking course</Link></Button></div>
 
       <section className="mt-12 border-t pt-8"><h2 className="text-2xl font-semibold">1. Start with a question</h2>
         <p className="mt-3 max-w-3xl leading-7 text-muted-foreground">Try “Did my device receive a DNS reply?” or “Did this connection start successfully?” A capture shows only traffic visible to the interface that recorded it, during that time window. It is not a complete view of the whole network.</p>
