@@ -41,3 +41,9 @@
 - [x] Make every protocol, alias and TLS version typeable, with suggestions while typing
 - [x] Offer the wider "frames carrying this protocol" view next to the packet list
 - [x] Verify typing, filtering, the wider view and the filter builder on desktop and phone
+
+# Privacy consent
+- [x] Add a first-visit privacy panel with equal accept/reject controls and detailed settings
+- [x] Connect analytics consent signals and preserve Global Privacy Control
+- [x] Add a public privacy page and permanent Cookie settings control
+- [x] Verify saved choices, first-visit behavior, mobile layout and capture privacy
