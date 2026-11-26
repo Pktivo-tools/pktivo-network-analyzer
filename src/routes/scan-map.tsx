@@ -1,7 +1,10 @@
+import { resolveTheme } from '@/lib/netlens/themes';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
+import { ThemeGrid, useTheme } from '@/components/theme-picker';
 import { ThirdPartyNotice } from '@/components/third-party-notice';
 import { createFileRoute, Link } from '@tanstack/react-router';
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { ArrowLeft, Copy, FileUp, GitCompare, Network, Radar, ScrollText, ShieldCheck, TerminalSquare, X } from 'lucide-react';
+import { Activity, BookOpen, ChevronRight, Menu, Copy, FileUp, GitCompare, Network, Radar, ScrollText, ShieldCheck, TerminalSquare, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -26,6 +29,27 @@ export const Route = createFileRoute('/scan-map')({
   component: ScanMapPage,
 });
 
+const TAB_LABELS: Record<string, string> = { results: 'Results', compare: 'Compare scans', simulator: 'Scan simulator', scripts: 'Script playbook' };
+
+function ScanMenu() {
+  const [open, setOpen] = useState(false);
+  const { theme, select } = useTheme();
+  const close = () => setOpen(false);
+  return <DropdownMenu open={open} onOpenChange={setOpen}>
+    <DropdownMenuTrigger asChild><Button variant="ghost" size="icon" className="size-8 shrink-0" aria-label="Menu" title="Menu: tools, learning, themes"><Menu className="size-4" /></Button></DropdownMenuTrigger>
+    <DropdownMenuContent align="start" className="max-h-[calc(100dvh-6rem)] w-72 overflow-y-auto p-2" aria-label="Pktivo menu">
+      <DropdownMenuLabel className="px-2 text-[11px] font-medium text-muted-foreground">Pktivo</DropdownMenuLabel>
+      <DropdownMenuItem asChild className="gap-2"><Link to="/packet-analyzer" onClick={close}><Activity className="size-4" />Packet viewer (Wireshark files)</Link></DropdownMenuItem>
+      <DropdownMenuItem asChild className="gap-2"><Link to="/learn" onClick={close}><BookOpen className="size-4" />Learn networking</Link></DropdownMenuItem>
+      <DropdownMenuItem asChild className="gap-2"><Link to="/how-to-read-wireshark-capture" onClick={close}><BookOpen className="size-4" />Beginner capture guide</Link></DropdownMenuItem>
+      <DropdownMenuItem asChild className="gap-2"><Link to="/glossary" onClick={close}><BookOpen className="size-4" />Networking glossary</Link></DropdownMenuItem>
+      <DropdownMenuSeparator />
+      <DropdownMenuLabel className="px-2 text-[11px] font-medium text-muted-foreground">Appearance · {resolveTheme(theme).name}</DropdownMenuLabel>
+      <div className="px-1 pb-1"><ThemeGrid theme={theme} className="grid-cols-3 sm:grid-cols-2" onSelect={(id) => { select(id); close(); }} /></div>
+    </DropdownMenuContent>
+  </DropdownMenu>;
+}
+
 async function readScan(file: File): Promise<NmapScan> { return parseNmapXml(await file.text()); }
 
 function ScanMapPage() {
@@ -36,9 +60,12 @@ function ScanMapPage() {
   const open = async (f?: File) => { if (!f) return; try { setScan(await readScan(f)); setError(''); setTab('results'); } catch (e) { setError(e instanceof Error ? e.message : 'Could not read this file.'); } };
 
   return <div className="min-h-screen bg-background text-foreground">
-    <header className="border-b px-4 py-3 sm:px-6"><div className="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-2">
-      <Link to="/" className="flex items-center gap-2 font-semibold"><span className="size-6"><PktivoLogo /></span>pktivo<span className="text-primary">.</span><span className="ml-1 text-muted-foreground">Scan Map</span></Link>
-      <Button asChild variant="ghost" size="sm"><Link to="/packet-analyzer"><ArrowLeft />Packet viewer</Link></Button></div></header>
+    <header className="border-b px-4 py-3 sm:px-6"><div className="mx-auto flex max-w-7xl min-w-0 items-center gap-2 text-xs text-muted-foreground">
+      <Link to="/" className="mr-2 flex items-center gap-2 text-base font-semibold text-foreground" aria-label="Pktivo home"><span className="size-6"><PktivoLogo /></span>pktivo<span className="text-primary">.</span></Link>
+      <ScanMenu />
+      <span className="hidden sm:inline">Scan Map</span><ChevronRight className="hidden size-3 sm:inline" /><span className="truncate font-medium text-foreground">{TAB_LABELS[tab]}</span>
+      <span className="ml-2 hidden items-center gap-1.5 rounded-full border px-2 py-0.5 text-[11px] md:inline-flex"><ShieldCheck className="size-3" />On this device</span>
+    </div></header>
     <main className="mx-auto max-w-7xl px-4 py-6 sm:px-6">
       <div className="flex flex-wrap items-end justify-between gap-4">
         <div><div className="flex items-center gap-2 text-sm text-primary"><Radar className="size-4" />Nmap results, visualized</div>
