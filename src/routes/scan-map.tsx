@@ -103,7 +103,7 @@ function Results({ scan, onClose, onOpen }: { scan: NmapScan; onClose: () => voi
   </div>;
 }
 
-function Topology({ hosts, selected, onSelect }: { hosts: ScanHost[]; selected?: string; onSelect: (a: string) => void }) {
+function Topology({ hosts, selected, onSelect }: { hosts: ScanHost[]; selected: string | undefined; onSelect: (a: string) => void }) {
   const groups = [...groupBySubnet(hosts)];
   const W = 720, band = W / Math.max(groups.length, 1), perRow = Math.max(2, Math.floor(band / 70));
   const rows = Math.max(1, ...groups.map(([, hs]) => Math.ceil(hs.length / perRow)));
