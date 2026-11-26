@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { PktivoLogo } from '@/components/pktivo-logo';
 import { PktivoPronunciation } from '@/components/pktivo-pronunciation';
 import { GitHubLink } from '@/components/github-link';
+import { ThemePicker } from '@/components/theme-picker';
 
 export const Route = createFileRoute('/')({
   staticData: { sitemap: true },
@@ -46,11 +47,11 @@ function HomePage() {
   return <div className="min-h-screen bg-background text-foreground">
     <header className="border-b px-4 py-3 sm:px-8"><div className="mx-auto flex max-w-6xl items-center justify-between gap-2">
       <Link to="/" className="flex items-center gap-2 font-semibold"><span className="size-6"><PktivoLogo /></span>pktivo<span className="text-primary">.</span></Link>
-      <nav className="flex items-center gap-1"><Button asChild variant="ghost" size="sm" className="hidden sm:inline-flex"><Link to="/learn">Learn</Link></Button><Button asChild variant="ghost" size="sm" className="hidden sm:inline-flex"><Link to="/scan-map">Scan Map</Link></Button><Button asChild size="sm"><Link to="/packet-analyzer">Packet analyzer</Link></Button></nav>
+      <nav className="flex items-center gap-1"><ThemePicker /><Button asChild variant="ghost" size="sm" className="hidden sm:inline-flex"><Link to="/learn">Learn</Link></Button><Button asChild variant="ghost" size="sm" className="hidden sm:inline-flex"><Link to="/scan-map">Scan Map</Link></Button><Button asChild size="sm"><Link to="/packet-analyzer">Packet analyzer</Link></Button></nav>
     </div></header>
     <main>
       <section className="px-4 pb-14 pt-16 sm:px-8 sm:pt-24"><div className="mx-auto max-w-6xl">
-        <span className="inline-flex items-center gap-1.5 rounded-full border px-3 py-1 text-xs text-muted-foreground"><ShieldCheck className="size-3.5 text-primary" />Everything runs in your browser</span>
+        <span className="inline-flex items-center gap-2 rounded-full border border-primary/30 bg-primary/5 px-4 py-1.5 text-sm font-medium sm:text-base"><ShieldCheck className="size-4 shrink-0 text-primary sm:size-5" />Everything runs in your browser</span>
         <h1 className="mt-5 max-w-3xl text-4xl font-semibold leading-tight tracking-tight sm:text-6xl">See what your network is really doing<span className="text-primary">.</span></h1>
         <p className="mt-5 max-w-2xl text-lg leading-8 text-muted-foreground">Pktivo turns Wireshark captures and Nmap scans into plain-language pictures — and teaches you networking from the very first packet to CCNA. Free, private, no account.</p>
         <div className="mt-8 flex flex-wrap gap-3"><Button asChild size="lg"><Link to="/packet-analyzer"><Layers />Open a capture</Link></Button><Button asChild size="lg" variant="outline"><Link to="/learn"><GraduationCap />Start learning</Link></Button></div>
