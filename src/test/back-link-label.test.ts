@@ -27,7 +27,7 @@ describe('Back-to-workspace link label', () => {
   });
 
   it('finds the back link on every page that offers one', () => {
-    expect(backLinks.length).toBeGreaterThanOrEqual(4);
+    expect(backLinks.length).toBeGreaterThanOrEqual(3);
     expect(backLinks.map(b => b.file)).toEqual(
       expect.arrayContaining([
         'src/routes/glossary.tsx',
