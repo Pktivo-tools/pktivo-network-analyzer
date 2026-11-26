@@ -67,12 +67,13 @@ export function CookieConsent() {
   }
 
   if (!open) {
-    return <div className="flex items-center justify-between gap-2 border-t bg-background px-3 py-2">
-      <GitHubLink className="-ml-2" />
+    return <div className="grid grid-cols-[1fr_auto_1fr] items-center gap-2 border-t bg-background px-3 py-2">
+      <GitHubLink className="-ml-2 justify-self-start" />
       <div role="status" aria-live="polite" aria-atomic="true" className="fixed bottom-14 right-3 z-50 max-w-[calc(100%-1.5rem)]">
         {saved && <p className="flex items-center gap-2 rounded-md border bg-background px-3 py-2 text-xs text-foreground shadow-md"><Check aria-hidden="true" className="size-4 shrink-0 text-primary" />Preferences saved: necessary always on; analytics {choice === 'granted' ? 'on' : 'off'}.</p>}
       </div>
       <Button ref={settingsButtonRef} type="button" variant="ghost" size="sm" onClick={showSettings} className="text-xs text-muted-foreground"><ShieldCheck aria-hidden="true" className="size-3.5" />Cookie settings</Button>
+      <span aria-hidden="true" />
     </div>;
   }
 
