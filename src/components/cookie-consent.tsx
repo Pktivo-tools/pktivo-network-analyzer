@@ -68,7 +68,7 @@ export function CookieConsent() {
   if (!open) {
     return <div className="flex justify-end border-t bg-background px-3 py-2">
       <div role="status" aria-live="polite" aria-atomic="true" className="fixed bottom-14 right-3 z-50 max-w-[calc(100%-1.5rem)]">
-        {saved && <p className="flex items-center gap-2 rounded-md border bg-background px-3 py-2 text-xs text-foreground shadow-md"><Check aria-hidden="true" className="size-4 shrink-0 text-primary" />Cookie preferences saved.</p>}
+        {saved && <p className="flex items-center gap-2 rounded-md border bg-background px-3 py-2 text-xs text-foreground shadow-md"><Check aria-hidden="true" className="size-4 shrink-0 text-primary" />Preferences saved: necessary always on; analytics {choice === 'granted' ? 'on' : 'off'}.</p>}
       </div>
       <Button ref={settingsButtonRef} type="button" variant="ghost" size="sm" onClick={showSettings} className="text-xs text-muted-foreground"><ShieldCheck aria-hidden="true" className="size-3.5" />Cookie settings</Button>
     </div>;
@@ -83,10 +83,10 @@ export function CookieConsent() {
           <div><p className="text-sm font-medium">Necessary</p><p className="mt-1 text-xs leading-5 text-muted-foreground">Always on. Delivers the site and remembers preferences you choose to save.</p></div>
           <span className="text-xs font-medium text-muted-foreground">Always on</span>
         </div>
-        <div className="flex items-start justify-between gap-4 p-4">
-          <div><label htmlFor="analytics-consent" className="text-sm font-medium">Analytics, provided by Lovable</label><p className="mt-1 text-xs leading-5 text-muted-foreground">Measures clicks only when allowed. Visit counting identifies no one.</p></div>
-          <Switch id="analytics-consent" aria-label="Analytics, provided by Lovable" checked={!privacySignal && choice === 'granted'} disabled={privacySignal} onCheckedChange={checked => setChoice(checked ? 'granted' : 'denied')} />
-        </div>
+        <label htmlFor="analytics-consent" className={`flex min-h-11 items-center justify-between gap-4 p-4 ${privacySignal ? 'cursor-not-allowed' : 'cursor-pointer'}`}>
+          <span><span className="block text-sm font-medium">Analytics, provided by Lovable</span><span className="mt-1 block text-xs leading-5 text-muted-foreground">Measures clicks only when allowed. Visit counting identifies no one.</span></span>
+          <Switch type="button" id="analytics-consent" aria-label="Analytics, provided by Lovable" className="h-7 w-12 [&>span]:size-6 [&>span[data-state=checked]]:translate-x-5" checked={!privacySignal && choice === 'granted'} disabled={privacySignal} onCheckedChange={checked => setChoice(checked ? 'granted' : 'denied')} />
+        </label>
       </div>
       {privacySignal && <p className="mt-3 text-xs leading-5 text-muted-foreground">Your browser’s privacy signal applies, so analytics stays off.</p>}
       <div className="mt-5 flex flex-wrap justify-end gap-2">

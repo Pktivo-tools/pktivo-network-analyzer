@@ -3,6 +3,8 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import type { ReactNode } from 'react';
 import { CookieConsent } from '@/components/cookie-consent';
 
+const sendSignals = vi.fn();
+
 vi.mock('@tanstack/react-router', () => ({
   Link: ({ children, to }: { children: ReactNode; to: string }) => <a href={to}>{children}</a>,
 }));
@@ -11,6 +13,8 @@ describe('Cookie consent', () => {
   beforeEach(() => {
     window.localStorage.clear();
     vi.stubGlobal('fetch', vi.fn().mockRejectedValue(new Error('No region lookup in tests')));
+    sendSignals.mockClear();
+    vi.stubGlobal('gtag', sendSignals);
   });
 
   afterEach(() => {
@@ -49,6 +53,7 @@ describe('Cookie consent', () => {
     const toggle = await screen.findByRole('switch', { name: 'Analytics, provided by Lovable' });
     expect(toggle).not.toBeChecked();
     expect(toggle).toBeDisabled();
+    expect(screen.getByRole('button', { name: 'Accept all' })).toBeDisabled();
   });
 
   it('accepts all from settings and restores the saved preference after reopening', async () => {
@@ -57,6 +62,7 @@ describe('Cookie consent', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Cookie settings' }));
     fireEvent.click(screen.getByRole('button', { name: 'Accept all' }));
     expect(JSON.parse(window.localStorage.getItem('cookie_consent_analytics') ?? '{}').choice).toBe('granted');
+    expect(sendSignals).toHaveBeenCalledWith('consent', 'update', { analytics_storage: 'granted' });
     cleanup();
 
     render(<CookieConsent />);
@@ -70,6 +76,7 @@ describe('Cookie consent', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Cookie settings' }));
     fireEvent.click(screen.getByRole('button', { name: 'Save choices' }));
     expect(JSON.parse(window.localStorage.getItem('cookie_consent_analytics') ?? '{}').choice).toBe('denied');
+    expect(sendSignals).toHaveBeenCalledWith('consent', 'update', { analytics_storage: 'denied' });
     fireEvent.click(screen.getByRole('button', { name: 'Cookie settings' }));
     expect(await screen.findByRole('switch', { name: 'Analytics, provided by Lovable' })).not.toBeChecked();
   });
