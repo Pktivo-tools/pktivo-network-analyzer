@@ -79,7 +79,7 @@ function ScanMapPage() {
     <main className="mx-auto max-w-7xl px-4 py-6 sm:px-6">
       <div className="flex flex-wrap items-end justify-between gap-4">
         <div><div className="flex items-center gap-2 text-sm text-primary"><Radar className="size-4" />Nmap results, visualized</div>
-          <h1 className="mt-2 text-2xl font-semibold sm:text-3xl">Scan Map</h1>
+          <h1 className="mt-2 text-2xl font-semibold sm:text-3xl">Scan Map for Nmap XML scan results</h1>
           <p className="mt-1 max-w-2xl text-sm leading-6 text-muted-foreground">Open an Nmap XML file to see every device, open port and service on a map. Learn what each scan type does, compare scans over time, and pick the right scripts.</p></div>
       </div>
       <div className="mt-4 flex flex-wrap items-center gap-2 rounded-md border bg-muted/40 px-3 py-2 text-xs text-muted-foreground"><ShieldCheck className="size-4 shrink-0 text-primary" /><p className="min-w-0 flex-1">Local, not uploaded. Scan files are read in this tab only and disappear when you close it. Only scan networks you own or have permission to test.</p><GitHubLink label="View code" iconSize={14} /></div>

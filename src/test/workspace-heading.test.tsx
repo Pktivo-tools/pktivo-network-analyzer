@@ -19,7 +19,7 @@ describe("Workspace heading", () => {
 
     const h1 = screen.getByRole("heading", { level: 1 });
     expect(h1.textContent).toContain("Pktivo");
-    expect(h1.textContent).toMatch(/browser-based network packet analyzer/i);
+    expect(h1.textContent).toMatch(/packet analyzer for Wireshark PCAP and PCAPNG/i);
     expect(h1.textContent).not.toContain("sample-traffic.pcapng");
     expect(h1.textContent).not.toContain("No capture loaded");
   });
