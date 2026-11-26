@@ -18,14 +18,14 @@ export const Route = createFileRoute('/learn_/test')({
 type Item = Quiz & { module: string; moduleId: string; level: string };
 const bank: Item[] = curriculum.flatMap(l => l.modules.flatMap(m => questionsFor(m.id, m.quiz).map(q => ({ ...q, module: m.title, moduleId: m.id, level: l.name }))));
 
-function shuffle<T>(a: T[]): T[] { const b = [...a]; for (let i = b.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [b[i], b[j]] = [b[j]!, b[i]!]; } return b; }
+import { shuffle, shuffleChoices } from '@/lib/learn/shuffle';
 
 function TestPage() {
   const navigate = useNavigate();
   const [scope, setScope] = useState<string | null>(null); const [seed, setSeed] = useState(0);
   const [i, setI] = useState(0); const [pick, setPick] = useState<number | null>(null); const [wrong, setWrong] = useState<Item[]>([]);
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  const qs = useMemo(() => scope === null ? [] : shuffle(bank.filter(q => scope === 'all' || q.level === scope)).slice(0, 20), [scope, seed]);
+  const qs = useMemo(() => scope === null ? [] : shuffle(bank.filter(q => scope === 'all' || q.level === scope)).slice(0, 20).map(q => shuffleChoices(q)), [scope, seed]);
   const start = (s: string) => { setScope(s); setSeed(seed + 1); setI(0); setPick(null); setWrong([]); };
   const q = qs[i]; const finished = scope !== null && i >= qs.length;
   return <div className="min-h-screen bg-background text-foreground">
