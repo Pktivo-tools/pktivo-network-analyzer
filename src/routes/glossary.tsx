@@ -1,3 +1,4 @@
+import { ThirdPartyNotice } from '@/components/third-party-notice';
 import { createFileRoute, Link } from '@tanstack/react-router';
 import { useState } from 'react';
 import { ArrowLeft, BookOpen, ClipboardCheck, FileSearch, GraduationCap, Network, Search, X } from 'lucide-react';
@@ -24,7 +25,7 @@ function GlossaryPage() {
   const [category, setCategory] = useState<GlossaryCategory | 'All'>('All');
   const terms = findGlossaryTerms(query, category);
   return <div className="min-h-screen bg-background text-foreground">
-    <header className="border-b px-4 py-3 sm:px-8"><div className="mx-auto flex max-w-4xl flex-wrap items-center justify-between gap-2"><Link to="/" className="flex items-center gap-2 font-semibold"><span className="size-6"><PktivoLogo /></span>pktivo<span className="text-primary">.</span></Link><Button asChild variant="ghost" size="sm"><Link to="/"><ArrowLeft />Packet viewer</Link></Button></div>
+    <header className="border-b px-4 py-3 sm:px-8"><div className="mx-auto flex max-w-4xl flex-wrap items-center justify-between gap-2"><Link to="/" className="flex items-center gap-2 font-semibold"><span className="size-6"><PktivoLogo /></span>pktivo<span className="text-primary">.</span></Link><Button asChild variant="ghost" size="sm"><Link to="/packet-analyzer"><ArrowLeft />Packet viewer</Link></Button></div>
       <nav aria-label="Courses" className="mx-auto mt-3 flex max-w-4xl gap-1 overflow-x-auto pb-1"><Button asChild variant="outline" size="sm"><Link to="/learn"><GraduationCap />Networking course</Link></Button><Button asChild variant="outline" size="sm"><Link to="/learn/subnetting"><Network />Subnetting course</Link></Button><Button asChild variant="outline" size="sm"><Link to="/learn/test"><ClipboardCheck />Practice test</Link></Button><Button asChild variant="outline" size="sm"><Link to="/how-to-read-wireshark-capture"><FileSearch />Capture guide</Link></Button></nav>
     </header>
     <main className="mx-auto max-w-4xl px-4 py-10 sm:px-8">
@@ -37,7 +38,7 @@ function GlossaryPage() {
       <p role="status" className="mt-4 text-xs text-muted-foreground">{terms.length} of {glossaryTerms.length} terms</p>
       <dl className="mt-4 divide-y">{terms.map(term => <div key={term.name} className="grid gap-3 py-6 sm:grid-cols-[13rem_1fr] sm:gap-6"><dt><span className="block text-lg font-medium">{term.name}</span><span className="mt-1 block text-xs text-primary">{term.category}</span></dt><dd className="min-w-0"><p className="text-sm leading-7">{term.meaning}</p><p className="mt-2 border-l-2 border-border pl-3 text-sm leading-6 text-muted-foreground"><span className="font-medium">Example: </span>{term.example}</p></dd></div>)}</dl>
       {!terms.length && <div className="py-12 text-center"><h2 className="font-medium">No matching terms</h2><Button className="mt-4" variant="outline" onClick={() => { setQuery(''); setCategory('All'); }}>Show all terms</Button></div>}
-      <footer className="mt-8 border-t pt-6"><PktivoPronunciation className="text-xs" /><p className="mt-2 text-xs text-muted-foreground">Independent educational reference. Warnings are clues, not proof; always consider capture settings and context.</p></footer>
+      <footer className="mt-8 border-t pt-6"><PktivoPronunciation className="text-xs" /><p className="mt-2 text-xs text-muted-foreground">Independent educational reference. Warnings are clues, not proof; always consider capture settings and context.</p><ThirdPartyNotice tools={['wireshark','nmap']} className="mt-2" /></footer>
     </main>
   </div>;
 }

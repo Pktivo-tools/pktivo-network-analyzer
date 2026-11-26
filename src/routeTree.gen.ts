@@ -12,9 +12,12 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as GlossaryRouteImport } from './routes/glossary'
 import { Route as HowToReadWiresharkCaptureRouteImport } from './routes/how-to-read-wireshark-capture'
+import { Route as HowToRunNmapScanRouteImport } from './routes/how-to-run-nmap-scan'
 import { Route as LearnRouteImport } from './routes/learn'
+import { Route as PacketAnalyzerRouteImport } from './routes/packet-analyzer'
 import { Route as PcapFileAnalyzerOnlineRouteImport } from './routes/pcap-file-analyzer-online'
 import { Route as PrivacyRouteImport } from './routes/privacy'
+import { Route as ScanMapRouteImport } from './routes/scan-map'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as LearnSubnettingRouteImport } from './routes/learn_/subnetting'
 import { Route as LearnTestRouteImport } from './routes/learn_/test'
@@ -35,9 +38,19 @@ const HowToReadWiresharkCaptureRoute =
     path: '/how-to-read-wireshark-capture',
     getParentRoute: () => rootRouteImport,
   } as any)
+const HowToRunNmapScanRoute = HowToRunNmapScanRouteImport.update({
+  id: '/how-to-run-nmap-scan',
+  path: '/how-to-run-nmap-scan',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const LearnRoute = LearnRouteImport.update({
   id: '/learn',
   path: '/learn',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PacketAnalyzerRoute = PacketAnalyzerRouteImport.update({
+  id: '/packet-analyzer',
+  path: '/packet-analyzer',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PcapFileAnalyzerOnlineRoute = PcapFileAnalyzerOnlineRouteImport.update({
@@ -48,6 +61,11 @@ const PcapFileAnalyzerOnlineRoute = PcapFileAnalyzerOnlineRouteImport.update({
 const PrivacyRoute = PrivacyRouteImport.update({
   id: '/privacy',
   path: '/privacy',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ScanMapRoute = ScanMapRouteImport.update({
+  id: '/scan-map',
+  path: '/scan-map',
   getParentRoute: () => rootRouteImport,
 } as any)
 const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
@@ -70,9 +88,12 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/glossary': typeof GlossaryRoute
   '/how-to-read-wireshark-capture': typeof HowToReadWiresharkCaptureRoute
+  '/how-to-run-nmap-scan': typeof HowToRunNmapScanRoute
   '/learn': typeof LearnRoute
+  '/packet-analyzer': typeof PacketAnalyzerRoute
   '/pcap-file-analyzer-online': typeof PcapFileAnalyzerOnlineRoute
   '/privacy': typeof PrivacyRoute
+  '/scan-map': typeof ScanMapRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/learn/subnetting': typeof LearnSubnettingRoute
   '/learn/test': typeof LearnTestRoute
@@ -81,9 +102,12 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/glossary': typeof GlossaryRoute
   '/how-to-read-wireshark-capture': typeof HowToReadWiresharkCaptureRoute
+  '/how-to-run-nmap-scan': typeof HowToRunNmapScanRoute
   '/learn': typeof LearnRoute
+  '/packet-analyzer': typeof PacketAnalyzerRoute
   '/pcap-file-analyzer-online': typeof PcapFileAnalyzerOnlineRoute
   '/privacy': typeof PrivacyRoute
+  '/scan-map': typeof ScanMapRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/learn/subnetting': typeof LearnSubnettingRoute
   '/learn/test': typeof LearnTestRoute
@@ -93,9 +117,12 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/glossary': typeof GlossaryRoute
   '/how-to-read-wireshark-capture': typeof HowToReadWiresharkCaptureRoute
+  '/how-to-run-nmap-scan': typeof HowToRunNmapScanRoute
   '/learn': typeof LearnRoute
+  '/packet-analyzer': typeof PacketAnalyzerRoute
   '/pcap-file-analyzer-online': typeof PcapFileAnalyzerOnlineRoute
   '/privacy': typeof PrivacyRoute
+  '/scan-map': typeof ScanMapRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/learn_/subnetting': typeof LearnSubnettingRoute
   '/learn_/test': typeof LearnTestRoute
@@ -106,9 +133,12 @@ export interface FileRouteTypes {
     | '/'
     | '/glossary'
     | '/how-to-read-wireshark-capture'
+    | '/how-to-run-nmap-scan'
     | '/learn'
+    | '/packet-analyzer'
     | '/pcap-file-analyzer-online'
     | '/privacy'
+    | '/scan-map'
     | '/sitemap.xml'
     | '/learn/subnetting'
     | '/learn/test'
@@ -117,9 +147,12 @@ export interface FileRouteTypes {
     | '/'
     | '/glossary'
     | '/how-to-read-wireshark-capture'
+    | '/how-to-run-nmap-scan'
     | '/learn'
+    | '/packet-analyzer'
     | '/pcap-file-analyzer-online'
     | '/privacy'
+    | '/scan-map'
     | '/sitemap.xml'
     | '/learn/subnetting'
     | '/learn/test'
@@ -128,9 +161,12 @@ export interface FileRouteTypes {
     | '/'
     | '/glossary'
     | '/how-to-read-wireshark-capture'
+    | '/how-to-run-nmap-scan'
     | '/learn'
+    | '/packet-analyzer'
     | '/pcap-file-analyzer-online'
     | '/privacy'
+    | '/scan-map'
     | '/sitemap.xml'
     | '/learn_/subnetting'
     | '/learn_/test'
@@ -140,9 +176,12 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   GlossaryRoute: typeof GlossaryRoute
   HowToReadWiresharkCaptureRoute: typeof HowToReadWiresharkCaptureRoute
+  HowToRunNmapScanRoute: typeof HowToRunNmapScanRoute
   LearnRoute: typeof LearnRoute
+  PacketAnalyzerRoute: typeof PacketAnalyzerRoute
   PcapFileAnalyzerOnlineRoute: typeof PcapFileAnalyzerOnlineRoute
   PrivacyRoute: typeof PrivacyRoute
+  ScanMapRoute: typeof ScanMapRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   LearnSubnettingRoute: typeof LearnSubnettingRoute
   LearnTestRoute: typeof LearnTestRoute
@@ -171,11 +210,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof HowToReadWiresharkCaptureRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/how-to-run-nmap-scan': {
+      id: '/how-to-run-nmap-scan'
+      path: '/how-to-run-nmap-scan'
+      fullPath: '/how-to-run-nmap-scan'
+      preLoaderRoute: typeof HowToRunNmapScanRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/learn': {
       id: '/learn'
       path: '/learn'
       fullPath: '/learn'
       preLoaderRoute: typeof LearnRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/packet-analyzer': {
+      id: '/packet-analyzer'
+      path: '/packet-analyzer'
+      fullPath: '/packet-analyzer'
+      preLoaderRoute: typeof PacketAnalyzerRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/pcap-file-analyzer-online': {
@@ -190,6 +243,13 @@ declare module '@tanstack/react-router' {
       path: '/privacy'
       fullPath: '/privacy'
       preLoaderRoute: typeof PrivacyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/scan-map': {
+      id: '/scan-map'
+      path: '/scan-map'
+      fullPath: '/scan-map'
+      preLoaderRoute: typeof ScanMapRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/sitemap.xml': {
@@ -220,9 +280,12 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   GlossaryRoute: GlossaryRoute,
   HowToReadWiresharkCaptureRoute: HowToReadWiresharkCaptureRoute,
+  HowToRunNmapScanRoute: HowToRunNmapScanRoute,
   LearnRoute: LearnRoute,
+  PacketAnalyzerRoute: PacketAnalyzerRoute,
   PcapFileAnalyzerOnlineRoute: PcapFileAnalyzerOnlineRoute,
   PrivacyRoute: PrivacyRoute,
+  ScanMapRoute: ScanMapRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   LearnSubnettingRoute: LearnSubnettingRoute,
   LearnTestRoute: LearnTestRoute,

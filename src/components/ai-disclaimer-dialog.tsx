@@ -54,6 +54,11 @@ export function AiDisclaimerDialog() {
             exam — check important answers somewhere else too.
           </p>
           <p>
+            <strong className="font-medium text-foreground">Only scan networks you own or have permission to test.</strong>{' '}
+            Recording traffic with Wireshark or scanning with Nmap on networks that aren&apos;t yours, without
+            permission, can break rules, contracts or laws.
+          </p>
+          <p>
             <strong className="font-medium text-foreground">It keeps improving.</strong> The project is
             updated regularly, so what is missing or rough today should work better soon.
           </p>

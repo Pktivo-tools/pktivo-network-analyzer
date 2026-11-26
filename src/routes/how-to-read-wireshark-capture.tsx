@@ -1,5 +1,7 @@
+import { GuideSwitch } from '@/components/guide-switch';
+import { ThirdPartyNotice } from '@/components/third-party-notice';
 import { createFileRoute, Link } from '@tanstack/react-router';
-import { ArrowLeft, ArrowRight, BookOpen, ClipboardCheck, ShieldCheck } from 'lucide-react';
+import { Activity, ArrowLeft, ArrowRight, BookOpen, ClipboardCheck, ShieldCheck } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { PktivoLogo } from '@/components/pktivo-logo';
 import { PktivoPronunciation } from '@/components/pktivo-pronunciation';
@@ -34,13 +36,13 @@ function CaptureReadingGuide() {
   return <div className="min-h-screen bg-background text-foreground">
     <header className="border-b"><div className="mx-auto flex max-w-5xl items-center justify-between gap-3 px-4 py-4 sm:px-8">
       <Link to="/" className="flex items-center gap-2 font-semibold"><PktivoLogo className="size-7 text-primary" />pktivo.</Link>
-      <Button asChild variant="ghost" size="sm"><Link to="/"><ArrowLeft />Packet viewer</Link></Button>
     </div></header>
     <main className="mx-auto max-w-5xl px-4 py-10 sm:px-8">
-      <div className="flex items-center gap-2 text-sm font-medium text-primary"><BookOpen className="size-4" />Beginner guide</div>
+      <GuideSwitch current="wireshark" />
+      <div className="mt-6 flex items-center gap-2 text-sm font-medium text-primary"><BookOpen className="size-4" />Beginner guide</div>
       <h1 className="mt-4 max-w-3xl text-3xl font-semibold sm:text-4xl">How to read a Wireshark capture</h1>
       <p className="mt-4 max-w-2xl text-lg leading-8 text-muted-foreground">A packet is a small piece of a conversation between devices. Start with who is talking, what they are saying, and whether a reply comes back—not every byte on the screen.</p>
-      <div className="mt-6 flex flex-wrap gap-3"><Button asChild><Link to="/">Open Pktivo<ArrowRight /></Link></Button><Button asChild variant="outline"><Link to="/learn"><BookOpen />Networking course</Link></Button></div>
+      <div className="mt-6 flex flex-wrap gap-3"><Button asChild><Link to="/packet-analyzer"><Activity />Open Packet Viewer<ArrowRight /></Link></Button><Button asChild variant="outline"><Link to="/learn"><BookOpen />Networking course</Link></Button></div>
 
       <section className="mt-12 border-t pt-8"><h2 className="text-2xl font-semibold">1. Start with a question</h2>
         <p className="mt-3 max-w-3xl leading-7 text-muted-foreground">Try “Did my device receive a DNS reply?” or “Did this connection start successfully?” A capture shows only traffic visible to the interface that recorded it, during that time window. It is not a complete view of the whole network.</p>
@@ -77,6 +79,6 @@ function CaptureReadingGuide() {
       <aside className="mt-10 border-y py-5"><h2 className="flex items-center gap-2 font-semibold"><ShieldCheck className="size-5 text-primary" />Keep captures private</h2><p className="mt-2 text-sm leading-6 text-muted-foreground">Capture only networks and devices you have permission to inspect. Files can contain addresses, names and unencrypted data. Pktivo reads your file in this browser tab without uploading it; capture contents and results are not stored and are cleared when the tab closes. That does not remove the original file from your device.</p></aside>
       <section className="mt-10 pb-4"><h2 className="text-2xl font-semibold">Build the basics, then test yourself</h2><p className="mt-3 leading-7 text-muted-foreground">Learn addresses, DNS, TCP and network troubleshooting in the reading course, then check what you remember with questions and explanations.</p><div className="mt-5 flex flex-wrap gap-3"><Button asChild><Link to="/learn"><BookOpen />Read the course</Link></Button><Button asChild variant="outline"><Link to="/learn/test"><ClipboardCheck />Take the practice test</Link></Button></div></section>
     </main>
-    <footer className="border-t px-4 py-6 text-center"><PktivoPronunciation className="text-xs" /></footer>
+    <footer className="border-t px-4 py-6 text-center"><PktivoPronunciation className="text-xs" /><ThirdPartyNotice tools={['wireshark']} className="mx-auto mt-2 max-w-2xl" /></footer>
   </div>;
 }

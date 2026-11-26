@@ -1,5 +1,10 @@
 import { render, screen } from "@testing-library/react";
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
+
+vi.mock("@tanstack/react-router", async (orig) => ({
+  ...(await orig<typeof import("@tanstack/react-router")>()),
+  Link: ({ to, children, ...rest }: { to: string; children?: React.ReactNode } & Record<string, unknown>) => <a href={to} {...rest}>{children}</a>,
+}));
 
 import { PktivoWorkspace } from "@/components/netlens-workspace";
 
