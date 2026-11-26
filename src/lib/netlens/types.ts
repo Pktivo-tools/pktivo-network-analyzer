@@ -64,6 +64,8 @@ export interface Packet {
   protocol: string;
   info: string;
   proto: ProtoKey;
+  /** Canonical name of the protocol shown in the list, e.g. "tcp" or "tlsv1.2". */
+  top: string;
   layers: string[];
   fields: Map<string, FieldValue[]>;
   stream: StreamRef | null;

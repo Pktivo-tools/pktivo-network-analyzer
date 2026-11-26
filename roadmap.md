@@ -35,3 +35,9 @@
 - [x] Add a chip-based filter builder with editable output and filters saved for the tab only
 - [x] Add search across every decoded value, packet marks with notes, and CSV/JSON/pcapng export
 - [x] Verify all four on desktop and phone and keep marks, notes and saved filters in tab memory only
+
+# Protocol filtering in the filter bar
+- [x] Type a protocol name to list only the packets labelled with that protocol
+- [x] Make every protocol, alias and TLS version typeable, with suggestions while typing
+- [x] Offer the wider "frames carrying this protocol" view next to the packet list
+- [x] Verify typing, filtering, the wider view and the filter builder on desktop and phone

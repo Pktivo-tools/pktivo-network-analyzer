@@ -1,5 +1,11 @@
 import type { Packet, FieldValue } from "./types";
-import { FIELD_MAP } from "./fields";
+import {
+  CONTAINS_BY_DEFAULT,
+  FIELD_MAP,
+  canonicalProtocol,
+  frameFieldBase,
+  protocolFamily,
+} from "./fields";
 import { ipv4ToInt } from "./format";
 
 type Op = "==" | "!=" | ">" | "<" | ">=" | "<=" | "contains" | "matches";
@@ -207,6 +213,22 @@ class Parser {
   }
 }
 
+/** Does this packet's own protocol label match the typed protocol name? */
+function labelMatches(p: Packet, name: string): boolean {
+  const canon = canonicalProtocol(name);
+  if (CONTAINS_BY_DEFAULT.has(canon)) return true;
+  return protocolFamily(canon).includes(p.top);
+}
+
+/** Values for a field name, including the synthetic "<proto>.frame" fields. */
+function valuesOf(p: Packet, name: string): FieldValue[] | undefined {
+  const direct = p.fields.get(name);
+  if (direct) return direct;
+  const base = frameFieldBase(name);
+  if (base && (base === "frame" || p.layers.includes(base))) return [1];
+  return undefined;
+}
+
 function eqValue(v: FieldValue, lit: Literal): boolean {
   if (typeof v === "number") return lit.num !== null ? v === lit.num : String(v) === lit.raw;
   if (lit.cidr) {
@@ -247,14 +269,16 @@ function evaluate(n: Node, p: Packet): boolean {
     case "not":
       return !evaluate(n.a, p);
     case "exists": {
-      const vals = p.fields.get(n.f);
+      // A bare protocol name lists the packets labelled with that protocol.
+      if (FIELD_MAP.get(n.f)?.type === "proto") return labelMatches(p, n.f);
+      const vals = valuesOf(p, n.f);
       if (!vals) return false;
       // Boolean flags exist on every packet of that protocol; treat bare flag names as "is set".
       if (FIELD_MAP.get(n.f)?.type === "bool") return vals.some((v) => v === 1);
       return true;
     }
     case "cmp": {
-      const vals = p.fields.get(n.f);
+      const vals = valuesOf(p, n.f);
       if (!vals || vals.length === 0) return false;
       // Like Wireshark: "!=" means no value equals; everything else matches if any value does.
       if (n.op === "!=") return vals.every((v) => cmpOne(v, "!=", n.lit));
@@ -279,6 +303,34 @@ export function compileFilter(text: string): FilterResult {
   }
 }
 
+/**
+ * The protocol names when a filter is nothing but bare protocol names joined by
+ * "or" ("tcp", "dns or mdns"), otherwise null. Used to offer the wider
+ * "frames containing this protocol" view next to the packet list.
+ */
+export function bareProtocolList(text: string): string[] | null {
+  const trimmed = text.trim();
+  if (!trimmed) return null;
+  try {
+    const parser = new Parser(tokenize(trimmed));
+    const ast = parser.parseOr();
+    if (parser.peek()) return null;
+    const out: string[] = [];
+    const collect = (n: Node): boolean => {
+      if (n.t === "or") return collect(n.a) && collect(n.b);
+      if (n.t === "exists" && FIELD_MAP.get(n.f)?.type === "proto") {
+        const canon = canonicalProtocol(n.f);
+        if (!out.includes(canon)) out.push(canon);
+        return true;
+      }
+      return false;
+    };
+    return collect(ast) ? out : null;
+  } catch {
+    return null;
+  }
+}
+
 /** Builds a filter clause for a field value, quoting strings when needed. */
 export function filterClause(field: string, value: FieldValue): string {
   if (typeof value === "number") return `${field} == ${value}`;
@@ -296,4 +348,5 @@ export const FILTER_EXAMPLES: { filter: string; label: string }[] = [
   { filter: 'dns.qry.name contains "google"', label: "Lookups containing a word" },
   { filter: "frame.len > 1000", label: "Large frames" },
   { filter: "arp or icmp", label: "ARP and ping" },
+  { filter: "tcp.frame", label: "Frames carrying TCP (incl. HTTP/TLS)" },
 ];

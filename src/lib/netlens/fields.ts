@@ -148,6 +148,66 @@ export const FIELD_DEFS: FieldDef[] = [
   f("ssh", "proto", "SSH"),
   f("null", "proto", "Loopback"),
   f("null.family", "num", "Address family"),
+  f("lldp", "proto", "LLDP"),
+  f("eapol", "proto", "802.1X authentication (EAPOL)"),
+  f("gre", "proto", "GRE tunnel"),
+  f("esp", "proto", "IPsec ESP"),
+  f("llmnr", "proto", "Link-Local Multicast Name Resolution"),
+  f("tlsv1.0", "proto", "TLS 1.0 records"),
+  f("tlsv1.1", "proto", "TLS 1.1 records"),
+  f("tlsv1.2", "proto", "TLS 1.2 records"),
+  f("tlsv1.3", "proto", "TLS 1.3 records"),
+  f("ipv4", "proto", "IPv4 (same as ip)"),
+  f("ethernet", "proto", "Ethernet (same as eth)"),
+  f("loopback", "proto", "Null/Loopback (same as null)"),
 ];
 
-export const FIELD_MAP = new Map(FIELD_DEFS.map((d) => [d.name, d]));
+/** Names that stand in for another protocol name, e.g. "ipv4" for "ip". */
+export const PROTO_ALIASES: Record<string, string> = {
+  ipv4: "ip",
+  ethernet: "eth",
+  loopback: "null",
+};
+
+/**
+ * Protocol names whose bare form means "every frame that carries it".
+ * Every packet is a frame, so typing "frame" lists the whole capture.
+ */
+export const CONTAINS_BY_DEFAULT = new Set(["frame"]);
+
+/** Bare names that also cover their variants, e.g. "tls" covers "TLSv1.2". */
+export const PROTO_FAMILY: Record<string, string[]> = {
+  tls: ["tls", "tlsv1.0", "tlsv1.1", "tlsv1.2", "tlsv1.3"],
+  dns: ["dns", "mdns", "llmnr"],
+};
+
+/** Every protocol name that can be typed into the display filter. */
+export const PROTO_NAMES: string[] = FIELD_DEFS.filter((d) => d.type === "proto").map((d) => d.name);
+const PROTO_NAME_SET = new Set(PROTO_NAMES);
+
+/** "tcp.frame" = any frame carrying TCP, even one labelled HTTP. */
+export const PROTO_FRAME_DEFS: FieldDef[] = PROTO_NAMES
+  .filter((n) => n !== "frame" && !PROTO_ALIASES[n])
+  .map((n) => f(`${n}.frame`, "bool", `Frame containing ${n}`));
+
+export const ALL_FIELD_DEFS: FieldDef[] = [...FIELD_DEFS, ...PROTO_FRAME_DEFS];
+
+export const FIELD_MAP = new Map(ALL_FIELD_DEFS.map((d) => [d.name, d]));
+
+/** Canonical protocol name for a typed name (resolves aliases like "ipv4"). */
+export function canonicalProtocol(name: string): string {
+  return PROTO_ALIASES[name] ?? name;
+}
+
+/** Protocol names a typed bare protocol stands for, e.g. tls → TLSv1.0/1.2/1.3. */
+export function protocolFamily(name: string): string[] {
+  const canon = canonicalProtocol(name);
+  return PROTO_FAMILY[canon] ?? [canon];
+}
+
+/** Base protocol of a "<proto>.frame" field, or null when it is not one. */
+export function frameFieldBase(name: string): string | null {
+  if (!name.endsWith(".frame")) return null;
+  const base = name.slice(0, -".frame".length);
+  return PROTO_NAME_SET.has(base) ? base : null;
+}

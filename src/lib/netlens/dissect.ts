@@ -14,6 +14,8 @@ interface Ctx {
   protocol: string;
   info: string;
   proto: ProtoKey;
+  /** Canonical name of the protocol shown in the list, e.g. "tcp" or "tlsv1.2". */
+  top: string;
   ttl: number;
   payload: Packet["payload"];
   stream: StreamRef | null;
@@ -66,10 +68,11 @@ function layer(ctx: Ctx, name: string, label: string, start: number, length: num
   return n;
 }
 
-function setTop(ctx: Ctx, protocol: string, proto: ProtoKey, info: string) {
+function setTop(ctx: Ctx, protocol: string, proto: ProtoKey, info: string, top: string) {
   ctx.protocol = protocol;
   ctx.proto = proto;
   ctx.info = info;
+  ctx.top = top;
 }
 
 const ETHERTYPE_NAMES: Record<number, string> = {
@@ -147,6 +150,7 @@ export class Dissector {
       protocol: ctx.protocol,
       info: ctx.info,
       proto: ctx.proto,
+      top: ctx.top,
       layers: ctx.layers,
       fields: ctx.fields,
       stream: ctx.stream,
@@ -183,6 +187,7 @@ function makeCtx(d: Uint8Array, withTree: boolean, prior: Packet | null, session
     protocol: "Frame",
     info: "",
     proto: "other",
+    top: "frame",
     ttl: 0,
     payload: null,
     stream: prior?.stream ?? null,
@@ -236,7 +241,7 @@ function runDissection(ctx: Ctx, raw: RawPacket, no: number, rel: number) {
         sll2(ctx);
         break;
       default:
-        setTop(ctx, "Frame", "other", `Unsupported link type ${raw.linkType}`);
+        setTop(ctx, "Frame", "other", `Unsupported link type ${raw.linkType}`, "frame");
     }
   } catch {
     ctx.info = (ctx.info ? ctx.info + " " : "") + "[Malformed Packet]";
@@ -272,7 +277,7 @@ function ethernet(ctx: Ctx, o: number) {
   ctx.dst = dst;
   ctx.netSrc = src;
   ctx.netDst = dst;
-  setTop(ctx, "Ethernet", "other", `Ethertype ${hex(type)}`);
+  setTop(ctx, "Ethernet", "other", `Ethertype ${hex(type)}`, "eth");
   etherPayload(ctx, type, next);
 }
 
@@ -280,8 +285,13 @@ function etherPayload(ctx: Ctx, type: number, o: number) {
   if (type === 0x0800) ipv4(ctx, o);
   else if (type === 0x86dd) ipv6(ctx, o);
   else if (type === 0x0806) arp(ctx, o);
-  else if (type === 0x88cc) setTop(ctx, "LLDP", "other", "Link Layer Discovery Protocol");
-  else if (type === 0x888e) setTop(ctx, "EAPOL", "other", "802.1X Authentication");
+  else if (type === 0x88cc) {
+    layer(ctx, "lldp", "Link Layer Discovery Protocol", o, ctx.d.length - o);
+    setTop(ctx, "LLDP", "other", "Link Layer Discovery Protocol", "lldp");
+  } else if (type === 0x888e) {
+    layer(ctx, "eapol", "802.1X Authentication (EAPOL)", o, ctx.d.length - o);
+    setTop(ctx, "EAPOL", "other", "802.1X Authentication", "eapol");
+  }
 }
 
 function loopback(ctx: Ctx, linkType: number) {
@@ -332,7 +342,7 @@ function arp(ctx: Ctx, o: number) {
   field(ctx, a, "arp.dst.hw_mac", tha, `Target MAC address: ${tha}`, o + 18, 6);
   field(ctx, a, "arp.dst.proto_ipv4", tpa, `Target IP address: ${tpa}`, o + 24, 4);
   const info = op === 1 ? `Who has ${tpa}? Tell ${spa}` : op === 2 ? `${spa} is at ${sha}` : `ARP ${opName}`;
-  setTop(ctx, "ARP", "arp", info);
+  setTop(ctx, "ARP", "arp", info, "arp");
 }
 
 function ipv4(ctx: Ctx, o: number) {
@@ -371,7 +381,7 @@ function ipv4(ctx: Ctx, o: number) {
   ctx.netSrc = src;
   ctx.netDst = dst;
   ctx.ttl = ttl;
-  setTop(ctx, "IPv4", "other", `${IP_PROTOS[proto] ?? "Protocol " + proto}`);
+  setTop(ctx, "IPv4", "other", `${IP_PROTOS[proto] ?? "Protocol " + proto}`, "ip");
   const end = Math.min(d.length, o + Math.max(totalLen, ihl));
   if (fragOff > 0) {
     ctx.info = `Fragmented IP protocol (proto=${IP_PROTOS[proto] ?? proto}, off=${fragOff}, ID=${hex(id)})`;
@@ -404,7 +414,7 @@ function ipv6(ctx: Ctx, o: number) {
   ctx.netSrc = src;
   ctx.netDst = dst;
   ctx.ttl = hlim;
-  setTop(ctx, "IPv6", "other", `${IP_PROTOS[nxt] ?? "Next header " + nxt}`);
+  setTop(ctx, "IPv6", "other", `${IP_PROTOS[nxt] ?? "Next header " + nxt}`, "ipv6");
   let p = o + 40;
   const end = Math.min(d.length, o + 40 + plen);
   for (let guard = 0; guard < 8 && (nxt === 0 || nxt === 43 || nxt === 60 || nxt === 44); guard++) {
@@ -424,9 +434,14 @@ function transport(ctx: Ctx, proto: number, o: number, end: number, src: string,
   else if (proto === 58) icmpv6(ctx, o, end);
   else if (proto === 2) {
     layer(ctx, "igmp", "Internet Group Management Protocol", o, end - o);
-    setTop(ctx, "IGMP", "other", "Membership report / query");
-  } else if (proto === 47) setTop(ctx, "GRE", "other", "Generic Routing Encapsulation");
-  else if (proto === 50) setTop(ctx, "ESP", "other", "Encapsulating Security Payload");
+    setTop(ctx, "IGMP", "other", "Membership report / query", "igmp");
+  } else if (proto === 47) {
+    layer(ctx, "gre", "Generic Routing Encapsulation", o, end - o);
+    setTop(ctx, "GRE", "other", "Generic Routing Encapsulation", "gre");
+  } else if (proto === 50) {
+    layer(ctx, "esp", "Encapsulating Security Payload", o, end - o);
+    setTop(ctx, "ESP", "other", "Encapsulating Security Payload", "esp");
+  }
 }
 
 function portLabel(p: number) {
@@ -505,7 +520,7 @@ function tcp(ctx: Ctx, o: number, end: number, ipSrc: string, ipDst: string) {
   if (plen > 0) node(ctx, t, `TCP payload (${plen} bytes)`, o + off, plen);
 
   const info = `${sport} → ${dport} [${flagNames.filter((n) => n !== "CWR" && n !== "ECE").join(", ")}] Seq=${seq}${flags & 0x10 ? ` Ack=${ack}` : ""} Win=${win} Len=${plen}`;
-  setTop(ctx, "TCP", flags & 0x04 ? "alert" : "tcp", info);
+  setTop(ctx, "TCP", flags & 0x04 ? "alert" : "tcp", info, "tcp");
   ctx.src = ipSrc;
   ctx.dst = ipDst;
   if (plen > 0) {
@@ -531,14 +546,14 @@ function tcpApp(ctx: Ctx, o: number, len: number, sport: number, dport: number) 
   if (b0 >= 20 && b0 <= 23 && b1 === 3) return tls(ctx, o, len);
   if (sport === 443 || dport === 443) {
     layer(ctx, "tls", "Transport Layer Security", o, len);
-    setTop(ctx, "TLS", "tls", "Continuation Data");
+    setTop(ctx, "TLS", "tls", "Continuation Data", "tls");
     return;
   }
   if (sport === 53 || dport === 53) return dns(ctx, o + 2, len - 2, "DNS");
   if (sport === 22 || dport === 22) {
     layer(ctx, "ssh", "SSH Protocol", o, len);
     const text = new TextDecoder().decode(d.subarray(o, o + Math.min(len, 80)));
-    setTop(ctx, "SSH", "tcp", text.startsWith("SSH-") ? `Protocol (${text.trim()})` : "Encrypted packet");
+    setTop(ctx, "SSH", "tcp", text.startsWith("SSH-") ? `Protocol (${text.trim()})` : "Encrypted packet", "ssh");
     return;
   }
 }
@@ -595,7 +610,7 @@ function http(ctx: Ctx, o: number, len: number) {
     if (bodyLen > 0) node(ctx, h, `File Data: ${bodyLen} bytes${contentType ? ` (${contentType})` : ""}`, o + headEnd + 4, bodyLen);
   }
   if (first.startsWith("HTTP/") && contentType) info += `  (${contentType})`;
-  setTop(ctx, "HTTP", "http", info);
+  setTop(ctx, "HTTP", "http", info, "http");
 }
 
 const TLS_CONTENT: Record<number, string> = { 20: "Change Cipher Spec", 21: "Alert", 22: "Handshake", 23: "Application Data" };
@@ -653,7 +668,9 @@ function tls(ctx: Ctx, o: number, len: number) {
     const ver = v.getUint16(o + 1);
     label = ver === 0x0303 ? "TLSv1.2" : ver === 0x0301 ? "TLSv1.0" : "TLS";
   }
-  setTop(ctx, label === "TLS" ? "TLS" : label, "tls", infos.length ? [...new Set(infos)].join(", ") : "Continuation Data");
+  const top = label === "TLS" ? "tls" : label.toLowerCase();
+  if (top !== "tls") ctx.layers.push(top);
+  setTop(ctx, label === "TLS" ? "TLS" : label, "tls", infos.length ? [...new Set(infos)].join(", ") : "Continuation Data", top);
 }
 
 function helloExtensions(ctx: Ctx, parent: Parent, p: number, end: number, client: boolean) {
@@ -732,7 +749,7 @@ function udp(ctx: Ctx, o: number, end: number, ipSrc: string, ipDst: string) {
   field(ctx, u, "udp.length", ulen, `Length: ${ulen}`, o + 4, 2);
   field(ctx, u, "udp.checksum", csum, `Checksum: ${hex(csum)}`, o + 6, 2);
   if (stream) field(ctx, u, "udp.stream", stream.index, `[Stream index: ${stream.index}]`, o, 0);
-  setTop(ctx, "UDP", "udp", `${sport} → ${dport} Len=${plen}`);
+  setTop(ctx, "UDP", "udp", `${sport} → ${dport} Len=${plen}`, "udp");
   ctx.src = ipSrc;
   ctx.dst = ipDst;
   if (plen <= 0) return;
@@ -856,7 +873,9 @@ function dns(ctx: Ctx, o: number, len: number, label: string) {
   let info = `${isResp ? "Standard query response" : "Standard query"} ${hex(id)} ${qs.join(", ")}`;
   if (isResp && rcode === 3) info += " No such name";
   if (answers.length) info += " " + answers.slice(0, 4).join(" ") + (answers.length > 4 ? " …" : "");
-  setTop(ctx, label, "dns", info);
+  const top = label === "MDNS" ? "mdns" : label === "LLMNR" ? "llmnr" : "dns";
+  if (top !== "dns") ctx.layers.push(top);
+  setTop(ctx, label, "dns", info, top);
 }
 
 const DHCP_TYPES: Record<number, string> = { 1: "Discover", 2: "Offer", 3: "Request", 4: "Decline", 5: "ACK", 6: "NAK", 7: "Release", 8: "Inform" };
@@ -890,7 +909,7 @@ function dhcp(ctx: Ctx, o: number, len: number) {
     } else node(ctx, n, `Option: (${code}) length ${l}`, p, 2 + l);
     p += 2 + l;
   }
-  setTop(ctx, "DHCP", "dhcp", `DHCP ${msgType || "Message"} - Transaction ID ${hex(xid, 8)}`);
+  setTop(ctx, "DHCP", "dhcp", `DHCP ${msgType || "Message"} - Transaction ID ${hex(xid, 8)}`, "dhcp");
 }
 
 function ntp(ctx: Ctx, o: number, len: number) {
@@ -900,14 +919,14 @@ function ntp(ctx: Ctx, o: number, len: number) {
   const modes = ["reserved", "symmetric active", "symmetric passive", "client", "server", "broadcast", "control", "private"];
   const n = layer(ctx, "ntp", "Network Time Protocol", o, len);
   field(ctx, n, "ntp.mode", mode, `Mode: ${modes[mode]} (${mode})`, o, 1);
-  setTop(ctx, "NTP", "udp", `NTP Version ${ver}, ${modes[mode]}`);
+  setTop(ctx, "NTP", "udp", `NTP Version ${ver}, ${modes[mode]}`, "ntp");
 }
 
 function ssdp(ctx: Ctx, o: number, len: number) {
   const text = new TextDecoder("latin1").decode(ctx.d.subarray(o, o + len));
   const first = text.split("\r\n")[0] ?? "";
   layer(ctx, "ssdp", "Simple Service Discovery Protocol", o, len);
-  setTop(ctx, "SSDP", "udp", first);
+  setTop(ctx, "SSDP", "udp", first, "ssdp");
 }
 
 function quic(ctx: Ctx, o: number, len: number) {
@@ -923,10 +942,10 @@ function quic(ctx: Ctx, o: number, len: number) {
     field(ctx, q, "quic.long.packet_type", (b0 >> 4) & 3, `Packet Type: ${type}`, o, 1);
     field(ctx, q, "quic.version", version, `Version: ${hex(version, 8)}`, o + 1, 4);
     field(ctx, q, "quic.dcid", dcid, `Destination Connection ID: ${dcid}`, o + 6, dcidLen);
-    setTop(ctx, "QUIC", "quic", `${type}, DCID=${dcid.slice(0, 16)}`);
+    setTop(ctx, "QUIC", "quic", `${type}, DCID=${dcid.slice(0, 16)}`, "quic");
   } else {
     node(ctx, q, "Short Header (1-RTT protected payload)", o, 1);
-    setTop(ctx, "QUIC", "quic", "Protected Payload (KP0)");
+    setTop(ctx, "QUIC", "quic", "Protected Payload (KP0)", "quic");
   }
 }
 
@@ -956,7 +975,7 @@ function icmp(ctx: Ctx, o: number, end: number) {
     if (end - o > 8) node(ctx, n, `Data (${end - o - 8} bytes)`, o + 8, end - o - 8);
     info += `  id=${hex(id)}, seq=${seq}, ttl=${ctx.ttl}`;
   }
-  setTop(ctx, "ICMP", type === 3 || type === 11 ? "alert" : "icmp", info);
+  setTop(ctx, "ICMP", type === 3 || type === 11 ? "alert" : "icmp", info, "icmp");
 }
 
 const ICMP6_TYPES: Record<number, string> = {
@@ -987,5 +1006,5 @@ function icmpv6(ctx: Ctx, o: number, end: number) {
   } else if (type === 128 || type === 129) {
     info += ` id=${hex(v.getUint16(o + 4))}, seq=${v.getUint16(o + 6)}`;
   }
-  setTop(ctx, "ICMPv6", type < 128 ? "alert" : "icmp", info);
+  setTop(ctx, "ICMPv6", type < 128 ? "alert" : "icmp", info, "icmpv6");
 }

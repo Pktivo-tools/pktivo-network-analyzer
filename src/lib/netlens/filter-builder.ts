@@ -44,6 +44,20 @@ export const BUILDER_GROUPS: BuilderGroup[] = [
       { id: "udp", label: "UDP", filter: "udp" },
       { id: "arp", label: "ARP", filter: "arp" },
       { id: "icmp", label: "Ping / ICMP", filter: "icmp" },
+      { id: "icmpv6", label: "Ping / ICMPv6", filter: "icmpv6" },
+      { id: "ipv6", label: "IPv6", filter: "ipv6" },
+      { id: "mdns", label: "Local names (mDNS)", filter: "mdns" },
+      { id: "llmnr", label: "Local names (LLMNR)", filter: "llmnr" },
+      { id: "ntp", label: "Clock sync (NTP)", filter: "ntp" },
+      { id: "dhcp", label: "Address leases (DHCP)", filter: "dhcp" },
+      { id: "ssdp", label: "Device discovery (SSDP)", filter: "ssdp" },
+      { id: "ssh", label: "Remote shells (SSH)", filter: "ssh" },
+      { id: "igmp", label: "Multicast groups (IGMP)", filter: "igmp" },
+      { id: "lldp", label: "Switch info (LLDP)", filter: "lldp" },
+      { id: "eapol", label: "Network auth (EAPOL)", filter: "eapol" },
+      { id: "gre", label: "Tunnels (GRE)", filter: "gre" },
+      { id: "esp", label: "VPN traffic (ESP)", filter: "esp" },
+      { id: "loopback", label: "Loopback", filter: "loopback" },
     ],
   },
   {
@@ -139,8 +153,15 @@ export function selectionForFilter(filter: string, ctx: BuilderContext | null = 
   const selection: BuilderSelection = {};
   const text = filter.trim();
   if (!text) return selection;
+  const lower = text.toLowerCase();
+  const tokens = new Set(lower.split(/[^a-z0-9_.:-]+/));
+  // Bare protocol chips must match a whole word, so "mdns" does not light up "dns".
+  const matches = (f: string) => {
+    const name = f.toLowerCase();
+    return /^[a-z0-9_.]+$/.test(name) ? tokens.has(name) : lower.includes(name);
+  };
   for (const group of allGroups(ctx)) {
-    const ids = group.choices.filter((c) => text.includes(c.filter)).map((c) => c.id);
+    const ids = group.choices.filter((c) => matches(c.filter)).map((c) => c.id);
     const first = ids[0];
     if (group.multi) {
       if (ids.length) selection[group.id] = ids;
