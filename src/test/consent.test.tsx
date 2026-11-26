@@ -50,4 +50,27 @@ describe('Cookie consent', () => {
     expect(toggle).not.toBeChecked();
     expect(toggle).toBeDisabled();
   });
+
+  it('accepts all from settings and restores the saved preference after reopening', async () => {
+    render(<CookieConsent />);
+    await screen.findByRole('region', { name: 'Your privacy choices' });
+    fireEvent.click(screen.getByRole('button', { name: 'Cookie settings' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Accept all' }));
+    expect(JSON.parse(window.localStorage.getItem('cookie_consent_analytics') ?? '{}').choice).toBe('granted');
+    cleanup();
+
+    render(<CookieConsent />);
+    fireEvent.click(await screen.findByRole('button', { name: 'Cookie settings' }));
+    expect(await screen.findByRole('switch', { name: 'Analytics, provided by Lovable' })).toBeChecked();
+  });
+
+  it('saves the chosen off preference instead of accepting all', async () => {
+    render(<CookieConsent />);
+    await screen.findByRole('region', { name: 'Your privacy choices' });
+    fireEvent.click(screen.getByRole('button', { name: 'Cookie settings' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Save choices' }));
+    expect(JSON.parse(window.localStorage.getItem('cookie_consent_analytics') ?? '{}').choice).toBe('denied');
+    fireEvent.click(screen.getByRole('button', { name: 'Cookie settings' }));
+    expect(await screen.findByRole('switch', { name: 'Analytics, provided by Lovable' })).not.toBeChecked();
+  });
 });

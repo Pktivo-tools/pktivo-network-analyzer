@@ -47,3 +47,8 @@
 - [x] Connect analytics consent signals and preserve Global Privacy Control
 - [x] Add a public privacy page and permanent Cookie settings control
 - [x] Verify saved choices, first-visit behavior, mobile layout and capture privacy
+
+# Cookie settings refinement
+- [x] Replace Not now with Accept all and preserve Save choices
+- [x] Confirm saved preferences and keep a discreet permanent settings button
+- [x] Verify saving, reopening and mobile layout

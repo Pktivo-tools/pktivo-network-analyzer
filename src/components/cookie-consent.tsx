@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { Link } from '@tanstack/react-router';
-import { ShieldCheck } from 'lucide-react';
+import { Check, ShieldCheck } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Switch } from '@/components/ui/switch';
 import { needsAnswer, onConsentChange, readChoice, saveChoices, type Choice } from '@/lib/consent';
@@ -16,7 +16,9 @@ export function CookieConsent() {
   const [settings, setSettings] = useState(false);
   const [choice, setChoice] = useState<Choice | null>(null);
   const [privacySignal, setPrivacySignal] = useState(false);
+  const [saved, setSaved] = useState(false);
   const panelRef = useRef<HTMLDivElement>(null);
+  const settingsButtonRef = useRef<HTMLButtonElement>(null);
 
   useEffect(() => {
     let active = true;
@@ -41,7 +43,15 @@ export function CookieConsent() {
     if (open) panelRef.current?.focus();
   }, [open, settings]);
 
+  useEffect(() => {
+    if (!saved) return;
+    settingsButtonRef.current?.focus({ preventScroll: true });
+    const timeout = window.setTimeout(() => setSaved(false), 5000);
+    return () => window.clearTimeout(timeout);
+  }, [saved]);
+
   function showSettings() {
+    setSaved(false);
     setChoice(readChoice('analytics'));
     setSettings(true);
     setOpen(true);
@@ -52,10 +62,16 @@ export function CookieConsent() {
     setChoice(readChoice('analytics'));
     setOpen(false);
     setSettings(false);
+    setSaved(true);
   }
 
   if (!open) {
-    return <Button type="button" variant="outline" size="sm" onClick={showSettings} className="fixed bottom-3 right-3 z-30 bg-background/95 text-xs shadow-md">Cookie settings</Button>;
+    return <div className="flex justify-end border-t bg-background px-3 py-2">
+      <div role="status" aria-live="polite" aria-atomic="true" className="fixed bottom-14 right-3 z-50 max-w-[calc(100%-1.5rem)]">
+        {saved && <p className="flex items-center gap-2 rounded-md border bg-background px-3 py-2 text-xs text-foreground shadow-md"><Check aria-hidden="true" className="size-4 shrink-0 text-primary" />Cookie preferences saved.</p>}
+      </div>
+      <Button ref={settingsButtonRef} type="button" variant="ghost" size="sm" onClick={showSettings} className="text-xs text-muted-foreground"><ShieldCheck aria-hidden="true" className="size-3.5" />Cookie settings</Button>
+    </div>;
   }
 
   return <div ref={panelRef} tabIndex={-1} role="region" aria-label="Your privacy choices" className="fixed inset-x-3 bottom-3 z-50 mx-auto max-w-2xl rounded-lg border bg-background/95 p-5 text-foreground shadow-2xl outline-none backdrop-blur sm:p-6">
@@ -74,7 +90,7 @@ export function CookieConsent() {
       </div>
       {privacySignal && <p className="mt-3 text-xs leading-5 text-muted-foreground">Your browser’s privacy signal applies, so analytics stays off.</p>}
       <div className="mt-5 flex flex-wrap justify-end gap-2">
-        <Button type="button" variant="ghost" onClick={() => { setOpen(false); setSettings(false); }}>Not now</Button>
+        <Button type="button" variant="outline" disabled={privacySignal} onClick={() => save('granted')}>Accept all</Button>
         <Button type="button" onClick={() => save(choice ?? 'denied')}>Save choices</Button>
       </div>
     </> : <>
