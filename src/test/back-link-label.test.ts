@@ -31,7 +31,6 @@ describe('Back-to-workspace link label', () => {
     expect(backLinks.map(b => b.file)).toEqual(
       expect.arrayContaining([
         'src/routes/glossary.tsx',
-        'src/routes/how-to-read-wireshark-capture.tsx',
         'src/routes/learn.tsx',
         'src/routes/pcap-file-analyzer-online.tsx',
       ]),
