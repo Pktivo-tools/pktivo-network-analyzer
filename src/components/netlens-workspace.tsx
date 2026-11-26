@@ -1,3 +1,4 @@
+import { HelpAbout } from '@/components/help-about';
 import { Link } from '@tanstack/react-router';
 import { PktivoLogo } from '@/components/pktivo-logo';
 import { useEffect, useMemo, useRef, useState } from 'react';
@@ -9,7 +10,6 @@ import { CaptureComparison } from '@/components/capture-comparison';
 import { SavedCaptureGuide } from '@/components/saved-capture-guide';
 import { CapturePrivacyNote } from '@/components/capture-privacy-note';
 import { PktivoPronunciation } from '@/components/pktivo-pronunciation';
-import { GitHubLink } from '@/components/github-link';
 import { bindTabLifetime } from '@/lib/netlens/tab-lifetime';
 import { analyzePackets, type Finding } from '@/lib/netlens/findings';
 import { ThemeGrid, useTheme } from '@/components/theme-picker';
@@ -124,7 +124,7 @@ export function PktivoWorkspace({onLearn,onAbout}:{onLearn?:()=>void;onAbout?:()
     {modal==='builder'&&<FilterBuilder context={builderContext} applied={applied} saved={savedFilters} onSave={(name,filter)=>setSavedFilters(prev=>[...prev.filter(s=>s.name!==name),{name,filter}])} onDelete={name=>setSavedFilters(prev=>prev.filter(s=>s.name!==name))} onApply={(f)=>{apply(f);setModal(null)}}/>}
     {modal==='stream'&&stream&&<><div className="flex flex-wrap items-center justify-between gap-2 text-xs text-muted-foreground"><span>{stream.kind.toUpperCase()} stream {stream.index} · {stream.packetCount} packets</span><Button variant="outline" size="sm" onClick={()=>download(new Uint8Array(stream.segments.flatMap(s=>Array.from(s.bytes))),`stream-${stream.index}.bin`)}><ArrowDownToLine/>Save payload</Button></div><div className="max-h-96 overflow-auto border bg-muted/30 p-4">{stream.segments.length?stream.segments.map((s,i)=><div key={i} className="mb-5"><div className="mb-2 text-[10px] font-semibold text-muted-foreground">{s.fromClient?'CLIENT → SERVER':'SERVER → CLIENT'} · {s.bytes.length} bytes</div><pre className={`whitespace-pre-wrap break-all font-mono text-xs ${s.fromClient?'text-primary':'text-stream-server'}`}>{new TextDecoder().decode(s.bytes)}</pre></div>):<p className="text-sm text-muted-foreground">No captured payload in this stream.</p>}</div><Button variant="secondary" onClick={()=>{apply(`${stream.kind}.stream == ${stream.index}`);setModal(null)}}>Isolate stream</Button></>}
     {modal==='capture'&&<SavedCaptureGuide expanded disabled={busy} onOpen={()=>{setModal(null);fileInput.current?.click()}}/>}
-    {modal==='help'&&<div className="space-y-5 text-sm"><p>Pktivo is an independent packet analyzer, not a Wireshark distribution. Capture files stay on your device.</p><div className="border-y py-4"><h3 className="mb-2 font-medium">Capture support</h3><p className="text-muted-foreground">PCAP and PCAPNG · Ethernet, IPv4/IPv6, TCP, UDP, DNS, HTTP, TLS, QUIC, ARP, ICMP and more.</p></div><div className="border-y py-4"><h3 className="mb-2 font-medium">Source code</h3><div className="flex flex-wrap items-center justify-between gap-3 rounded-md border bg-muted/30 px-3 py-2.5"><div><p className="text-sm font-medium">Pktivo on GitHub</p><p className="mt-0.5 text-xs text-muted-foreground">See how it works, report a problem, or read the full project page.</p></div><GitHubLink label="Open repository" className="shrink-0" /></div></div><p className="text-xs text-muted-foreground">TCP stream view is a payload conversation, not full sequence-aware reassembly. Encrypted payloads are not decrypted. Record new traffic with Wireshark and open the saved file here. Browsers cannot directly record network traffic.</p><Button variant="outline"  onClick={()=>{setPackets(demoPackets());setFilename('sample-traffic.pcapng');setIsDemo(true);setSelected(5);apply('');setView('packets');setModal(null)}}><FlaskConical/>Load sample capture</Button></div>}
+    {modal==='help'&&<HelpAbout><Button variant="outline"  onClick={()=>{setPackets(demoPackets());setFilename('sample-traffic.pcapng');setIsDemo(true);setSelected(5);apply('');setView('packets');setModal(null)}}><FlaskConical/>Load sample capture</Button></HelpAbout>}
     </DialogContent></Dialog>
   </div>;
 }

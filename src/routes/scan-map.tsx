@@ -1,10 +1,13 @@
+import { Dialog, DialogContent, DialogDescription, DialogTitle } from '@/components/ui/dialog';
+import { HelpAbout } from '@/components/help-about';
+import { NmapCaptureGuide } from '@/components/nmap-capture-guide';
 import { resolveTheme } from '@/lib/netlens/themes';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { ThemeGrid, useTheme } from '@/components/theme-picker';
 import { ThirdPartyNotice } from '@/components/third-party-notice';
 import { createFileRoute, Link } from '@tanstack/react-router';
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { Activity, BookOpen, ChevronRight, Menu, Copy, FileUp, GitCompare, Network, Radar, ScrollText, ShieldCheck, TerminalSquare, X } from 'lucide-react';
+import { Activity, BookOpen, ChevronRight, CircleHelp, Menu, Copy, FileUp, GitCompare, Network, Radar, ScrollText, ShieldCheck, TerminalSquare, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -31,7 +34,7 @@ export const Route = createFileRoute('/scan-map')({
 
 const TAB_LABELS: Record<string, string> = { results: 'Results', compare: 'Compare scans', simulator: 'Scan simulator', scripts: 'Script playbook' };
 
-function ScanMenu() {
+function ScanMenu({ onModal }: { onModal: (m: 'nmap' | 'help') => void }) {
   const [open, setOpen] = useState(false);
   const { theme, select } = useTheme();
   const close = () => setOpen(false);
@@ -40,9 +43,11 @@ function ScanMenu() {
     <DropdownMenuContent align="start" className="max-h-[calc(100dvh-6rem)] w-72 overflow-y-auto p-2" aria-label="Pktivo menu">
       <DropdownMenuLabel className="px-2 text-[11px] font-medium text-muted-foreground">Pktivo</DropdownMenuLabel>
       <DropdownMenuItem asChild className="gap-2"><Link to="/packet-analyzer" onClick={close}><Activity className="size-4" />Packet viewer (Wireshark files)</Link></DropdownMenuItem>
+      <DropdownMenuItem className="gap-2" onSelect={() => { close(); onModal('nmap'); }}><Radar className="size-4" />Capture with Nmap</DropdownMenuItem>
       <DropdownMenuItem asChild className="gap-2"><Link to="/learn" onClick={close}><BookOpen className="size-4" />Learn networking</Link></DropdownMenuItem>
-      <DropdownMenuItem asChild className="gap-2"><Link to="/how-to-read-wireshark-capture" onClick={close}><BookOpen className="size-4" />Beginner capture guide</Link></DropdownMenuItem>
+      <DropdownMenuItem asChild className="gap-2"><Link to="/how-to-run-nmap-scan" onClick={close}><BookOpen className="size-4" />Beginner capture guide</Link></DropdownMenuItem>
       <DropdownMenuItem asChild className="gap-2"><Link to="/glossary" onClick={close}><BookOpen className="size-4" />Networking glossary</Link></DropdownMenuItem>
+      <DropdownMenuItem className="gap-2" onSelect={() => { close(); onModal('help'); }}><CircleHelp className="size-4" />Help & about</DropdownMenuItem>
       <DropdownMenuSeparator />
       <DropdownMenuLabel className="px-2 text-[11px] font-medium text-muted-foreground">Appearance · {resolveTheme(theme).name}</DropdownMenuLabel>
       <div className="px-1 pb-1"><ThemeGrid theme={theme} className="grid-cols-3 sm:grid-cols-2" onSelect={(id) => { select(id); close(); }} /></div>
@@ -56,13 +61,14 @@ function ScanMapPage() {
   const [scan, setScan] = useState<NmapScan | null>(null);
   const [error, setError] = useState('');
   const [tab, setTab] = useState('results');
+  const [modal, setModal] = useState<'nmap' | 'help' | null>(null);
   useEffect(() => bindTabLifetime(window, () => { setScan(null); setError(''); }), []);
   const open = async (f?: File) => { if (!f) return; try { setScan(await readScan(f)); setError(''); setTab('results'); } catch (e) { setError(e instanceof Error ? e.message : 'Could not read this file.'); } };
 
   return <div className="min-h-screen bg-background text-foreground">
     <header className="border-b px-4 py-3 sm:px-6"><div className="mx-auto flex max-w-7xl min-w-0 items-center gap-2 text-xs text-muted-foreground">
       <Link to="/" className="mr-2 flex items-center gap-2 text-base font-semibold text-foreground" aria-label="Pktivo home"><span className="size-6"><PktivoLogo /></span>pktivo<span className="text-primary">.</span></Link>
-      <ScanMenu />
+      <ScanMenu onModal={setModal} />
       <span className="hidden sm:inline">Scan Map</span><ChevronRight className="hidden size-3 sm:inline" /><span className="truncate font-medium text-foreground">{TAB_LABELS[tab]}</span>
       <span className="ml-2 hidden items-center gap-1.5 rounded-full border px-2 py-0.5 text-[11px] md:inline-flex"><ShieldCheck className="size-3" />On this device</span>
     </div></header>
@@ -89,6 +95,10 @@ function ScanMapPage() {
       </Tabs>
       <footer className="mt-10 border-t pt-6"><PktivoPronunciation className="text-xs" /><ThirdPartyNotice tools={['nmap','wireshark']} className="mt-2" /><p className="mt-1 text-xs text-muted-foreground">Port hints are clues, not proof.</p></footer>
     </main>
+    <Dialog open={modal !== null} onOpenChange={o => { if (!o) setModal(null); }}><DialogContent className="max-h-[85dvh] w-[calc(100%-2rem)] max-w-2xl overflow-auto"><DialogTitle>{modal === 'nmap' ? 'Capture with Nmap' : 'About Pktivo'}</DialogTitle><DialogDescription>{modal === 'nmap' ? 'Scan with Nmap, then view the results privately in your browser.' : 'Private browser-based packet viewer and Nmap scan visualizer'}</DialogDescription>
+      {modal === 'nmap' && <NmapCaptureGuide onOpen={() => { setModal(null); setTab('results'); }} />}
+      {modal === 'help' && <HelpAbout><Button variant="outline" onClick={() => { setScan(parseNmapXml(demoScanAfter)); setError(''); setTab('results'); setModal(null); }}><Radar />Load sample scan</Button></HelpAbout>}
+    </DialogContent></Dialog>
   </div>;
 }
 

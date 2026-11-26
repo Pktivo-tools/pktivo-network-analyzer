@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as GlossaryRouteImport } from './routes/glossary'
 import { Route as HowToReadWiresharkCaptureRouteImport } from './routes/how-to-read-wireshark-capture'
+import { Route as HowToRunNmapScanRouteImport } from './routes/how-to-run-nmap-scan'
 import { Route as LearnRouteImport } from './routes/learn'
 import { Route as PacketAnalyzerRouteImport } from './routes/packet-analyzer'
 import { Route as PcapFileAnalyzerOnlineRouteImport } from './routes/pcap-file-analyzer-online'
@@ -37,6 +38,11 @@ const HowToReadWiresharkCaptureRoute =
     path: '/how-to-read-wireshark-capture',
     getParentRoute: () => rootRouteImport,
   } as any)
+const HowToRunNmapScanRoute = HowToRunNmapScanRouteImport.update({
+  id: '/how-to-run-nmap-scan',
+  path: '/how-to-run-nmap-scan',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const LearnRoute = LearnRouteImport.update({
   id: '/learn',
   path: '/learn',
@@ -82,6 +88,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/glossary': typeof GlossaryRoute
   '/how-to-read-wireshark-capture': typeof HowToReadWiresharkCaptureRoute
+  '/how-to-run-nmap-scan': typeof HowToRunNmapScanRoute
   '/learn': typeof LearnRoute
   '/packet-analyzer': typeof PacketAnalyzerRoute
   '/pcap-file-analyzer-online': typeof PcapFileAnalyzerOnlineRoute
@@ -95,6 +102,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/glossary': typeof GlossaryRoute
   '/how-to-read-wireshark-capture': typeof HowToReadWiresharkCaptureRoute
+  '/how-to-run-nmap-scan': typeof HowToRunNmapScanRoute
   '/learn': typeof LearnRoute
   '/packet-analyzer': typeof PacketAnalyzerRoute
   '/pcap-file-analyzer-online': typeof PcapFileAnalyzerOnlineRoute
@@ -109,6 +117,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/glossary': typeof GlossaryRoute
   '/how-to-read-wireshark-capture': typeof HowToReadWiresharkCaptureRoute
+  '/how-to-run-nmap-scan': typeof HowToRunNmapScanRoute
   '/learn': typeof LearnRoute
   '/packet-analyzer': typeof PacketAnalyzerRoute
   '/pcap-file-analyzer-online': typeof PcapFileAnalyzerOnlineRoute
@@ -124,6 +133,7 @@ export interface FileRouteTypes {
     | '/'
     | '/glossary'
     | '/how-to-read-wireshark-capture'
+    | '/how-to-run-nmap-scan'
     | '/learn'
     | '/packet-analyzer'
     | '/pcap-file-analyzer-online'
@@ -137,6 +147,7 @@ export interface FileRouteTypes {
     | '/'
     | '/glossary'
     | '/how-to-read-wireshark-capture'
+    | '/how-to-run-nmap-scan'
     | '/learn'
     | '/packet-analyzer'
     | '/pcap-file-analyzer-online'
@@ -150,6 +161,7 @@ export interface FileRouteTypes {
     | '/'
     | '/glossary'
     | '/how-to-read-wireshark-capture'
+    | '/how-to-run-nmap-scan'
     | '/learn'
     | '/packet-analyzer'
     | '/pcap-file-analyzer-online'
@@ -164,6 +176,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   GlossaryRoute: typeof GlossaryRoute
   HowToReadWiresharkCaptureRoute: typeof HowToReadWiresharkCaptureRoute
+  HowToRunNmapScanRoute: typeof HowToRunNmapScanRoute
   LearnRoute: typeof LearnRoute
   PacketAnalyzerRoute: typeof PacketAnalyzerRoute
   PcapFileAnalyzerOnlineRoute: typeof PcapFileAnalyzerOnlineRoute
@@ -195,6 +208,13 @@ declare module '@tanstack/react-router' {
       path: '/how-to-read-wireshark-capture'
       fullPath: '/how-to-read-wireshark-capture'
       preLoaderRoute: typeof HowToReadWiresharkCaptureRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/how-to-run-nmap-scan': {
+      id: '/how-to-run-nmap-scan'
+      path: '/how-to-run-nmap-scan'
+      fullPath: '/how-to-run-nmap-scan'
+      preLoaderRoute: typeof HowToRunNmapScanRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/learn': {
@@ -260,6 +280,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   GlossaryRoute: GlossaryRoute,
   HowToReadWiresharkCaptureRoute: HowToReadWiresharkCaptureRoute,
+  HowToRunNmapScanRoute: HowToRunNmapScanRoute,
   LearnRoute: LearnRoute,
   PacketAnalyzerRoute: PacketAnalyzerRoute,
   PcapFileAnalyzerOnlineRoute: PcapFileAnalyzerOnlineRoute,
