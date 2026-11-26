@@ -25,8 +25,11 @@ export function isLocalAddress(a: string): boolean {
   return true; // MAC or unknown: local link
 }
 
+/** Name lookups built from the capture itself. */
+export type NameIndex = { byIp: Map<string, string>; byStream: Map<string, string> };
+
 /** Builds name lookups from the capture itself only (DNS answers, TLS SNI, HTTP Host) — nothing leaves the device. */
-export function buildNameIndex(packets: Packet[]) {
+export function buildNameIndex(packets: Packet[]): NameIndex {
   const byIp = new Map<string, string>();
   const byStream = new Map<string, string>();
   for (const p of packets) {

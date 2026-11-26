@@ -28,3 +28,10 @@
 - [x] Expand reading with troubleshooting, route summarization, wildcard masks, IPv6 and a VLSM design lab
 - [x] Add professional scenario practice and a separate mixed subnetting exam with end-of-test review
 - [x] Test question answers, saved progress and the complete exam on desktop and phone
+
+# Beginner and expert analysis tools
+- [x] Add a health check with a plain-language verdict, per-step timings and TCP problems with packet numbers
+- [x] Add readable packet-list labels that filter on the raw field behind them, with a raw-fields toggle
+- [x] Add a chip-based filter builder with editable output and filters saved for the tab only
+- [x] Add search across every decoded value, packet marks with notes, and CSV/JSON/pcapng export
+- [x] Verify all four on desktop and phone and keep marks, notes and saved filters in tab memory only
