@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { Link } from '@tanstack/react-router';
-import { Check, ShieldCheck } from 'lucide-react';
+import { Check, ShieldCheck, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Switch } from '@/components/ui/switch';
 import { needsAnswer, onConsentChange, readChoice, saveChoices, type Choice } from '@/lib/consent';
@@ -75,8 +75,9 @@ export function CookieConsent() {
   }
 
   return <div ref={panelRef} tabIndex={-1} role="region" aria-label="Your privacy choices" className="fixed inset-x-3 bottom-3 z-50 mx-auto max-w-2xl rounded-lg border bg-background/95 p-5 text-foreground shadow-2xl outline-none backdrop-blur sm:p-6">
+    <Button type="button" variant="ghost" size="icon" aria-label="Close cookie banner" title="Close cookie banner" className="absolute right-2 top-2 size-8 text-muted-foreground" onClick={() => { setOpen(false); setSettings(false); }}><X aria-hidden="true" className="size-4" /></Button>
     {settings ? <>
-      <div className="flex items-center gap-2"><ShieldCheck className="size-5 text-primary" /><h2 className="font-semibold">Cookie settings</h2></div>
+      <div className="flex items-center gap-2 pr-6"><ShieldCheck className="size-5 shrink-0 text-primary" /><h2 className="font-semibold">Cookie settings</h2></div>
       <p className="mt-2 text-sm leading-6 text-muted-foreground">Choose whether Pktivo can measure clicks. Your packet captures are never part of this choice and never leave this tab.</p>
       <div className="mt-5 divide-y rounded-md border">
         <div className="flex items-start justify-between gap-4 p-4">
@@ -94,7 +95,7 @@ export function CookieConsent() {
         <Button type="button" onClick={() => save(choice ?? 'denied')}>Save choices</Button>
       </div>
     </> : <>
-      <div className="flex items-center gap-2"><ShieldCheck className="size-5 text-primary" /><h2 className="font-semibold">Your privacy, your choice</h2></div>
+      <div className="flex items-center gap-2 pr-6"><ShieldCheck className="size-5 shrink-0 text-primary" /><h2 className="font-semibold">Your privacy, your choice</h2></div>
       <p className="mt-3 text-sm leading-6 text-muted-foreground">We count visits without identifying you. If you accept, we also measure clicks. Your captures stay in this browser tab either way. Read our <Link to="/privacy" className="text-primary underline underline-offset-4">privacy policy</Link>.</p>
       <div className="mt-5 grid grid-cols-2 gap-2 sm:grid-cols-[1fr_1fr_auto]">
         <Button type="button" variant="outline" onClick={() => save('granted')}>Accept all</Button>

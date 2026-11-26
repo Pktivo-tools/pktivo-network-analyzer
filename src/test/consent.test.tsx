@@ -70,6 +70,20 @@ describe('Cookie consent', () => {
     expect(await screen.findByRole('switch', { name: 'Analytics, provided by Lovable' })).toBeChecked();
   });
 
+  it('closes without granting consent or saving unfinished choices', async () => {
+    render(<CookieConsent />);
+    await screen.findByRole('region', { name: 'Your privacy choices' });
+    fireEvent.click(screen.getByRole('button', { name: 'Close cookie banner' }));
+    expect(window.localStorage.getItem('cookie_consent_analytics')).toBeNull();
+    expect(sendSignals).not.toHaveBeenCalledWith('consent', 'update', { analytics_storage: 'granted' });
+    fireEvent.click(screen.getByRole('button', { name: 'Cookie settings' }));
+    fireEvent.click(await screen.findByRole('switch', { name: 'Analytics, provided by Lovable' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Close cookie banner' }));
+    expect(window.localStorage.getItem('cookie_consent_analytics')).toBeNull();
+    fireEvent.click(screen.getByRole('button', { name: 'Cookie settings' }));
+    expect(await screen.findByRole('switch', { name: 'Analytics, provided by Lovable' })).not.toBeChecked();
+  });
+
   it('saves the chosen off preference instead of accepting all', async () => {
     render(<CookieConsent />);
     await screen.findByRole('region', { name: 'Your privacy choices' });
