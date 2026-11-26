@@ -6,6 +6,7 @@ import { Dissector } from '@/lib/netlens/dissect';
 import { compareCaptures } from '@/lib/netlens/comparison';
 import { formatBytes } from '@/lib/netlens/format';
 import { bindTabLifetime } from '@/lib/netlens/tab-lifetime';
+import { GitHubLink } from '@/components/github-link';
 import type { Packet } from '@/lib/netlens/types';
 
 interface Capture { name: string; packets: Packet[] }
@@ -48,7 +49,7 @@ export function CaptureComparison({ current, currentName, isDemo }: { current: P
   }
   return <section className="rr-block rr-mask px-4 pb-8 sm:px-6" data-private="true" onDragOver={e => { e.preventDefault(); e.stopPropagation(); }} onDrop={e => { e.preventDefault(); e.stopPropagation(); }}>
     <div className="flex flex-wrap items-center justify-between gap-3 border-b py-4"><div><h2 className="text-xl font-semibold">Compare captures</h2><p className="mt-1 text-sm text-muted-foreground">Two recordings. One side-by-side view.</p></div><Button variant="outline" size="sm" disabled={!captures[0] || !captures[1] || busy.some(Boolean)} onClick={() => setCaptures(c => [c[1], c[0]])}><ArrowLeftRight />Swap A and B</Button></div>
-    <div className="mt-4 flex items-start gap-2 text-xs text-muted-foreground"><ShieldCheck className="size-4 shrink-0 text-primary" /><p>Files are read only on this device, never uploaded or saved. Closing this tab clears them.</p></div>
+    <div className="mt-4 flex flex-wrap items-start gap-x-2 gap-y-1 text-xs text-muted-foreground"><ShieldCheck className="size-4 shrink-0 text-primary" /><p className="min-w-0 flex-1">Files are read only on this device, never uploaded or saved. Closing this tab clears them.</p><GitHubLink label="View code" className="-mt-1 -mr-2 shrink-0" iconSize={14} /></div>
     <div className="mt-5 grid gap-4 md:grid-cols-2">{([0, 1] as const).map(slot => {
       const capture = captures[slot];
       return <div key={slot} className="min-w-0 rounded-lg border bg-card p-4" onDrop={e => { e.preventDefault(); e.stopPropagation(); const f = e.dataTransfer.files[0]; if (f) void open(f, slot); }}>
