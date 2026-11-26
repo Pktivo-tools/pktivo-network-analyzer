@@ -7,7 +7,7 @@ import { ThemeGrid, useTheme } from '@/components/theme-picker';
 import { ThirdPartyNotice } from '@/components/third-party-notice';
 import { createFileRoute, Link } from '@tanstack/react-router';
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { Activity, BookOpen, ChevronRight, CircleHelp, Menu, Copy, FileUp, GitCompare, Network, Radar, ScrollText, ShieldCheck, TerminalSquare, X } from 'lucide-react';
+import { Activity, BookOpen, Download, Lightbulb, ListChecks, Search, Wand2, ChevronRight, CircleHelp, Menu, Copy, FileUp, GitCompare, Network, Radar, ScrollText, ShieldCheck, TerminalSquare, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -18,6 +18,7 @@ import { bindTabLifetime } from '@/lib/netlens/tab-lifetime';
 import { diffScans, filterHosts, groupBySubnet, openPorts, parseNmapXml, type DiffItem, type NmapScan, type ScanHost } from '@/lib/scan/nmap-xml';
 import { demoScanAfter, demoScanBefore } from '@/lib/scan/demo';
 import { portNote } from '@/lib/scan/risk';
+import { liveHostList, lookupPorts, nextSteps, recipeCommand, recipes, scanToCsv, serviceInventory, type Recipe } from '@/lib/scan/tools';
 import { buildCommand, nseScripts, scanOptions, scanTypes, scriptCommand, scriptsFor } from '@/lib/scan/knowledge';
 
 export const Route = createFileRoute('/scan-map')({
@@ -32,7 +33,7 @@ export const Route = createFileRoute('/scan-map')({
   component: ScanMapPage,
 });
 
-const TAB_LABELS: Record<string, string> = { results: 'Results', compare: 'Compare scans', simulator: 'Scan simulator', scripts: 'Script playbook' };
+const TAB_LABELS: Record<string, string> = { results: 'Results', compare: 'Compare scans', simulator: 'Scan simulator', scripts: 'Script playbook', recipes: 'Scan recipes', ports: 'Port lookup' };
 
 function ScanMenu({ onModal }: { onModal: (m: 'nmap' | 'help') => void }) {
   const [open, setOpen] = useState(false);
@@ -84,7 +85,9 @@ function ScanMapPage() {
           <TabsTrigger value="results"><Network className="size-4" />Results</TabsTrigger>
           <TabsTrigger value="compare"><GitCompare className="size-4" />Compare scans</TabsTrigger>
           <TabsTrigger value="simulator"><TerminalSquare className="size-4" />Scan simulator</TabsTrigger>
+          <TabsTrigger value="recipes"><Wand2 className="size-4" />Scan recipes</TabsTrigger>
           <TabsTrigger value="scripts"><ScrollText className="size-4" />Script playbook</TabsTrigger>
+          <TabsTrigger value="ports"><Search className="size-4" />Port lookup</TabsTrigger>
         </TabsList>
         <TabsContent value="results" className="mt-4">
           {scan ? <Results scan={scan} onClose={() => setScan(null)} onOpen={open} /> : <EmptyState error={error} onOpen={open} onDemo={() => { setScan(parseNmapXml(demoScanAfter)); setError(''); }} />}
@@ -92,6 +95,8 @@ function ScanMapPage() {
         <TabsContent value="compare" className="mt-4"><Compare /></TabsContent>
         <TabsContent value="simulator" className="mt-4"><Simulator /></TabsContent>
         <TabsContent value="scripts" className="mt-4"><Playbook scan={scan} /></TabsContent>
+        <TabsContent value="recipes" className="mt-4"><Recipes /></TabsContent>
+        <TabsContent value="ports" className="mt-4"><PortLookup /></TabsContent>
       </Tabs>
       <footer className="mt-10 border-t pt-6"><PktivoPronunciation className="text-xs" /><ThirdPartyNotice tools={['nmap','wireshark']} className="mt-2" /><p className="mt-1 text-xs text-muted-foreground">Port hints are clues, not proof.</p></footer>
     </main>
@@ -126,16 +131,18 @@ function Results({ scan, onClose, onOpen }: { scan: NmapScan; onClose: () => voi
   const totalOpen = scan.hosts.reduce((n, h) => n + openPorts(h).length, 0);
   const topPorts = useMemo(() => { const m = new Map<number, number>(); scan.hosts.forEach(h => openPorts(h).forEach(p => m.set(p.port, (m.get(p.port) ?? 0) + 1))); return [...m].sort((a, b) => b[1] - a[1]).slice(0, 8); }, [scan]);
   return <div data-private-capture className="space-y-4">
-    <div className="flex flex-wrap items-center gap-2 text-sm"><code className="min-w-0 flex-1 truncate rounded bg-muted px-2 py-1 font-mono text-xs" title={scan.args}>{scan.args || 'nmap'}</code><FilePick label="Open another" onFile={onOpen} /><Button variant="ghost" size="sm" onClick={onClose}><X />Close</Button></div>
+    <div className="flex flex-wrap items-center gap-2 text-sm"><code className="min-w-0 flex-1 truncate rounded bg-muted px-2 py-1 font-mono text-xs" title={scan.args}>{scan.args || 'nmap'}</code><Button variant="outline" size="sm" onClick={() => saveText(scanToCsv(scan), 'nmap-results.csv', 'text/csv')} title="Every host and port as a spreadsheet"><Download />CSV</Button><Button variant="outline" size="sm" onClick={() => saveText(liveHostList(scan), 'live-hosts.txt', 'text/plain')} title="Live hosts, one per line, for nmap -iL"><Download />Host list</Button><FilePick label="Open another" onFile={onOpen} /><Button variant="ghost" size="sm" onClick={onClose}><X />Close</Button></div>
     <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">{[['Hosts up', scan.hosts.filter(h => h.status === 'up').length], ['Open ports', totalOpen], ['Subnets', groupBySubnet(scan.hosts).size], ['Scan time', scan.elapsed ? `${scan.elapsed}s` : '—']].map(([k, v]) => <div key={k} className="rounded-md border p-3"><div className="text-xs text-muted-foreground">{k}</div><div className="text-xl font-semibold">{v}</div></div>)}</div>
     <div className="flex flex-wrap gap-2"><Input className="max-w-xs" placeholder="Filter: IP, name, service, OS…" value={text} onChange={e => setText(e.target.value)} aria-label="Filter hosts" />
       <div className="flex flex-wrap items-center gap-1 text-xs"><span className="text-muted-foreground">Open port:</span>{topPorts.map(([p, n]) => <Button key={p} size="sm" variant={port === String(p) ? 'secondary' : 'ghost'} className="h-7" aria-pressed={port === String(p)} onClick={() => setPort(port === String(p) ? '' : String(p))}>{p} <span className="text-muted-foreground">×{n}</span></Button>)}</div></div>
     <div className="grid gap-4 lg:grid-cols-[16rem_1fr]">
       <ul className="max-h-[32rem] overflow-y-auto rounded-md border" aria-label="Hosts">{hosts.map(h => <li key={h.address}><button className={`w-full border-b px-3 py-2 text-left text-sm hover:bg-muted ${host?.address === h.address ? 'bg-accent text-accent-foreground' : ''}`} onClick={() => setSel(h.address)}><div className="font-mono">{h.address}</div><div className="truncate text-xs text-muted-foreground">{h.hostname || h.vendor || 'unnamed'} · {openPorts(h).length} open</div></button></li>)}{!hosts.length && <li className="p-4 text-sm text-muted-foreground">No hosts match.</li>}</ul>
-      <Tabs defaultValue="map"><TabsList><TabsTrigger value="map">Topology</TabsTrigger><TabsTrigger value="ports">Ports / services</TabsTrigger><TabsTrigger value="details">Host details</TabsTrigger></TabsList>
+      <Tabs defaultValue="map"><TabsList><TabsTrigger value="map">Topology</TabsTrigger><TabsTrigger value="ports">Ports / services</TabsTrigger><TabsTrigger value="details">Host details</TabsTrigger><TabsTrigger value="services">All services</TabsTrigger><TabsTrigger value="next">Next steps</TabsTrigger></TabsList>
         <TabsContent value="map"><Topology hosts={hosts} selected={host?.address} onSelect={setSel} /></TabsContent>
         <TabsContent value="ports">{host ? <PortTable host={host} /> : null}</TabsContent>
         <TabsContent value="details">{host ? <HostDetails host={host} /> : null}</TabsContent>
+        <TabsContent value="services"><Services scan={scan} port={port} onPort={setPort} /></TabsContent>
+        <TabsContent value="next"><NextSteps scan={scan} /></TabsContent>
       </Tabs>
     </div>
   </div>;
@@ -205,6 +212,51 @@ function Simulator() {
     <section><h2 className="font-medium">2. Add options</h2><div className="mt-2 grid gap-1 sm:grid-cols-2">{scanOptions.map(op => <label key={op.flag} className="flex cursor-pointer items-start gap-2 rounded-md border p-2 text-sm hover:bg-muted"><input type="checkbox" className="mt-1 accent-primary" checked={flags.includes(op.flag)} onChange={e => setFlags(e.target.checked ? [...flags, op.flag] : flags.filter(f => f !== op.flag))} /><span><span className="font-mono text-xs">{op.flag}</span> {op.label}<span className="block text-xs text-muted-foreground">{op.help}</span></span></label>)}</div>
       <h2 className="mt-4 font-medium">3. Target</h2><Input className="mt-2 font-mono" value={target} onChange={e => setTarget(e.target.value)} aria-label="Scan target" />
       <CommandBox cmd={cmd} /></section>
+  </div>;
+}
+
+function saveText(text: string, name: string, type: string) {
+  const url = URL.createObjectURL(new Blob([text], { type }));
+  const a = document.createElement('a'); a.href = url; a.download = name; a.click();
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
+}
+
+function Services({ scan, port, onPort }: { scan: NmapScan; port: string; onPort: (p: string) => void }) {
+  const rows = useMemo(() => serviceInventory(scan), [scan]);
+  return <div className="overflow-x-auto rounded-md border"><table className="w-full text-sm"><thead className="bg-muted text-left text-xs text-muted-foreground"><tr><th className="p-2">Port</th><th className="p-2">Service</th><th className="p-2">Devices</th><th className="p-2">Versions seen</th></tr></thead>
+    <tbody>{rows.map(r => <tr key={r.key} className="border-t align-top"><td className="p-2 font-mono">{r.key}</td><td className="p-2">{r.service || '—'}</td><td className="p-2"><Button size="sm" variant={port === String(r.port) ? 'secondary' : 'ghost'} className="h-7" onClick={() => onPort(port === String(r.port) ? '' : String(r.port))} title="Show only these devices">{r.hosts.length} device{r.hosts.length === 1 ? '' : 's'}</Button></td><td className="p-2 text-xs text-muted-foreground">{r.versions.join(' · ') || 'unknown — add -sV'}</td></tr>)}
+    {!rows.length && <tr><td colSpan={4} className="p-4 text-muted-foreground">No open ports in this scan.</td></tr>}</tbody></table>
+    <p className="p-2 text-xs text-muted-foreground">Several versions of one service can mean some devices need updates.</p></div>;
+}
+
+function NextSteps({ scan }: { scan: NmapScan }) {
+  const steps = useMemo(() => nextSteps(scan), [scan]);
+  return <div className="space-y-3"><p className="flex items-center gap-2 text-sm text-muted-foreground"><Lightbulb className="size-4 text-primary" />Suggestions based on what this scan did and found. Use "Host list" to save live-hosts.txt for -iL.</p>
+    {steps.map(s => <div key={s.title} className="rounded-md border p-3"><div className="font-medium">{s.title}</div><p className="text-xs text-muted-foreground">{s.why}</p><CommandBox cmd={s.command} /></div>)}
+    {!steps.length && <p className="text-sm text-muted-foreground">This scan already covers the usual follow-ups.</p>}</div>;
+}
+
+function Recipes() {
+  const [target, setTarget] = useState('192.168.1.0/24');
+  const [level, setLevel] = useState<'all' | Recipe['level']>('all');
+  const list = recipes.filter(r => level === 'all' || r.level === level);
+  return <div className="space-y-4">
+    <p className="flex items-center gap-2 text-sm text-muted-foreground"><ListChecks className="size-4 text-primary" />Pick what you want to find out. Each command saves XML you can open in Results.</p>
+    <div className="flex flex-wrap items-center gap-2"><Input className="max-w-xs font-mono" value={target} onChange={e => setTarget(e.target.value)} aria-label="Recipe target" placeholder="192.168.1.0/24" />
+      {(['all', 'Beginner', 'Intermediate', 'Advanced'] as const).map(l => <Button key={l} size="sm" variant={level === l ? 'secondary' : 'ghost'} aria-pressed={level === l} onClick={() => setLevel(l)}>{l === 'all' ? 'All levels' : l}</Button>)}</div>
+    <div className="grid gap-3 md:grid-cols-2">{list.map(r => <div key={r.id} className="rounded-md border p-3"><div className="flex items-center justify-between gap-2"><span className="font-medium">{r.goal}</span><span className="rounded-full border px-2 py-0.5 text-[11px] text-muted-foreground">{r.level}{r.root ? ' · admin' : ''}</span></div><p className="mt-1 text-xs text-muted-foreground">{r.explain}</p><CommandBox cmd={recipeCommand(r, target)} /></div>)}</div>
+    <p className="text-xs text-muted-foreground">Only scan networks you own or have permission to test.</p>
+  </div>;
+}
+
+function PortLookup() {
+  const [q, setQ] = useState('');
+  const rows = lookupPorts(q);
+  return <div className="space-y-3">
+    <Input className="max-w-sm" value={q} onChange={e => setQ(e.target.value)} placeholder="Port number, service or word (e.g. 3389, ssh, database)" aria-label="Look up a port" />
+    <div className="overflow-x-auto rounded-md border"><table className="w-full text-sm"><thead className="bg-muted text-left text-xs text-muted-foreground"><tr><th className="p-2">Port</th><th className="p-2">Nmap name</th><th className="p-2">What it is</th></tr></thead>
+      <tbody>{rows.map(p => <tr key={`${p.port}${p.protocol}`} className="border-t"><td className="p-2 font-mono">{p.port}/{p.protocol}</td><td className="p-2 font-mono text-xs">{p.service}</td><td className="p-2 text-muted-foreground">{p.what}</td></tr>)}
+      {!rows.length && <tr><td colSpan={3} className="p-4 text-muted-foreground">Not in this list of common ports. Nmap's own list: nmap-services.</td></tr>}</tbody></table></div>
   </div>;
 }
 
