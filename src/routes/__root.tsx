@@ -11,6 +11,7 @@ import {
 import { type ReactNode } from "react";
 import { AiDisclaimerDialog } from "@/components/ai-disclaimer-dialog";
 import { CookieConsent } from "@/components/cookie-consent";
+import { FeedbackLink } from "@/components/feedback-link";
 
 import appCss from "../styles.css?url";
 
@@ -179,6 +180,7 @@ function RootComponent() {
       <Outlet />
       <AiDisclaimerDialog />
       <CookieConsent />
+      <FeedbackLink />
     </QueryClientProvider>
   );
 }
