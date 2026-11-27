@@ -43,3 +43,17 @@ describe('Back-to-workspace link label', () => {
     );
   });
 });
+
+// The privacy page is about the site as a whole, not about one tool, so its top-right
+// button returns to the home page instead of the packet viewer.
+describe('Privacy page header button', () => {
+  const source = readFileSync(join(ROUTES_DIR, 'privacy.tsx'), 'utf8');
+
+  it('links the header button to the home page', () => {
+    expect(source).toContain('<Link to="/"><House />Home</Link>');
+  });
+
+  it('does not offer a back-to-packet-viewer link', () => {
+    expect(source).not.toContain('<Link to="/packet-analyzer">');
+  });
+});

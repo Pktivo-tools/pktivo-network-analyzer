@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from '@tanstack/react-router';
-import { ArrowLeft, ShieldCheck } from 'lucide-react';
+import { House, ShieldCheck } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { PktivoLogo } from '@/components/pktivo-logo';
 import { PktivoPronunciation } from '@/components/pktivo-pronunciation';
@@ -28,7 +28,7 @@ function PrivacyPage() {
   return <div className="min-h-screen bg-background text-foreground">
     <header className="border-b"><div className="mx-auto flex max-w-4xl items-center justify-between gap-3 px-4 py-4 sm:px-8">
       <Link to="/" className="flex items-center gap-2 font-semibold"><PktivoLogo className="size-7 text-primary" />pktivo.</Link>
-      <Button asChild variant="ghost" size="sm"><Link to="/packet-analyzer"><ArrowLeft />Packet viewer</Link></Button>
+      <Button asChild variant="ghost" size="sm"><Link to="/"><House />Home</Link></Button>
     </div></header>
     <main className="mx-auto max-w-4xl px-4 py-10 sm:px-8">
       <div className="flex items-center gap-2 text-sm font-medium text-primary"><ShieldCheck className="size-4" />Privacy</div>
