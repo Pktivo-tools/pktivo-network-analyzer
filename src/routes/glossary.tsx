@@ -14,6 +14,7 @@ export const Route = createFileRoute('/glossary')({
     { title: 'Wireshark and networking glossary — Pktivo' },
     { name: 'description', content: 'Plain-language definitions and examples of Wireshark and networking terms, including packets, TCP, DNS, subnetting, capture filters and response times.' },
     { property: 'og:title', content: 'Wireshark and networking glossary — Pktivo' },
+    { property: 'og:url', content: 'https://pktivo.com/glossary' },
     { property: 'og:description', content: 'Understand packet captures and CCNA networking vocabulary with a searchable, beginner-friendly glossary.' },
     { property: 'og:type', content: 'website' }, { name: 'twitter:card', content: 'summary_large_image' },
   ] }),

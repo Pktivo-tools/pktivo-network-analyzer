@@ -15,6 +15,7 @@ export const Route = createFileRoute('/learn_/subnetting')({
     { title: 'Subnetting course and practice — Pktivo CCNA Learn' },
     { name: 'description', content: 'Study subnetting with 12 lessons covering IPv4, VLSM, route summaries, wildcard masks and IPv6, plus a visual calculator, professional practice and a 20-question scenario exam.' },
     { property: 'og:title', content: 'Subnetting course and practice — Pktivo CCNA Learn' },
+    { property: 'og:url', content: 'https://pktivo.com/learn/subnetting' },
     { property: 'og:description', content: 'Free subnetting lessons from binary to VLSM design and IPv6, with professional practice, a scenario exam and saved reading progress.' },
     { property: 'og:type', content: 'website' }, { name: 'twitter:card', content: 'summary_large_image' },
   ] }),

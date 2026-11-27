@@ -30,6 +30,7 @@ export const Route = createFileRoute('/scan-map')({
     { title: 'Scan Map — private Nmap XML viewer & visualizer | Pktivo' },
     { name: 'description', content: 'Open Nmap -oX results in your browser: host map by subnet, open ports and services, scan comparison, an interactive scan-type simulator and an NSE script playbook. Nothing is uploaded.' },
     { property: 'og:title', content: 'Scan Map — private Nmap XML viewer by Pktivo' },
+    { property: 'og:url', content: 'https://pktivo.com/scan-map' },
     { property: 'og:description', content: 'A modern, beginner-friendly Zenmap alternative that runs entirely in your browser.' },
     { property: 'og:type', content: 'website' }, { name: 'twitter:card', content: 'summary_large_image' },
   ] }),
